@@ -1,0 +1,35 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@angular-import-orchestrator/examples/example0": [
+        "libs/examples/example0/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/example1": [
+        "libs/examples/example1/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/example2": [
+        "libs/examples/example2/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/example3": [
+        "libs/examples/example3/src/index.ts"
+      ],
+      "@angular-import-orchestrator/import": ["libs/import/src/index.ts"],
+      "@angular-import-orchestrator/workspace": ["libs/workspace/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

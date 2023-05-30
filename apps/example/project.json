@@ -1,0 +1,110 @@
+{
+  "name": "example",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "example",
+  "sourceRoot": "apps/example/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/example",
+        "index": "apps/example/src/index.html",
+        "main": "apps/example/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/example/tsconfig.app.json",
+        "assets": ["apps/example/src/favicon.ico", "apps/example/src/assets"],
+        "styles": ["apps/example/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production",
+      "dependsOn": [{
+        "projects": "self",
+        "target": "prepare"
+      }]
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "example:build:production"
+        },
+        "development": {
+          "browserTarget": "example:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "dependsOn": [{
+        "projects": "self",
+        "target": "prepare"
+      }]
+    },
+    "prepare": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/libs/examples"],
+      "options": {
+        "commands": ["nx g @angular-import-orchestrator/workspace:cleanup-examples examples && nx g @angular-import-orchestrator/workspace:scaffold-examples examples"]
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "example:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/example/**/*.ts", "apps/example/**/*.html"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/example/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "example:build"
+      }
+    }
+  }
+}

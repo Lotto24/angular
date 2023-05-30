@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "ScaffoldExamples",
+  "title": "",
+  "type": "object",
+  "properties": {
+    "namespace": {
+      "type": "string",
+      "description": "",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What namespace should the examples components be created in?"
+    }
+  },
+  "required": ["namespace"]
+}

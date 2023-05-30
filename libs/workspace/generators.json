@@ -1,0 +1,14 @@
+{
+  "generators": {
+    "scaffold-examples": {
+      "factory": "./src/generators/scaffold-examples/generator",
+      "schema": "./src/generators/scaffold-examples/schema.json",
+      "description": "scaffold-examples generator"
+    },
+    "cleanup-examples": {
+      "factory": "./src/generators/cleanup-examples/generator",
+      "schema": "./src/generators/cleanup-examples/schema.json",
+      "description": "cleanup-examples generator"
+    }
+  }
+}
