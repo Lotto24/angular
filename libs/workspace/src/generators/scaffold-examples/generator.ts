@@ -1,8 +1,10 @@
-import {formatFiles, Tree, updateJson,} from '@nx/devkit';
+import {formatFiles, Tree,} from '@nx/devkit';
 import {ScaffoldExamplesGeneratorSchema} from './schema';
 import {componentGenerator, libraryGenerator, UnitTestRunner} from "@nx/angular/generators";
 import {Schema as NxAngularLibrarySchema} from "@nx/angular/src/generators/library/schema";
 import {Schema as NxAngularComponentSchema} from "@nx/angular/src/generators/component/schema";
+import {FileUpdates, ModuleGeneratorUtil, updateSourceFiles} from "../util/ts-morph.util";
+import {ts} from "ts-morph";
 
 interface ExamplesScaffolderLibrary {
   name: string;
@@ -68,10 +70,15 @@ async function createLibrary(tree: Tree, namespace: string, library: ExamplesSca
     flat: true,
     skipTests: true,
     inlineStyle: true,
+
     standalone: library.type === 'standalone',
   }
   await componentGenerator(tree, componentSchema)
   await bloatTemplates(tree, library);
+
+  if (library.type === 'ng-module-bootstrap') {
+    addComponentToNgModuleBootstrap(tree, library);
+  }
 }
 
 async function bloatTemplates(tree: Tree, library: ExamplesScaffolderLibrary): Promise<void> {
@@ -79,6 +86,30 @@ async function bloatTemplates(tree: Tree, library: ExamplesScaffolderLibrary): P
   const templatePath = `libs/${directory}/${library.name}/src/lib/${directory}-${library.name}.component.html`
   const bloat = await createBlob(library.bloatSizeKb * 1024).text();
   tree.write(templatePath, `<div data-bloat="${bloat}">${library.name} (bs=${library.bloatSizeKb}kB)</div>`)
+}
+
+function addComponentToNgModuleBootstrap(tree: Tree, library: ExamplesScaffolderLibrary): Tree {
+  const directory = 'examples';
+  const ngModulePath = `libs/${directory}/${library.name}/src/lib/${directory}-${library.name}.module.ts`;
+
+  const updates: FileUpdates = {
+    [ngModulePath]: sourceFile => {
+      const decorator = ModuleGeneratorUtil.findModuleClass(sourceFile, 'NgModule');
+      const objLiteral = decorator?.getFirstDescendantByKind(ts.SyntaxKind.ObjectLiteralExpression);
+
+      if (!objLiteral) {
+        return;
+      }
+
+      const value = objLiteral.getPropertyOrThrow('exports');
+      objLiteral.addProperty(writer => writer.write(value.getFullText().replace(/exports/, 'bootstrap')));
+
+    },
+  };
+
+  updateSourceFiles(tree, updates);
+
+  return tree;
 }
 
 function createBlob(size: number): Blob {
