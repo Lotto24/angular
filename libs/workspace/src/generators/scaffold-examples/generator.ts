@@ -14,25 +14,66 @@ interface ExamplesScaffolderLibrary {
 
 const structure: ExamplesScaffolderLibrary[] = [
   {
-    name: 'example0',
+    name: 'home0',
     bloatSizeKb: 24,
     type: 'standalone',
   },
   {
-    name: 'example1',
+    name: 'home1',
     bloatSizeKb: 32,
     type: 'standalone',
   },
   {
-    name: 'example2',
+    name: 'home2',
     bloatSizeKb: 16,
     type: 'standalone',
   },
   {
-    name: 'example3',
+    name: 'home3',
     bloatSizeKb: 16,
     type: 'ng-module-bootstrap',
-  }
+  },
+
+  {
+    name: 'fruit0',
+    bloatSizeKb: 32,
+    type: 'standalone',
+  },
+  {
+    name: 'fruit1',
+    bloatSizeKb: 127,
+    type: 'standalone',
+  },
+  {
+    name: 'fruit2',
+    bloatSizeKb: 96,
+    type: 'standalone',
+  },
+  {
+    name: 'fruit3',
+    bloatSizeKb: 72,
+    type: 'standalone',
+  },
+  {
+    name: 'fruit4',
+    bloatSizeKb: 16,
+    type: 'standalone',
+  },
+  {
+    name: 'fruit5',
+    bloatSizeKb: 48,
+    type: 'standalone',
+  },
+  {
+    name: 'fruit6',
+    bloatSizeKb: 84,
+    type: 'standalone',
+  },
+  {
+    name: 'fruit7',
+    bloatSizeKb: 112,
+    type: 'standalone',
+  },
 ]
 
 export default async function (

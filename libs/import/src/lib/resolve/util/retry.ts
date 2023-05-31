@@ -18,9 +18,8 @@ export async function retry<T>(fn: () => Promise<T>, tries = 5, interval = 1000)
 }
 
 export async function resolvePromiseWithRetries(
-  promise: Promise<unknown>
+  resolveFn: () => Promise<unknown>
 ): Promise<unknown> {
-  const resolveFn = () => promise;
   return await retry(async () => {
     // when offline, do not attempt to lazy-load chunk.
     // once import promise fails, there is no way to recover

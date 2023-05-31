@@ -6,7 +6,7 @@ import {resolvePromiseWithRetries} from "./util/retry";
 import {Constructor, resolveConstructorFromESModule} from "./util/resolve-constructor";
 import {ESModule, isNgModuleDef, NgModuleDef} from "./util/module";
 
-export function importNgModuleBootstrap(promise: Promise<any>): ImportQueueItemResolveFn {
+export function importNgModuleBootstrap(promise: () => Promise<any>): ImportQueueItemResolveFn {
   return async (item: ImportQueueItem) => {
     const resolvedImport = await resolvePromiseWithRetries(promise) as Constructor | ESModule;
     const ngModuleConstructor = resolveConstructorFromESModule(resolvedImport)

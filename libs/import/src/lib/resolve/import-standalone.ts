@@ -6,7 +6,7 @@ import {assertStandalone, mountComponent} from "./util/component";
 import {Constructor, resolveConstructorFromESModule} from "./util/resolve-constructor";
 import {ESModule} from "./util/module";
 
-export function importStandalone(promise: Promise<any>): ImportQueueItemResolveFn {
+export function importStandalone(promise: () => Promise<any>): ImportQueueItemResolveFn {
   return async (item: ImportQueueItem) => {
     const resolvedImport = await resolvePromiseWithRetries(promise) as Constructor | ESModule;
     const constructor = resolveConstructorFromESModule(resolvedImport).shift();

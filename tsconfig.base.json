@@ -15,17 +15,41 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@angular-import-orchestrator/examples/example0": [
-        "libs/examples/example0/src/index.ts"
+      "@angular-import-orchestrator/examples/fruit0": [
+        "libs/examples/fruit0/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/example1": [
-        "libs/examples/example1/src/index.ts"
+      "@angular-import-orchestrator/examples/fruit1": [
+        "libs/examples/fruit1/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/example2": [
-        "libs/examples/example2/src/index.ts"
+      "@angular-import-orchestrator/examples/fruit2": [
+        "libs/examples/fruit2/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/example3": [
-        "libs/examples/example3/src/index.ts"
+      "@angular-import-orchestrator/examples/fruit3": [
+        "libs/examples/fruit3/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/fruit4": [
+        "libs/examples/fruit4/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/fruit5": [
+        "libs/examples/fruit5/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/fruit6": [
+        "libs/examples/fruit6/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/fruit7": [
+        "libs/examples/fruit7/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/home0": [
+        "libs/examples/home0/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/home1": [
+        "libs/examples/home1/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/home2": [
+        "libs/examples/home2/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/home3": [
+        "libs/examples/home3/src/index.ts"
       ],
       "@angular-import-orchestrator/import": ["libs/import/src/index.ts"],
       "@angular-import-orchestrator/workspace": ["libs/workspace/src/index.ts"]

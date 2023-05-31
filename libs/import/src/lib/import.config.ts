@@ -19,8 +19,8 @@ class ImportConfigService {
 }
 
 export function provideImports<T>(
-  orchestration: T & { [key in keyof T]: number } & Orchestration,
-  imports: { [key in keyof T]: ImportQueueItemResolveFn } & Imports): Provider[] {
+  orchestration: T & Orchestration,
+  imports: Partial<{ [key in keyof T]: ImportQueueItemResolveFn }>): Provider[] {
   return [
     {
       provide: ORCHESTRATION,
@@ -29,7 +29,7 @@ export function provideImports<T>(
     },
     {
       provide: IMPORTS,
-      useFactory: (config: ImportConfigService) => config.updateImports(imports),
+      useFactory: (config: ImportConfigService) => config.updateImports(imports as Imports),
       deps: [ImportConfigService]
     }
   ]
