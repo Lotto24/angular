@@ -11,16 +11,19 @@ import {APP_IMPORT_ORCHESTRATION} from "../app.orchestration";
   selector: 'example-home',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./fruit.component.scss'],
   template: `
-    <h2>Home</h2>
-    <ng-container import="fruit0"></ng-container>
-    <ng-container import="fruit1"></ng-container>
-    <ng-container import="fruit2"></ng-container>
-    <ng-container import="fruit3"></ng-container>
-    <ng-container import="fruit4"></ng-container>
-    <ng-container import="fruit5"></ng-container>
-    <ng-container import="fruit6"></ng-container>
-    <ng-container import="fruit7"></ng-container>
+    <h2>Fruit</h2>
+    <div class="container">
+      <ng-container import="fruit0" withClass="fruity fruit0"></ng-container>
+      <ng-container import="fruit1" withClass="fruity fruit1"></ng-container>
+      <ng-container import="fruit2" withClass="fruity fruit2"></ng-container>
+      <ng-container import="fruit3" withClass="fruity fruit3"></ng-container>
+      <ng-container import="fruit4" withClass="fruity fruit4"></ng-container>
+      <ng-container import="fruit5" withClass="fruity fruit5"></ng-container>
+      <ng-container import="fruit6" withClass="fruity fruit6"></ng-container>
+      <ng-container import="fruit7" withClass="fruity fruit7"></ng-container>
+    </div>
   `,
   imports: [
     ImportDirective
@@ -32,10 +35,10 @@ import {APP_IMPORT_ORCHESTRATION} from "../app.orchestration";
         'fruit0': importStandalone(() => import('@angular-import-orchestrator/examples/fruit0')),
         'fruit1': importStandalone(() => import('@angular-import-orchestrator/examples/fruit1')),
         'fruit2': importStandalone(() => import('@angular-import-orchestrator/examples/fruit2')),
-        'fruit3': importStandalone(() => import('@angular-import-orchestrator/examples/fruit3')),
+        'fruit3': importNgModuleBootstrap(() => import('@angular-import-orchestrator/examples/fruit3')),
         'fruit4': importStandalone(() => import('@angular-import-orchestrator/examples/fruit4')),
-        'fruit5': importStandalone(() => import('@angular-import-orchestrator/examples/fruit5')),
-        'fruit6': importStandalone(() => import('@angular-import-orchestrator/examples/fruit6')),
+        'fruit5': importNgModuleBootstrap(() => import('@angular-import-orchestrator/examples/fruit5')),
+        'fruit6': importNgModuleBootstrap(() => import('@angular-import-orchestrator/examples/fruit6')),
         'fruit7': importStandalone(() => import('@angular-import-orchestrator/examples/fruit7')),
       })
   ]

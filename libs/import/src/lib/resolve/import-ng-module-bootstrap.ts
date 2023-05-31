@@ -10,20 +10,20 @@ export function importNgModuleBootstrap(promise: () => Promise<any>): ImportQueu
   return async (item: ImportQueueItem) => {
     const resolvedImport = await resolvePromiseWithRetries(promise) as Constructor | ESModule;
     const ngModuleConstructor = resolveConstructorFromESModule(resolvedImport)
-      ?.filter((type) => isNgModuleDef(type)).shift();
+      ?.filter((type) => isNgModuleDef(type))?.shift();
 
     if (!ngModuleConstructor) {
       throw new Error('no class found');
     }
 
     const ngModuleRef = createNgModule(ngModuleConstructor, item.injector);
-    const componentConstructor = ((ngModuleRef as any)._bootstrapComponents as Array<Type<any>>).shift();
+    const componentConstructor = ((ngModuleRef as any)._bootstrapComponents as Array<Type<any>>)?.slice().shift();
 
     if (!componentConstructor) {
       throw new Error('no class found');
     }
 
-    const componentRef = await mountComponent(item.viewContainerRef, item.injector, componentConstructor);
+    const componentRef = await mountComponent(item, componentConstructor);
 
     // logger.debug(`loading import="${item.import}", providers=${item.providers?.length}`);
     const componentChangeDetectorRef = componentRef.injector.get(ChangeDetectorRef);
@@ -35,6 +35,9 @@ export function importNgModuleBootstrap(promise: () => Promise<any>): ImportQueu
     if (item.outputs) {
       bindComponentOutputs(componentRef, item.outputs, item.destroy$);
     }
+
+    item.instance.componentMount.next(componentRef);
+    item.instance.componentMount.complete();
 
     // This will trigger Angular lifecycle on componentRef's entire component tree
     // * Bindings will be resolved

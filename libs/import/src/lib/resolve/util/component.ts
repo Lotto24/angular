@@ -1,7 +1,8 @@
-import {ComponentRef, Injector, isStandalone, Type, ViewContainerRef} from "@angular/core";
+import {ComponentRef, isStandalone, Type} from "@angular/core";
+import {ImportQueueItem} from "../../import-queue.directive";
 
-export async function mountComponent(viewContainerRef: ViewContainerRef, injector: Injector, componentType: Type<unknown>): Promise<ComponentRef<unknown>> {
-  return viewContainerRef.createComponent(componentType, {injector});
+export async function mountComponent(item: ImportQueueItem, componentType: Type<unknown>): Promise<ComponentRef<unknown>> {
+  return item.viewContainerRef.createComponent(componentType, { injector: item.injector });
 }
 
 export function assertStandalone(resolved: Type<unknown>) {

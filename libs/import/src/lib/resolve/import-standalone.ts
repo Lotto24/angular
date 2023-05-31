@@ -17,7 +17,7 @@ export function importStandalone(promise: () => Promise<any>): ImportQueueItemRe
 
     assertStandalone(constructor);
 
-    const componentRef = await mountComponent(item.viewContainerRef, item.injector, constructor);
+    const componentRef = await mountComponent(item, constructor);
 
     // logger.debug(`loading import="${item.import}", providers=${item.providers?.length}`);
     const componentChangeDetectorRef = componentRef.injector.get(ChangeDetectorRef);
@@ -29,6 +29,9 @@ export function importStandalone(promise: () => Promise<any>): ImportQueueItemRe
     if (item.outputs) {
       bindComponentOutputs(componentRef, item.outputs, item.destroy$);
     }
+
+    item.instance.componentMount.next(componentRef);
+    item.instance.componentMount.complete();
 
     // This will trigger Angular lifecycle on componentRef's entire component tree
     // * Bindings will be resolved

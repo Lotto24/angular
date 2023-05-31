@@ -1,10 +1,10 @@
-import type {OnDestroy, OnInit, StaticProvider} from '@angular/core';
-import {Directive, ElementRef, Inject, Injector, Input, ViewContainerRef} from '@angular/core';
+import type {ComponentRef, OnDestroy, OnInit, StaticProvider} from '@angular/core';
+import {Directive, EventEmitter, Inject, Injector, Input, Output, Renderer2, ViewContainerRef} from '@angular/core';
 import type {Observable} from 'rxjs';
 import {Subject} from 'rxjs';
 
 import {ImportQueueProvider} from './import-queue.provider';
-import {LOG_PREFIX} from './util/logger';
+import {LOG_PREFIX, logger} from './util/logger';
 import {IMPORTS, ORCHESTRATION} from "./import.token";
 
 export type ImportQueueItemResolveFn = (item: ImportQueueItem) => Promise<void>;
@@ -12,6 +12,7 @@ export type ImportQueueItemResolveFn = (item: ImportQueueItem) => Promise<void>;
 interface ImportQueueItemExtras {
   resolveFn: ImportQueueItemResolveFn;
   priority: number;
+  instance: ImportQueueDirective,
   injector: Injector;
   destroy$: Observable<void>;
 }
@@ -30,16 +31,19 @@ export class ImportQueueDirective implements OnInit, OnDestroy {
   @Input() public inputs!: { [index: string]: unknown };
   @Input() public outputs!: { [index: string]: unknown };
 
-  private readonly destroy$ = new Subject<void>();
+  @Output() public componentMount = new EventEmitter<ComponentRef<unknown>>();
+
+  public readonly destroy$ = new Subject<void>();
 
   constructor(
-    private elementRef: ElementRef<HTMLElement>,
+    public readonly viewContainerRef: ViewContainerRef,
     @Inject(IMPORTS) private readonly config: { [key: string]: ImportQueueItemResolveFn }, // migrate config in the future
     @Inject(ORCHESTRATION) private readonly priorities: { [key: string]: number },
     private readonly injector: Injector,
-    public viewContainerRef: ViewContainerRef,
-    private readonly queue: ImportQueueProvider
-  ) {}
+    private readonly queue: ImportQueueProvider,
+    private readonly renderer2: Renderer2,
+  ) {
+  }
 
   public ngOnInit(): void {
     const resolveFn = createResolveFn(this.config, this.import);
@@ -52,9 +56,10 @@ export class ImportQueueDirective implements OnInit, OnDestroy {
 
     this.queue.insert(priority, {
       ...this,
-      resolveFn: resolveFn,
+      instance: this,
       import: this.import,
       destroy$: this.destroy$,
+      resolveFn,
       injector,
       priority,
     });

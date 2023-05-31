@@ -1,0 +1,29 @@
+@use "sass:list";
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(5, 10vh);
+  grid-template-areas:
+    'f0 f1 f1'
+    'f0 f2 f3'
+    'f0 f4 f3'
+    'f6 f6 f5'
+    'f7 f7 f5';
+  justify-items: stretch;
+  align-items: stretch;
+  color: white;
+}
+
+$colors: #f46036ff, #2e294eff, #1b998bff, #e71a36ff, #35a83dff, #1b1b3aff, #693668ff, #a74482ff, #f84aa7ff, #ff3562ff;
+::ng-deep {
+  .fruity {
+    padding: 1rem;
+  }
+  @for $i from 0 through 7 {
+     .fruity.fruit#{$i} {
+      grid-area: f#{$i};
+      background-color: list.nth($colors, $i + 1)
+    }
+  }
+}

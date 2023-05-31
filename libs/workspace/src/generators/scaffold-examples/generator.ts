@@ -52,7 +52,7 @@ const structure: ExamplesScaffolderLibrary[] = [
   {
     name: 'fruit3',
     bloatSizeKb: 72,
-    type: 'standalone',
+    type: 'ng-module-bootstrap',
   },
   {
     name: 'fruit4',
@@ -62,12 +62,12 @@ const structure: ExamplesScaffolderLibrary[] = [
   {
     name: 'fruit5',
     bloatSizeKb: 48,
-    type: 'standalone',
+    type: 'ng-module-bootstrap',
   },
   {
     name: 'fruit6',
     bloatSizeKb: 84,
-    type: 'standalone',
+    type: 'ng-module-bootstrap',
   },
   {
     name: 'fruit7',
