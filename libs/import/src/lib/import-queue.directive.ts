@@ -3,9 +3,9 @@ import {Directive, ElementRef, Inject, Injector, Input, ViewContainerRef} from '
 import type {Observable} from 'rxjs';
 import {Subject} from 'rxjs';
 
-import {IMPORT_COMPONENTS, IMPORT_PRIORITIES} from './import.token';
 import {ImportQueueProvider} from './import-queue.provider';
 import {LOG_PREFIX} from './util/logger';
+import {IMPORTS, ORCHESTRATION} from "./import.token";
 
 export type ImportQueueItemResolveFn = (item: ImportQueueItem) => Promise<void>;
 
@@ -34,8 +34,8 @@ export class ImportQueueDirective implements OnInit, OnDestroy {
 
   constructor(
     private elementRef: ElementRef<HTMLElement>,
-    @Inject(IMPORT_COMPONENTS) private readonly config: { [key: string]: ImportQueueItemResolveFn }, // migrate config in the future
-    @Inject(IMPORT_PRIORITIES) private readonly priorities: { [key: string]: number },
+    @Inject(IMPORTS) private readonly config: { [key: string]: ImportQueueItemResolveFn }, // migrate config in the future
+    @Inject(ORCHESTRATION) private readonly priorities: { [key: string]: number },
     private readonly injector: Injector,
     public viewContainerRef: ViewContainerRef,
     private readonly queue: ImportQueueProvider
