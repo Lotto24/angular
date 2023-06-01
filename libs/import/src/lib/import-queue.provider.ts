@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import type { ImportQueueItem } from './import-queue.directive';
-import { Queue } from './queue';
+import { Queue } from './util/queue';
 import { logger } from './util/logger';
 
 @Injectable({ providedIn: 'root' })

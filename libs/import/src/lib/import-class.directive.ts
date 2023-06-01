@@ -1,4 +1,4 @@
-import {ComponentRef, Directive, ElementRef, inject, Input, OnInit, Renderer2} from "@angular/core";
+import {ComponentRef, Directive, ElementRef, inject, Input, Renderer2} from "@angular/core";
 import {ImportQueueDirective} from "./import-queue.directive";
 import {takeUntil} from "rxjs";
 
@@ -6,7 +6,7 @@ import {takeUntil} from "rxjs";
   selector: '[importClass]',
   standalone: true,
 })
-export class ImportClassDirective implements OnInit {
+export class ImportClassDirective {
   @Input() public withClass!: string
 
   private readonly queue = inject(ImportQueueDirective, { self: true })
@@ -18,8 +18,6 @@ export class ImportClassDirective implements OnInit {
   }
 
   public onComponentMount(componentRef: ComponentRef<unknown>): void {
-    console.log('ImportClassDirective.onComponentMount', this);
-
     if (!this.withClass)
       return;
 
@@ -29,9 +27,5 @@ export class ImportClassDirective implements OnInit {
 
     const classes = this.withClass.match(/[^\s]+/ig);
     classes?.forEach((c) => renderer2.addClass(htmlElement, c))
-  }
-
-  public ngOnInit(): void {
-    console.log('ImportClassDirective.ngOnInit', this.withClass);
   }
 }

@@ -1,11 +1,9 @@
-import type { AfterViewInit } from '@angular/core';
+import type {AfterViewInit} from '@angular/core';
 import {Directive, ElementRef, NgZone} from '@angular/core';
-import { Router } from '@angular/router';
-
-import { ImportQueueDirective } from './import-queue.directive';
-import { ImportQueueProvider } from './import-queue.provider';
-import { logger } from './util/logger';
-import { processImportQueue } from './process-import-queue';
+import {Router} from '@angular/router';
+import {ImportQueueProvider} from './import-queue.provider';
+import {logger} from './util/logger';
+import {processImportQueue} from './process-import-queue';
 
 @Directive({
   selector: '[importLoader]',
