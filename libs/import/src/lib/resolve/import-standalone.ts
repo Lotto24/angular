@@ -1,15 +1,15 @@
 import {ChangeDetectorRef} from "@angular/core";
 import {resolvePromiseWithRetries} from "./util/retry";
-import {ImportQueueItem, ImportQueueItemResolveFn} from "../import-queue.directive";
+import {ImportQueueItem, ImportQueueItemResolveFn} from "../host-directive/import-queue.directive";
 import {bindComponentInputs, bindComponentOutputs} from "./util/bind-component-io";
 import {assertStandalone, mountComponent} from "./util/component";
-import {Constructor, resolveConstructorFromESModule} from "./util/resolve-constructor";
+import {Constructor, resolveConstructorsFromESModule} from "./util/resolve-constructor";
 import {ESModule} from "./util/module";
 
 export function importStandalone(promise: () => Promise<any>): ImportQueueItemResolveFn {
   return async (item: ImportQueueItem) => {
     const resolvedImport = await resolvePromiseWithRetries(promise) as Constructor | ESModule;
-    const constructor = resolveConstructorFromESModule(resolvedImport).shift();
+    const constructor = resolveConstructorsFromESModule(resolvedImport).shift();
 
     if (!constructor) {
       throw new Error('class not found');

@@ -1,8 +1,8 @@
 import {Directive} from '@angular/core';
 
-import {ImportLoaderDirective} from './import-loader.directive';
-import {ImportClassDirective} from "./import-class.directive";
-import {ImportQueueDirective} from "./import-queue.directive";
+import {ImportLoaderDirective} from './host-directive/import-loader.directive';
+import {ImportClassDirective} from "./host-directive/import-class.directive";
+import {ImportQueueDirective} from "./host-directive/import-queue.directive";
 
 @Directive({
   selector: '[import]',
@@ -15,7 +15,7 @@ import {ImportQueueDirective} from "./import-queue.directive";
     },
     {
       directive: ImportClassDirective,
-      inputs: ['withClass'],
+      inputs: ['cssClass'],
     }
   ],
 })

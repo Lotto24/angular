@@ -3,11 +3,11 @@ import {ImportQueueDirective} from "./import-queue.directive";
 import {takeUntil} from "rxjs";
 
 @Directive({
-  selector: '[importClass]',
+  selector: '[importCssClass]',
   standalone: true,
 })
 export class ImportClassDirective {
-  @Input() public withClass!: string
+  @Input() public cssClass!: string
 
   private readonly queue = inject(ImportQueueDirective, { self: true })
 
@@ -18,14 +18,14 @@ export class ImportClassDirective {
   }
 
   public onComponentMount(componentRef: ComponentRef<unknown>): void {
-    if (!this.withClass)
+    if (!this.cssClass)
       return;
 
     const renderer2 = componentRef.injector.get(Renderer2);
     const elementRef = componentRef.injector.get(ElementRef);
     const htmlElement = elementRef.nativeElement as HTMLElement;
 
-    const classes = this.withClass.match(/[^\s]+/ig);
+    const classes = this.cssClass.match(/[^\s]+/ig);
     classes?.forEach((c) => renderer2.addClass(htmlElement, c))
   }
 }

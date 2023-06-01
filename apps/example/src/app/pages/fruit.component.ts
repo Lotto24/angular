@@ -15,14 +15,14 @@ import {APP_IMPORT_ORCHESTRATION} from "../app.orchestration";
   template: `
     <h2>Fruit</h2>
     <div class="container">
-      <ng-container import="fruit0" withClass="fruity fruit0"></ng-container>
-      <ng-container import="fruit1" withClass="fruity fruit1"></ng-container>
-      <ng-container import="fruit2" withClass="fruity fruit2"></ng-container>
-      <ng-container import="fruit3" withClass="fruity fruit3"></ng-container>
-      <ng-container import="fruit4" withClass="fruity fruit4"></ng-container>
-      <ng-container import="fruit5" withClass="fruity fruit5"></ng-container>
-      <ng-container import="fruit6" withClass="fruity fruit6"></ng-container>
-      <ng-container import="fruit7" withClass="fruity fruit7"></ng-container>
+      <ng-container import="fruit0" cssClass="fruity fruit0"></ng-container>
+      <ng-container import="fruit1" cssClass="fruity fruit1"></ng-container>
+      <ng-container import="fruit2" cssClass="fruity fruit2"></ng-container>
+      <ng-container import="fruit3" cssClass="fruity fruit3"></ng-container>
+      <ng-container import="fruit4" cssClass="fruity fruit4"></ng-container>
+      <ng-container import="fruit5" cssClass="fruity fruit5"></ng-container>
+      <ng-container import="fruit6" cssClass="fruity fruit6"></ng-container>
+      <ng-container import="fruit7" cssClass="fruity fruit7"></ng-container>
     </div>
   `,
   imports: [

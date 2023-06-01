@@ -3,8 +3,7 @@ import {ESModule, isESModule} from "./module";
 
 export type Constructor = Type<unknown>
 
-
-export function resolveConstructorFromESModule(esm: ESModule | Constructor): Constructor[] {
+export function resolveConstructorsFromESModule(esm: ESModule | Constructor): Constructor[] {
   if (isESModule(esm)) {
     const constructors = Object.values<Constructor>(esm as unknown as{ [index: string]: Constructor })
       .filter(v => typeof v === 'function')
@@ -18,4 +17,3 @@ export function resolveConstructorFromESModule(esm: ESModule | Constructor): Con
 
   return [esm];
 }
-

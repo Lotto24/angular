@@ -1,16 +1,16 @@
 import type {Router} from '@angular/router';
 import {ResolveEnd} from '@angular/router';
 import {filter, firstValueFrom, map} from 'rxjs';
-
-import type {ImportQueueProvider} from './import-queue.provider';
-import {logger} from "./util/logger";
+import type {Logger} from "../provider/import-config.provider";
+import {ImportQueueItem} from "../host-directive/import-queue.directive";
+import {Queue} from "./queue";
 
 /**
  * recursive loading of queued features
  */
-export async function processImportQueue(queue: ImportQueueProvider, router: Router): Promise<void> {
+export async function processImportQueue(queue: Queue<ImportQueueItem>, router: Router, logger: Logger): Promise<void> {
   // suspend processing while routing, as navigation takes precedence
-  await routingFinished(router);
+  await routingFinished(router, logger);
 
   // let's take the next item off the queue
   const item = queue.take();
@@ -30,7 +30,7 @@ export async function processImportQueue(queue: ImportQueueProvider, router: Rou
     logger.error(`error processing item w/ import="${item.import}"`, x);
   }
 
-  return await processImportQueue(queue, router);
+  return await processImportQueue(queue, router, logger);
 }
 
 /**
@@ -38,7 +38,7 @@ export async function processImportQueue(queue: ImportQueueProvider, router: Rou
  * Returns immediately if routing is not ongoing.
  * @param router
  */
-async function routingFinished(router: Router): Promise<void> {
+async function routingFinished(router: Router, logger: Logger): Promise<void> {
   if (!router.getCurrentNavigation()) {
     // return immediately, if routing is not ongoing
     return;

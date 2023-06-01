@@ -1,11 +1,10 @@
 import type {ComponentRef, OnDestroy, OnInit, StaticProvider} from '@angular/core';
-import {Directive, EventEmitter, Inject, Injector, Input, Output, Renderer2, ViewContainerRef} from '@angular/core';
+import {Directive, EventEmitter, inject, Injector, Input, Output, ViewContainerRef} from '@angular/core';
 import type {Observable} from 'rxjs';
 import {Subject} from 'rxjs';
 
-import {ImportQueueProvider} from './import-queue.provider';
-import {LOG_PREFIX, logger} from './util/logger';
-import {IMPORTS, ORCHESTRATION} from "./import.token";
+import {ImportQueue} from '../queue/import.queue';
+import {ImportConfigProvider} from "../provider/import-config.provider";
 
 export type ImportQueueItemResolveFn = (item: ImportQueueItem) => Promise<void>;
 
@@ -33,28 +32,22 @@ export class ImportQueueDirective implements OnInit, OnDestroy {
 
   @Output() public componentMount = new EventEmitter<ComponentRef<unknown>>();
 
+  public readonly viewContainerRef = inject(ViewContainerRef);
   public readonly destroy$ = new Subject<void>();
 
-  constructor(
-    public readonly viewContainerRef: ViewContainerRef,
-    @Inject(IMPORTS) private readonly config: { [key: string]: ImportQueueItemResolveFn }, // migrate config in the future
-    @Inject(ORCHESTRATION) private readonly priorities: { [key: string]: number },
-    private readonly injector: Injector,
-    private readonly queue: ImportQueueProvider,
-    private readonly renderer2: Renderer2,
-  ) {
-  }
+  private readonly config = inject(ImportConfigProvider);
+  private readonly injector = inject(Injector);
 
   public ngOnInit(): void {
-    const resolveFn = createResolveFn(this.config, this.import);
-    const priority = resolveImportPriority(this.priorities, this.orderKey || this.import);
+    const resolveFn = createResolveFn(this.config.imports, this.import);
+    const priority = resolveImportPriority(this.config.orchestration, this.orderKey || this.import);
 
     const injector = Injector.create({
       providers: this.providers ?? [],
       parent: this.injector,
     });
 
-    this.queue.insert(priority, {
+    this.config.queue.insert(priority, {
       ...this,
       instance: this,
       import: this.import,
@@ -78,7 +71,7 @@ function createResolveFn(
   const resolveFn = config[importId];
 
   if (!resolveFn) {
-    throw new Error(`${LOG_PREFIX}: Missing resolve configuration for import: ${importId}`);
+    throw new Error(`Missing resolve configuration for import: ${importId}`);
   }
 
   return resolveFn;
