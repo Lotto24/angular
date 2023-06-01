@@ -51,8 +51,8 @@
       "@angular-import-orchestrator/examples/home3": [
         "libs/examples/home3/src/index.ts"
       ],
-      "@angular-import-orchestrator/import": ["libs/import/src/index.ts"],
-      "@angular-import-orchestrator/workspace": ["libs/workspace/src/index.ts"]
+      "@angular-import-orchestrator/workspace": ["libs/workspace/src/index.ts"],
+      "@lotto24/angular-import-orchestrator": ["libs/import/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

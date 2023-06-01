@@ -42,6 +42,18 @@
       "options": {
         "lintFilePatterns": ["libs/import/**/*.ts", "libs/import/**/*.html"]
       }
+    },
+    "publish": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "dependsOn": [
+        "build"
+      ],
+      "options": {
+        "cwd": "",
+        "command": "pnpm publish dist/libs/import --access=public --no-git-checks --dry-run",
+        "parallel": false
+      }
     }
   }
 }

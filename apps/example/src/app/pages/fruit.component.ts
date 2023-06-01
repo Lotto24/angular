@@ -4,7 +4,7 @@ import {
   importNgModuleBootstrap,
   importStandalone,
   provideImports
-} from "@angular-import-orchestrator/import";
+} from "@lotto24/angular-import-orchestrator";
 import {APP_IMPORT_ORCHESTRATION} from "../app.orchestration";
 
 @Component({
