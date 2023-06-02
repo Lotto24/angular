@@ -13,7 +13,6 @@ export class ImportClassDirective {
 
   constructor() {
     this.queue.componentMount
-      // @ts-ignore
       .pipe(takeUntil(this.queue.destroy$))
       .subscribe((ref) => this.onComponentMount(ref))
   }
