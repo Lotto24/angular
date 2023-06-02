@@ -2,8 +2,6 @@ import type {ComponentRef, OnDestroy, OnInit, StaticProvider} from '@angular/cor
 import {Directive, EventEmitter, inject, Injector, Input, Output, ViewContainerRef} from '@angular/core';
 import type {Observable} from 'rxjs';
 import {Subject} from 'rxjs';
-
-import {ImportQueue} from '../queue/import.queue';
 import {ImportConfigProvider} from "../provider/import-config.provider";
 
 export type ImportQueueItemResolveFn = (item: ImportQueueItem) => Promise<void>;

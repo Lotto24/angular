@@ -1,6 +1,28 @@
 {
-  "name": "@angular-import-orchestrator/import",
-  "version": "0.0.1",
+  "name": "@lotto24/angular-import-orchestrator",
+  "description": "Orchestrate dynamically imported components in Angular applications",
+  "version": "0.0.0-test.0",
+  "keywords": [
+    "Angular",
+    "import",
+    "directive",
+    "components",
+    "loader",
+    "lazy",
+    "load",
+    "loading",
+    "queue",
+    "orchestrate",
+    "orchestration"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lotto24/angular-import-orchestrator",
+    "directory": "libs/import"
+  },
+  "bugs": {
+    "url": "https://github.com/Lotto24/angular-import-orchestrator/issues"
+  },
   "peerDependencies": {
     "@angular/common": "^16.0.0",
     "@angular/core": "^16.0.0"

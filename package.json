@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
     "examples": "nx g @angular-import-orchestrator/workspace:cleanup-examples examples && nx g @angular-import-orchestrator/workspace:scaffold-examples examples"
   },
