@@ -15,6 +15,15 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@angular-import-orchestrator/examples/footer0": [
+        "libs/examples/footer0/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/footer1": [
+        "libs/examples/footer1/src/index.ts"
+      ],
+      "@angular-import-orchestrator/examples/footer2": [
+        "libs/examples/footer2/src/index.ts"
+      ],
       "@angular-import-orchestrator/examples/fruit0": [
         "libs/examples/fruit0/src/index.ts"
       ],

@@ -1,5 +1,5 @@
 import type {Router} from '@angular/router';
-import {ResolveEnd} from '@angular/router';
+import {ActivationEnd} from '@angular/router';
 import {filter, firstValueFrom, map} from 'rxjs';
 import type {Logger} from "../provider/import-config.provider";
 import {ImportQueueItem} from "../host-directive/import-queue.directive";
@@ -46,7 +46,7 @@ async function routingFinished(router: Router, logger: Logger): Promise<void> {
   logger.debug('suspend while routing');
 
   const routingFinished$ = router.events.pipe(
-    filter(event => event instanceof ResolveEnd),
+    filter(event => event instanceof ActivationEnd),
     map(() => undefined)
   );
 

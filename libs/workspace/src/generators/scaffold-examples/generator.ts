@@ -74,6 +74,22 @@ const structure: ExamplesScaffolderLibrary[] = [
     bloatSizeKb: 112,
     type: 'standalone',
   },
+
+  {
+    name: 'footer0',
+    bloatSizeKb: 16,
+    type: 'standalone',
+  },
+  {
+    name: 'footer1',
+    bloatSizeKb: 16,
+    type: 'standalone',
+  },
+  {
+    name: 'footer2',
+    bloatSizeKb: 16,
+    type: 'standalone',
+  },
 ]
 
 export default async function (

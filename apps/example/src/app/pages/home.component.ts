@@ -5,7 +5,7 @@ import {
   importStandalone,
   provideImports
 } from "@lotto24/angular-import-orchestrator";
-import {APP_IMPORT_ORCHESTRATION} from "../app.orchestration";
+import type {AppImportsOrchestration} from "../app.config";
 
 @Component({
   selector: 'example-home',
@@ -22,8 +22,7 @@ import {APP_IMPORT_ORCHESTRATION} from "../app.orchestration";
     ImportDirective,
   ],
   providers: [
-    provideImports(
-      APP_IMPORT_ORCHESTRATION,
+    provideImports<AppImportsOrchestration>(
       {
         // just add an import to the ES-Module exporting a standalone component
         'home0': importStandalone(() => import('@angular-import-orchestrator/examples/home0')),

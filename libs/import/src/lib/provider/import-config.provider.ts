@@ -1,14 +1,16 @@
-import {Injectable} from "@angular/core";
 import {ImportQueueItem, ImportQueueItemResolveFn} from "../host-directive/import-queue.directive";
 import {Queue} from "../queue/queue";
 import {ImportQueue} from "../queue/import.queue";
+import {InjectionToken} from "@angular/core";
 
 export type Orchestration = {
   [index: string]: number;
 }
+
 export type Imports = {
   [index: string]: ImportQueueItemResolveFn
 }
+
 export type Logger = Pick<Console, 'info' | 'warn' | 'error' | 'debug'>;
 
 export interface AngularImportOrchestratorOptions {
@@ -17,18 +19,21 @@ export interface AngularImportOrchestratorOptions {
   queue: Queue<ImportQueueItem>
 }
 
+export const ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS = new InjectionToken<Imports>('ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS')
+
 const DEFAULTS: Pick<AngularImportOrchestratorOptions, 'logger' | 'prefix'> = {
   logger: console,
   prefix: 'ImportOrchestrator',
 }
 
-@Injectable({providedIn: 'any'})
 export class ImportConfigProvider {
-  private _orchestration: Orchestration = {};
-  private _imports: Imports = {};
   private _options!: AngularImportOrchestratorOptions;
 
-  public set options(value: Partial<AngularImportOrchestratorOptions>) {
+  constructor(public readonly orchestration: Orchestration, options: Partial<AngularImportOrchestratorOptions>) {
+    this.options = options;
+  }
+
+  private set options(value: Partial<AngularImportOrchestratorOptions>) {
     const prefix = value.prefix ?? DEFAULTS.prefix
     const logger = createLogger(value.logger ?? DEFAULTS.logger, `[${prefix}]`)
     const queue = value.queue ?? new ImportQueue(logger);
@@ -38,22 +43,6 @@ export class ImportConfigProvider {
       logger,
       queue,
     }
-  }
-
-  public get orchestration(): Orchestration {
-    return this._orchestration;
-  }
-
-  public set orchestration(value: Orchestration) {
-    this._orchestration = {...this._orchestration, ...value ?? {}};
-  }
-
-  public get imports(): Imports {
-    return this._imports;
-  }
-
-  public set imports(value: Imports) {
-    this._imports = {...this._imports, ...value ?? {}};
   }
 
   public get logger(): Logger {

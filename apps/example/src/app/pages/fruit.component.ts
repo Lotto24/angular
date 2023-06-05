@@ -5,7 +5,7 @@ import {
   importStandalone,
   provideImports
 } from "@lotto24/angular-import-orchestrator";
-import {APP_IMPORT_ORCHESTRATION} from "../app.orchestration";
+import type {AppImportsOrchestration} from "../app.config";
 
 @Component({
   selector: 'example-home',
@@ -29,9 +29,7 @@ import {APP_IMPORT_ORCHESTRATION} from "../app.orchestration";
     ImportDirective
   ],
   providers: [
-    provideImports(
-      APP_IMPORT_ORCHESTRATION,
-      {
+    provideImports<AppImportsOrchestration>({
         'fruit0': importStandalone(() => import('@angular-import-orchestrator/examples/fruit0')),
         'fruit1': importStandalone(() => import('@angular-import-orchestrator/examples/fruit1')),
         'fruit2': importStandalone(() => import('@angular-import-orchestrator/examples/fruit2')),

@@ -2,7 +2,7 @@ import type {ComponentRef, OnDestroy, OnInit, StaticProvider} from '@angular/cor
 import {Directive, EventEmitter, inject, Injector, Input, Output, ViewContainerRef} from '@angular/core';
 import type {Observable} from 'rxjs';
 import {Subject} from 'rxjs';
-import {ImportConfigProvider} from "../provider/import-config.provider";
+import {ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS, ImportConfigProvider} from "../provider/import-config.provider";
 
 export type ImportQueueItemResolveFn = (item: ImportQueueItem) => Promise<void>;
 
@@ -34,10 +34,11 @@ export class ImportQueueDirective implements OnInit, OnDestroy {
   public readonly destroy$ = new Subject<void>();
 
   private readonly config = inject(ImportConfigProvider);
+  private readonly imports = inject(ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS);
   private readonly injector = inject(Injector);
 
   public ngOnInit(): void {
-    const resolveFn = createResolveFn(this.config.imports, this.import);
+    const resolveFn = createResolveFn(this.imports, this.import);
     const priority = resolveImportPriority(this.config.orchestration, this.orderKey || this.import);
 
     const injector = Injector.create({
