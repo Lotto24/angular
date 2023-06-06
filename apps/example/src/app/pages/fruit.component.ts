@@ -1,11 +1,11 @@
-import {ChangeDetectionStrategy, Component} from "@angular/core";
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   ImportDirective,
   importNgModuleBootstrap,
   importStandalone,
-  provideImports
-} from "@lotto24/angular-import-orchestrator";
-import type {AppImportsOrchestration} from "../app.config";
+  provideImports,
+} from '@lotto24/angular-import-orchestrator';
+import type { AppImportsOrchestration } from '../app.config';
 
 @Component({
   selector: 'example-home',
@@ -25,21 +25,34 @@ import type {AppImportsOrchestration} from "../app.config";
       <ng-container import="fruit7" cssClass="fruity fruit7"></ng-container>
     </div>
   `,
-  imports: [
-    ImportDirective
-  ],
+  imports: [ImportDirective],
   providers: [
     provideImports<AppImportsOrchestration>({
-        'fruit0': importStandalone(() => import('@angular-import-orchestrator/examples/fruit0')),
-        'fruit1': importStandalone(() => import('@angular-import-orchestrator/examples/fruit1')),
-        'fruit2': importStandalone(() => import('@angular-import-orchestrator/examples/fruit2')),
-        'fruit3': importNgModuleBootstrap(() => import('@angular-import-orchestrator/examples/fruit3')),
-        'fruit4': importStandalone(() => import('@angular-import-orchestrator/examples/fruit4')),
-        'fruit5': importNgModuleBootstrap(() => import('@angular-import-orchestrator/examples/fruit5')),
-        'fruit6': importNgModuleBootstrap(() => import('@angular-import-orchestrator/examples/fruit6')),
-        'fruit7': importStandalone(() => import('@angular-import-orchestrator/examples/fruit7')),
-      })
-  ]
+      fruit0: importStandalone(
+        () => import('@angular-import-orchestrator/examples/fruit0')
+      ),
+      fruit1: importStandalone(
+        () => import('@angular-import-orchestrator/examples/fruit1')
+      ),
+      fruit2: importStandalone(
+        () => import('@angular-import-orchestrator/examples/fruit2')
+      ),
+      fruit3: importNgModuleBootstrap(
+        () => import('@angular-import-orchestrator/examples/fruit3')
+      ),
+      fruit4: importStandalone(
+        () => import('@angular-import-orchestrator/examples/fruit4')
+      ),
+      fruit5: importNgModuleBootstrap(
+        () => import('@angular-import-orchestrator/examples/fruit5')
+      ),
+      fruit6: importNgModuleBootstrap(
+        () => import('@angular-import-orchestrator/examples/fruit6')
+      ),
+      fruit7: importStandalone(
+        () => import('@angular-import-orchestrator/examples/fruit7')
+      ),
+    }),
+  ],
 })
-export class FruitComponent {
-}
+export class FruitComponent {}

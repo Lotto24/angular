@@ -1,19 +1,19 @@
-import {Route} from '@angular/router';
-import {HomeComponent} from "./pages/home.component";
-import {FruitComponent} from "./pages/fruit.component";
+import { Route } from '@angular/router';
+import { HomeComponent } from './pages/home.component';
+import { FruitComponent } from './pages/fruit.component';
 
 export const appRoutes: Route[] = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'home'
+    redirectTo: 'home',
   },
   {
     path: 'home',
-    component: HomeComponent
+    component: HomeComponent,
   },
   {
     path: 'fruit',
-    component: FruitComponent
-  }
+    component: FruitComponent,
+  },
 ];
