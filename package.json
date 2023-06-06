@@ -1,10 +1,10 @@
 {
-  "name": "angular-import-orchestrator",
+  "name": "lotto24-angular",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
-    "examples": "nx g @angular-import-orchestrator/workspace:cleanup-examples examples && nx g @angular-import-orchestrator/workspace:scaffold-examples apps/example/scaffold-examples.json examples"
+    "prepare-imports-orchestrator-example": "nx run imports-orchestrator-example:prepare"
   },
   "private": true,
   "dependencies": {

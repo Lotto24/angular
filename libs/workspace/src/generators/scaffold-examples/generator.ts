@@ -13,7 +13,6 @@ interface ExamplesScaffolderLibrary {
   type: 'standalone' | 'ng-module-bootstrap'
 }
 
-
 export default async function (
   tree: Tree,
   options: ScaffoldExamplesGeneratorSchema

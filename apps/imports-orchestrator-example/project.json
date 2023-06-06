@@ -1,0 +1,122 @@
+{
+  "name": "imports-orchestrator-example",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "example",
+  "sourceRoot": "apps/imports-orchestrator-example/src",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@angular-devkit/build-angular:browser",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/imports-orchestrator-example",
+        "index": "apps/imports-orchestrator-example/src/index.html",
+        "main": "apps/imports-orchestrator-example/src/main.ts",
+        "polyfills": ["zone.js"],
+        "tsConfig": "apps/imports-orchestrator-example/tsconfig.app.json",
+        "assets": [
+          "apps/imports-orchestrator-example/src/favicon.ico",
+          "apps/imports-orchestrator-example/src/assets"
+        ],
+        "styles": ["apps/imports-orchestrator-example/src/styles.scss"],
+        "scripts": []
+      },
+      "configurations": {
+        "production": {
+          "budgets": [
+            {
+              "type": "initial",
+              "maximumWarning": "500kb",
+              "maximumError": "1mb"
+            },
+            {
+              "type": "anyComponentStyle",
+              "maximumWarning": "2kb",
+              "maximumError": "4kb"
+            }
+          ],
+          "outputHashing": "all"
+        },
+        "development": {
+          "buildOptimizer": false,
+          "optimization": false,
+          "vendorChunk": true,
+          "extractLicenses": false,
+          "sourceMap": true,
+          "namedChunks": true
+        }
+      },
+      "defaultConfiguration": "production",
+      "dependsOn": [
+        {
+          "projects": "self",
+          "target": "prepare"
+        }
+      ]
+    },
+    "serve": {
+      "executor": "@angular-devkit/build-angular:dev-server",
+      "configurations": {
+        "production": {
+          "browserTarget": "imports-orchestrator-example:build:production"
+        },
+        "development": {
+          "browserTarget": "imports-orchestrator-example:build:development"
+        }
+      },
+      "defaultConfiguration": "development",
+      "dependsOn": [
+        {
+          "projects": "self",
+          "target": "prepare"
+        }
+      ]
+    },
+    "prepare": {
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/libs/examples"],
+      "options": {
+        "commands": [
+          "nx g @lotto24-angular/workspace:cleanup-examples imports-orchestrator-examples && nx g @lotto24-angular/workspace:scaffold-examples apps/imports-orchestrator-example/scaffold-examples.json imports-orchestrator-examples"
+        ]
+      }
+    },
+    "extract-i18n": {
+      "executor": "@angular-devkit/build-angular:extract-i18n",
+      "options": {
+        "browserTarget": "imports-orchestrator-example:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "apps/imports-orchestrator-example/**/*.ts",
+          "apps/imports-orchestrator-example/**/*.html"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/imports-orchestrator-example/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "imports-orchestrator-example:build"
+      }
+    }
+  }
+}

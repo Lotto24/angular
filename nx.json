@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "angular-import-orchestrator",
+  "npmScope": "lotto24-angular",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",

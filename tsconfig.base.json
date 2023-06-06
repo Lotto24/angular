@@ -15,53 +15,55 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@angular-import-orchestrator/examples/footer0": [
-        "libs/examples/footer0/src/index.ts"
+      "@lotto24-angular/imports-orchestrator": [
+        "libs/imports-orchestrator/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/footer1": [
-        "libs/examples/footer1/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/footer0": [
+        "libs/imports-orchestrator-examples/footer0/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/footer2": [
-        "libs/examples/footer2/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/footer1": [
+        "libs/imports-orchestrator-examples/footer1/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/fruit0": [
-        "libs/examples/fruit0/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/footer2": [
+        "libs/imports-orchestrator-examples/footer2/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/fruit1": [
-        "libs/examples/fruit1/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/fruit0": [
+        "libs/imports-orchestrator-examples/fruit0/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/fruit2": [
-        "libs/examples/fruit2/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/fruit1": [
+        "libs/imports-orchestrator-examples/fruit1/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/fruit3": [
-        "libs/examples/fruit3/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/fruit2": [
+        "libs/imports-orchestrator-examples/fruit2/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/fruit4": [
-        "libs/examples/fruit4/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/fruit3": [
+        "libs/imports-orchestrator-examples/fruit3/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/fruit5": [
-        "libs/examples/fruit5/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/fruit4": [
+        "libs/imports-orchestrator-examples/fruit4/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/fruit6": [
-        "libs/examples/fruit6/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/fruit5": [
+        "libs/imports-orchestrator-examples/fruit5/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/fruit7": [
-        "libs/examples/fruit7/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/fruit6": [
+        "libs/imports-orchestrator-examples/fruit6/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/home0": [
-        "libs/examples/home0/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/fruit7": [
+        "libs/imports-orchestrator-examples/fruit7/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/home1": [
-        "libs/examples/home1/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/home0": [
+        "libs/imports-orchestrator-examples/home0/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/home2": [
-        "libs/examples/home2/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/home1": [
+        "libs/imports-orchestrator-examples/home1/src/index.ts"
       ],
-      "@angular-import-orchestrator/examples/home3": [
-        "libs/examples/home3/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/home2": [
+        "libs/imports-orchestrator-examples/home2/src/index.ts"
       ],
-      "@angular-import-orchestrator/workspace": ["libs/workspace/src/index.ts"],
-      "@lotto24/angular-import-orchestrator": ["libs/import/src/index.ts"]
+      "@lotto24-angular/imports-orchestrator-examples/home3": [
+        "libs/imports-orchestrator-examples/home3/src/index.ts"
+      ],
+      "@lotto24-angular/workspace": ["libs/workspace/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,5 +1,5 @@
 {
-  "name": "@angular-import-orchestrator/workspace",
+  "name": "@lotto24-angular/workspace",
   "version": "0.0.1",
   "type": "commonjs",
   "executors": "./executors.json",
