@@ -28,7 +28,7 @@ const DEFAULTS: Pick<AngularImportOrchestratorOptions, 'logger' | 'prefix'> = {
   prefix: 'ImportOrchestrator',
 };
 
-export class ImportConfigProvider {
+export class ImportConfig {
   private _options!: AngularImportOrchestratorOptions;
 
   constructor(

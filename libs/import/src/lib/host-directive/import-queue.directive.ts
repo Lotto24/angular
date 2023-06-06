@@ -17,8 +17,8 @@ import type { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
 import {
   ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS,
-  ImportConfigProvider,
-} from '../provider/import-config.provider';
+  ImportConfig,
+} from '../config/import.config';
 
 export type ImportQueueItemResolveFn = (item: ImportQueueItem) => Promise<void>;
 
@@ -52,7 +52,7 @@ export class ImportQueueDirective implements OnInit, OnDestroy {
   public readonly viewContainerRef = inject(ViewContainerRef);
   public readonly destroy$ = new Subject<void>();
 
-  private readonly config = inject(ImportConfigProvider);
+  private readonly config = inject(ImportConfig);
   private readonly imports = inject(ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS);
   private readonly injector = inject(Injector);
 

@@ -2,7 +2,7 @@ import type { AfterViewInit } from '@angular/core';
 import { Directive, inject, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
 import { processImportQueue } from '../queue/process-import-queue';
-import { ImportConfigProvider } from '../provider/import-config.provider';
+import { ImportConfig } from '../config/import.config';
 
 @Directive({
   selector: '[importLoader]',
@@ -11,7 +11,7 @@ import { ImportConfigProvider } from '../provider/import-config.provider';
 export class ImportLoaderDirective implements AfterViewInit {
   private static processing = false;
 
-  private config = inject(ImportConfigProvider);
+  private config = inject(ImportConfig);
   private router = inject(Router);
   private zone = inject(NgZone);
 

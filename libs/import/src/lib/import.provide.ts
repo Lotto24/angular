@@ -7,9 +7,9 @@ import { ImportQueueItemResolveFn } from './host-directive';
 import {
   ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS,
   AngularImportOrchestratorOptions,
-  ImportConfigProvider,
+  ImportConfig,
   Orchestration,
-} from './provider/import-config.provider';
+} from './config/import.config';
 
 export function provideImports<T>(
   imports: Partial<{ [key in keyof T]: ImportQueueItemResolveFn }>
@@ -26,8 +26,8 @@ export function provideImportsOrchestration<T>(
 ): EnvironmentProviders {
   return makeEnvironmentProviders([
     {
-      provide: ImportConfigProvider,
-      useFactory: () => new ImportConfigProvider(orchestration, options ?? {}),
+      provide: ImportConfig,
+      useFactory: () => new ImportConfig(orchestration, options ?? {}),
     },
   ]);
 }

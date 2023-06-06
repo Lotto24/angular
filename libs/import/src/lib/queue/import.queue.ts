@@ -1,7 +1,7 @@
 import type { ImportQueueItem } from '../host-directive/import-queue.directive';
 import { Queue } from './queue';
 
-import { Logger } from '../provider/import-config.provider';
+import { Logger } from '../config/import.config';
 
 export class ImportQueue extends Queue<ImportQueueItem> {
   constructor(private logger: Logger) {

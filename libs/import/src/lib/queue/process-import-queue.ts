@@ -1,8 +1,8 @@
 import type { Router } from '@angular/router';
 import { ActivationEnd } from '@angular/router';
 import { filter, firstValueFrom, map } from 'rxjs';
-import type { Logger } from '../provider/import-config.provider';
-import { ImportQueueItem } from '../host-directive/import-queue.directive';
+import type { Logger } from '../config/import.config';
+import { ImportQueueItem } from '../host-directive/';
 import { Queue } from './queue';
 
 /**
