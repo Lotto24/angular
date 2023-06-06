@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
-    "examples": "nx g @angular-import-orchestrator/workspace:cleanup-examples examples && nx g @angular-import-orchestrator/workspace:scaffold-examples examples"
+    "examples": "nx g @angular-import-orchestrator/workspace:cleanup-examples examples && nx g @angular-import-orchestrator/workspace:scaffold-examples apps/example/scaffold-examples.json examples"
   },
   "private": true,
   "dependencies": {

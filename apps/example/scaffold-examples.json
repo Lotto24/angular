@@ -1,0 +1,17 @@
+[
+  { "name": "home0", "bloatSizeKb": 24, "type": "standalone" },
+  { "name": "home1", "bloatSizeKb": 32, "type": "standalone" },
+  { "name": "home2", "bloatSizeKb": 16, "type": "standalone" },
+  { "name": "home3", "bloatSizeKb": 16, "type": "ng-module-bootstrap" },
+  { "name": "fruit0", "bloatSizeKb": 32, "type": "standalone" },
+  { "name": "fruit1", "bloatSizeKb": 127, "type": "standalone" },
+  { "name": "fruit2", "bloatSizeKb": 96, "type": "standalone" },
+  { "name": "fruit3", "bloatSizeKb": 72, "type": "ng-module-bootstrap" },
+  { "name": "fruit4", "bloatSizeKb": 16, "type": "standalone" },
+  { "name": "fruit5", "bloatSizeKb": 48, "type": "ng-module-bootstrap" },
+  { "name": "fruit6", "bloatSizeKb": 84, "type": "ng-module-bootstrap" },
+  { "name": "fruit7", "bloatSizeKb": 112, "type": "standalone" },
+  { "name": "footer0", "bloatSizeKb": 16, "type": "standalone" },
+  { "name": "footer1", "bloatSizeKb": 16, "type": "standalone" },
+  { "name": "footer2", "bloatSizeKb": 16, "type": "standalone" }
+]

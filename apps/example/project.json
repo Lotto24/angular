@@ -70,7 +70,7 @@
       "executor": "nx:run-commands",
       "outputs": ["{workspaceRoot}/libs/examples"],
       "options": {
-        "commands": ["nx g @angular-import-orchestrator/workspace:cleanup-examples examples && nx g @angular-import-orchestrator/workspace:scaffold-examples examples"]
+        "commands": ["nx g @angular-import-orchestrator/workspace:cleanup-examples examples && nx g @angular-import-orchestrator/workspace:scaffold-examples apps/example/scaffold-examples.json examples"]
       }
     },
     "extract-i18n": {
