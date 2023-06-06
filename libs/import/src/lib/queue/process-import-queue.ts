@@ -1,14 +1,18 @@
-import type {Router} from '@angular/router';
-import {ActivationEnd} from '@angular/router';
-import {filter, firstValueFrom, map} from 'rxjs';
-import type {Logger} from "../provider/import-config.provider";
-import {ImportQueueItem} from "../host-directive/import-queue.directive";
-import {Queue} from "./queue";
+import type { Router } from '@angular/router';
+import { ActivationEnd } from '@angular/router';
+import { filter, firstValueFrom, map } from 'rxjs';
+import type { Logger } from '../provider/import-config.provider';
+import { ImportQueueItem } from '../host-directive/import-queue.directive';
+import { Queue } from './queue';
 
 /**
  * recursive loading of queued features
  */
-export async function processImportQueue(queue: Queue<ImportQueueItem>, router: Router, logger: Logger): Promise<void> {
+export async function processImportQueue(
+  queue: Queue<ImportQueueItem>,
+  router: Router,
+  logger: Logger
+): Promise<void> {
   // suspend processing while routing, as navigation takes precedence
   await routingFinished(router, logger);
 
@@ -22,7 +26,7 @@ export async function processImportQueue(queue: Queue<ImportQueueItem>, router: 
   }
 
   try {
-    await item.resolveFn(item)
+    await item.resolveFn(item);
     // logger.debug(`changeDetection following import=${item.import}, componentRef${componentRef.instance}`);
 
     // let's loop recursively until the queue is processed
@@ -46,7 +50,7 @@ async function routingFinished(router: Router, logger: Logger): Promise<void> {
   logger.debug('suspend while routing');
 
   const routingFinished$ = router.events.pipe(
-    filter(event => event instanceof ActivationEnd),
+    filter((event) => event instanceof ActivationEnd),
     map(() => undefined)
   );
 

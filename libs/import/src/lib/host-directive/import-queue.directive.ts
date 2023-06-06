@@ -1,21 +1,40 @@
-import type {ComponentRef, OnDestroy, OnInit, StaticProvider} from '@angular/core';
-import {Directive, EventEmitter, inject, Injector, Input, Output, ViewContainerRef} from '@angular/core';
-import type {Observable} from 'rxjs';
-import {Subject} from 'rxjs';
-import {ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS, ImportConfigProvider} from "../provider/import-config.provider";
+import type {
+  ComponentRef,
+  OnDestroy,
+  OnInit,
+  StaticProvider,
+} from '@angular/core';
+import {
+  Directive,
+  EventEmitter,
+  inject,
+  Injector,
+  Input,
+  Output,
+  ViewContainerRef,
+} from '@angular/core';
+import type { Observable } from 'rxjs';
+import { Subject } from 'rxjs';
+import {
+  ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS,
+  ImportConfigProvider,
+} from '../provider/import-config.provider';
 
 export type ImportQueueItemResolveFn = (item: ImportQueueItem) => Promise<void>;
 
 interface ImportQueueItemExtras {
   resolveFn: ImportQueueItemResolveFn;
   priority: number;
-  instance: ImportQueueDirective,
+  instance: ImportQueueDirective;
   injector: Injector;
   destroy$: Observable<void>;
 }
 
 export type ImportQueueItem = ImportQueueItemExtras &
-  Pick<ImportQueueDirective, 'import' | 'providers' | 'inputs' | 'outputs' | 'viewContainerRef'>;
+  Pick<
+    ImportQueueDirective,
+    'import' | 'providers' | 'inputs' | 'outputs' | 'viewContainerRef'
+  >;
 
 @Directive({
   selector: '[importQueue]',
@@ -39,7 +58,10 @@ export class ImportQueueDirective implements OnInit, OnDestroy {
 
   public ngOnInit(): void {
     const resolveFn = createResolveFn(this.imports, this.import);
-    const priority = resolveImportPriority(this.config.orchestration, this.orderKey || this.import);
+    const priority = resolveImportPriority(
+      this.config.orchestration,
+      this.orderKey || this.import
+    );
 
     const injector = Injector.create({
       providers: this.providers ?? [],
@@ -65,7 +87,7 @@ export class ImportQueueDirective implements OnInit, OnDestroy {
 
 function createResolveFn(
   config: { [key: string]: ImportQueueItemResolveFn },
-  importId: string,
+  importId: string
 ): ImportQueueItemResolveFn {
   const resolveFn = config[importId];
 
@@ -76,12 +98,15 @@ function createResolveFn(
   return resolveFn;
 }
 
-function resolveImportPriority(priorities: { [key: string]: number }, importId: string): number {
+function resolveImportPriority(
+  priorities: { [key: string]: number },
+  importId: string
+): number {
   if (typeof priorities[importId] === 'number') {
     return priorities[importId];
   }
 
-  const key = Object.keys(priorities).find(key => importId.startsWith(key));
+  const key = Object.keys(priorities).find((key) => importId.startsWith(key));
 
   if (key) {
     return priorities[key];

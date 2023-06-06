@@ -1,8 +1,8 @@
-import type {AfterViewInit} from '@angular/core';
-import {Directive, inject, NgZone} from '@angular/core';
-import {Router} from '@angular/router';
-import {processImportQueue} from '../queue/process-import-queue';
-import {ImportConfigProvider} from "../provider/import-config.provider";
+import type { AfterViewInit } from '@angular/core';
+import { Directive, inject, NgZone } from '@angular/core';
+import { Router } from '@angular/router';
+import { processImportQueue } from '../queue/process-import-queue';
+import { ImportConfigProvider } from '../provider/import-config.provider';
 
 @Directive({
   selector: '[importLoader]',
@@ -20,10 +20,14 @@ export class ImportLoaderDirective implements AfterViewInit {
       ImportLoaderDirective.processing = true;
       this.config.logger.debug('queue processing started');
       this.zone.runOutsideAngular(async () => {
-        await processImportQueue(this.config.queue, this.router, this.config.logger);
+        await processImportQueue(
+          this.config.queue,
+          this.router,
+          this.config.logger
+        );
         ImportLoaderDirective.processing = false;
         this.config.logger.debug('queue processing ended');
-      })
+      });
     }
   }
 }

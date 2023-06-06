@@ -1,6 +1,10 @@
-import {delay} from './delay.';
+import { delay } from './delay.';
 
-export async function retry<T>(fn: () => Promise<T>, tries = 5, interval = 1000): Promise<T> {
+export async function retry<T>(
+  fn: () => Promise<T>,
+  tries = 5,
+  interval = 1000
+): Promise<T> {
   let err: unknown;
 
   for (let i = 0; i < tries; i++) {

@@ -1,6 +1,10 @@
-import {Directive} from '@angular/core';
+import { Directive } from '@angular/core';
 
-import {ImportClassDirective, ImportLoaderDirective, ImportQueueDirective} from './host-directive';
+import {
+  ImportClassDirective,
+  ImportLoaderDirective,
+  ImportQueueDirective,
+} from './host-directive';
 
 @Directive({
   selector: '[import]',
@@ -14,8 +18,7 @@ import {ImportClassDirective, ImportLoaderDirective, ImportQueueDirective} from 
     {
       directive: ImportClassDirective,
       inputs: ['cssClass'],
-    }
+    },
   ],
 })
-export class ImportDirective {
-}
+export class ImportDirective {}

@@ -1,14 +1,27 @@
-import {ChangeDetectorRef} from "@angular/core";
-import {resolvePromiseWithRetries} from "./util/retry";
-import {ImportQueueItem, ImportQueueItemResolveFn} from "../host-directive/import-queue.directive";
-import {bindComponentInputs, bindComponentOutputs} from "./util/bind-component-io";
-import {assertStandalone, mountComponent} from "./util/component";
-import {Constructor, resolveConstructorsFromESModule} from "./util/resolve-constructor";
-import {ESModule} from "./util/module";
+import { ChangeDetectorRef } from '@angular/core';
+import { resolvePromiseWithRetries } from './util/retry';
+import {
+  ImportQueueItem,
+  ImportQueueItemResolveFn,
+} from '../host-directive/import-queue.directive';
+import {
+  bindComponentInputs,
+  bindComponentOutputs,
+} from './util/bind-component-io';
+import { assertStandalone, mountComponent } from './util/component';
+import {
+  Constructor,
+  resolveConstructorsFromESModule,
+} from './util/resolve-constructor';
+import { ESModule } from './util/module';
 
-export function importStandalone(promise: () => Promise<any>): ImportQueueItemResolveFn {
+export function importStandalone(
+  promise: () => Promise<any>
+): ImportQueueItemResolveFn {
   return async (item: ImportQueueItem) => {
-    const resolvedImport = await resolvePromiseWithRetries(promise) as Constructor | ESModule;
+    const resolvedImport = (await resolvePromiseWithRetries(promise)) as
+      | Constructor
+      | ESModule;
     const constructor = resolveConstructorsFromESModule(resolvedImport).shift();
 
     if (!constructor) {
@@ -20,7 +33,8 @@ export function importStandalone(promise: () => Promise<any>): ImportQueueItemRe
     const componentRef = await mountComponent(item, constructor);
 
     // logger.debug(`loading import="${item.import}", providers=${item.providers?.length}`);
-    const componentChangeDetectorRef = componentRef.injector.get(ChangeDetectorRef);
+    const componentChangeDetectorRef =
+      componentRef.injector.get(ChangeDetectorRef);
 
     if (item.inputs) {
       bindComponentInputs(componentRef, item.inputs);
@@ -40,5 +54,5 @@ export function importStandalone(promise: () => Promise<any>): ImportQueueItemRe
     // * It is of vital importance that items are queued before triggering processQueue again
     // IMPORTANT: markForCheck is not enough. This will not cause an immediate change detection cycle
     componentChangeDetectorRef.detectChanges();
-  }
+  };
 }
