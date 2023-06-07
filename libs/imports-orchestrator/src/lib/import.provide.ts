@@ -11,24 +11,21 @@ import {
   Orchestration,
 } from './config/import.config';
 
-export function provideImports<T>(
+export const provideImports = <T>(
   imports: Partial<{ [key in keyof T]: ImportsOrchestratorQueueItemResolveFn }>
-): Provider {
-  return {
-    provide: ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS,
-    useValue: imports,
-  };
-}
+): Provider => ({
+  provide: ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS,
+  useValue: imports,
+});
 
-export function provideImportsOrchestration<T>(
+export const provideImportsOrchestration = <T>(
   orchestration: T & Orchestration,
   options?: Partial<AngularImportOrchestratorOptions>
-): EnvironmentProviders {
-  return makeEnvironmentProviders([
+): EnvironmentProviders =>
+  makeEnvironmentProviders([
     {
       provide: ImportsOrchestratorConfig,
       useFactory: () =>
         new ImportsOrchestratorConfig(orchestration, options ?? {}),
     },
   ]);
-}

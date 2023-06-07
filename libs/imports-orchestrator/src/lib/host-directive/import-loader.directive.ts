@@ -22,7 +22,7 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
         ImportsOrchestratorLoaderDirective.processing = true;
         this.config.logger.debug(`queue processing started (parallel=${this.config.parallel})`);
         const processes = Array.from(Array(this.config.parallel)).map((_, pid) =>
-          processImportQueue(pid, this.config.queue, this.router, this.config.logger)
+          processImportQueue(pid, this.config, this.router)
         );
         await Promise.all(processes);
 
