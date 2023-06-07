@@ -3,7 +3,6 @@ import {
   ImportsOrchestratorQueueItemResolveFn,
 } from '../host-directive';
 import { Queue } from '../queue/queue';
-import { ImportsOrchestratorQueue } from '../queue/import.queue';
 import { InjectionToken } from '@angular/core';
 
 export type Orchestration = {
@@ -20,6 +19,7 @@ export interface AngularImportOrchestratorOptions {
   logger: Logger;
   prefix: string;
   queue: Queue<ImportsOrchestratorQueueItem>;
+  parallel: number;
 }
 
 export const ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS =
@@ -27,40 +27,22 @@ export const ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS =
     'ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS'
   );
 
-const DEFAULTS: Pick<AngularImportOrchestratorOptions, 'logger' | 'prefix'> = {
+const DEFAULTS: Pick<AngularImportOrchestratorOptions, 'logger' | 'prefix' | 'parallel'> = {
   logger: console,
   prefix: 'ImportsOrchestratorOrchestrator',
+  parallel: 1
 };
 
-export class ImportsOrchestratorConfig {
-  private _options!: AngularImportOrchestratorOptions;
+export class ImportsOrchestratorConfig implements AngularImportOrchestratorOptions {
+  public readonly parallel = this.options.parallel ?? DEFAULTS.parallel;
+  public readonly prefix = this.options.prefix ?? DEFAULTS.prefix;
+  public readonly logger = createLogger(this.options.logger ?? DEFAULTS.logger, `[${this.prefix}]`);
+  public readonly queue = this.options.queue ?? new Queue<ImportsOrchestratorQueueItem>();
 
   constructor(
     public readonly orchestration: Orchestration,
-    options: Partial<AngularImportOrchestratorOptions>
-  ) {
-    this.options = options;
-  }
-
-  private set options(value: Partial<AngularImportOrchestratorOptions>) {
-    const prefix = value.prefix ?? DEFAULTS.prefix;
-    const logger = createLogger(value.logger ?? DEFAULTS.logger, `[${prefix}]`);
-    const queue = value.queue ?? new ImportsOrchestratorQueue(logger);
-
-    this._options = {
-      prefix,
-      logger,
-      queue,
-    };
-  }
-
-  public get logger(): Logger {
-    return this._options.logger;
-  }
-
-  public get queue(): Queue<ImportsOrchestratorQueueItem> {
-    return this._options.queue;
-  }
+    private readonly options: Partial<AngularImportOrchestratorOptions>
+  ) {}
 }
 
 function createLogger(logger: Logger, prefix: string): Logger {

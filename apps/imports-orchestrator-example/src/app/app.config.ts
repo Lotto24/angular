@@ -31,6 +31,6 @@ export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
-    provideImportsOrchestration(APP_IMPORTS_ORCHESTRATION),
+    provideImportsOrchestration(APP_IMPORTS_ORCHESTRATION, { parallel: 2 }),
   ],
 };

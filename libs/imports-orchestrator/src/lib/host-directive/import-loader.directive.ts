@@ -17,14 +17,15 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
 
   public async ngAfterViewInit(): Promise<void> {
     if (!ImportsOrchestratorLoaderDirective.processing) {
-      ImportsOrchestratorLoaderDirective.processing = true;
-      this.config.logger.debug('queue processing started');
+      // do not await, as it would block the lifecycle callback from completing until the queue is processed
       this.zone.runOutsideAngular(async () => {
-        await processImportQueue(
-          this.config.queue,
-          this.router,
-          this.config.logger
+        ImportsOrchestratorLoaderDirective.processing = true;
+        this.config.logger.debug(`queue processing started (parallel=${this.config.parallel})`);
+        const processes = Array.from(Array(this.config.parallel)).map((_, pid) =>
+          processImportQueue(pid, this.config.queue, this.router, this.config.logger)
         );
+        await Promise.all(processes);
+
         ImportsOrchestratorLoaderDirective.processing = false;
         this.config.logger.debug('queue processing ended');
       });

@@ -9,21 +9,24 @@ import { Queue } from './queue';
  * recursive loading of queued features
  */
 export async function processImportQueue(
+  pid: number,
   queue: Queue<ImportsOrchestratorQueueItem>,
   router: Router,
   logger: Logger
 ): Promise<void> {
   // suspend processing while routing, as navigation takes precedence
-  await routingFinished(router, logger);
+  await routingFinished(pid, router, logger);
 
   // let's take the next item off the queue
   const item = queue.take();
 
   // let's stop if there are no items in the queue
   if (!item) {
-    logger.debug('queue is drained');
+    logger.debug('queue is drained', `(pid=${pid})`);
     return;
   }
+
+  logger.debug(`queue item @priority=${item?.priority}, @import=${item?.import}`, `(pid=${pid})`);
 
   try {
     await item.resolveFn(item);
@@ -31,23 +34,22 @@ export async function processImportQueue(
 
     // let's loop recursively until the queue is processed
   } catch (x) {
-    logger.error(`error processing item w/ import="${item.import}"`, x);
+    logger.error(`error processing item w/ import="${item.import}"`, `(pid=${pid})`, x);
   }
 
-  return await processImportQueue(queue, router, logger);
+  return await processImportQueue(pid, queue, router, logger);
 }
 
 /**
  * Returns once routing has finished.
  * Returns immediately if routing is not ongoing.
- * @param router
  */
-async function routingFinished(router: Router, logger: Logger): Promise<void> {
+async function routingFinished(pid: number, router: Router, logger: Logger): Promise<void> {
   if (!router.getCurrentNavigation()) {
     // return immediately, if routing is not ongoing
     return;
   }
-  logger.debug('suspend while routing');
+  logger.debug( 'suspend while routing', `(pid=${pid})`);
 
   const routingFinished$ = router.events.pipe(
     filter((event) => event instanceof ActivationEnd),
@@ -55,6 +57,6 @@ async function routingFinished(router: Router, logger: Logger): Promise<void> {
   );
 
   await firstValueFrom(routingFinished$);
-  logger.debug('resume after routing');
+  logger.debug('resume after routing', `(pid=${pid})`);
   return;
 }
