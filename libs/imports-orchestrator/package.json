@@ -1,7 +1,7 @@
 {
   "name": "@lotto24-angular/imports-orchestrator",
   "description": "Orchestrate dynamically imported components in Angular applications",
-  "version": "0.0.0-test.0",
+  "version": "0.0.0",
   "keywords": [
     "Angular",
     "import",

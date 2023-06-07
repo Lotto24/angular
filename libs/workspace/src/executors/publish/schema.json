@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "version": 2,
+  "title": "Publish executor",
+  "description": "",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "Path to distributable",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "pattern": "^dist"
+    },
+    "registry": {
+      "type": "string",
+      "default": "https://registry.npmjs.org/",
+      "description": "registry url",
+      "pattern": "^https://"
+    },
+    "tag": {
+      "type": "string",
+      "description": "tag the release, defaults to latest",
+      "default": "latest"
+    },
+    "access": {
+      "type": "string",
+      "description": "access",
+      "default": "public",
+      "pattern": "^(public|restricted)$"
+    },
+    "release": {
+      "type": "string",
+      "description": "bump or set semantic version",
+      "pattern": "^(major|minor|patch|premajor|preminor|prepatch|prerelease|from-git|(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)$"
+    },
+    "dryRun": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": ["path", "release"]
+}

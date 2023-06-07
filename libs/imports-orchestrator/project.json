@@ -46,7 +46,7 @@
         ]
       }
     },
-    "publish": {
+    "publish_outdated": {
       "executor": "nx:run-commands",
       "outputs": [],
       "dependsOn": ["build"],
@@ -54,6 +54,17 @@
         "cwd": "",
         "command": "pnpm publish dist/libs/imports-orchestrator --access=public --no-git-checks --dry-run",
         "parallel": false
+      }
+    },
+    "publish": {
+      "executor": "@lotto24-angular/workspace:publish",
+      "outputs": [],
+      "dependsOn": ["build"],
+      "options": {
+        "path": "dist/libs/imports-orchestrator",
+        "access": "public",
+        "tag": "test",
+        "registry": "https://registry.npmjs.org/"
       }
     }
   }
