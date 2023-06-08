@@ -63,7 +63,7 @@
       "options": {
         "path": "dist/libs/imports-orchestrator",
         "access": "public",
-        "tag": "test",
+        "tag": "prerelease",
         "registry": "https://registry.npmjs.org/"
       }
     }
