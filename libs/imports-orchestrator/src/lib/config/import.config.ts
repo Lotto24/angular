@@ -27,17 +27,26 @@ export const ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS =
     'ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS'
   );
 
-const DEFAULTS: Pick<AngularImportOrchestratorOptions, 'logger' | 'prefix' | 'parallel'> = {
+const DEFAULTS: Pick<
+  AngularImportOrchestratorOptions,
+  'logger' | 'prefix' | 'parallel'
+> = {
   logger: console,
   prefix: 'ImportsOrchestratorOrchestrator',
-  parallel: 1
+  parallel: 1,
 };
 
-export class ImportsOrchestratorConfig implements AngularImportOrchestratorOptions {
+export class ImportsOrchestratorConfig
+  implements AngularImportOrchestratorOptions
+{
   public readonly parallel = this.options.parallel ?? DEFAULTS.parallel;
   public readonly prefix = this.options.prefix ?? DEFAULTS.prefix;
-  public readonly logger = createLogger(this.options.logger ?? DEFAULTS.logger, `[${this.prefix}]`);
-  public readonly queue = this.options.queue ?? new Queue<ImportsOrchestratorQueueItem>();
+  public readonly logger = createLogger(
+    this.options.logger ?? DEFAULTS.logger,
+    `[${this.prefix}]`
+  );
+  public readonly queue =
+    this.options.queue ?? new Queue<ImportsOrchestratorQueueItem>();
 
   constructor(
     public readonly orchestration: Orchestration,
@@ -52,6 +61,7 @@ function createLogger(logger: Logger, prefix: string): Logger {
       (r, k) => ({
         ...r,
         [k]: (...rest: any[]) => {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           logger[k](prefix, ...rest);
         },
