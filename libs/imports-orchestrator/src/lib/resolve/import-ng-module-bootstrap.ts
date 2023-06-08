@@ -1,19 +1,18 @@
-import {
-  ImportsOrchestratorQueueItem,
-  ImportsOrchestratorQueueItemResolveFn,
-} from '../host-directive';
-import { mountComponent } from './util/component';
 import { ChangeDetectorRef, createNgModule, Type } from '@angular/core';
 import {
   bindComponentInputs,
   bindComponentOutputs,
-} from './util/bind-component-io';
-import { resolvePromiseWithRetries } from './util/retry';
-import {
   Constructor,
+  ESModule,
+  isNgModuleDef,
+  mountComponent,
   resolveConstructorsFromESModule,
-} from './util/resolve-constructor';
-import { ESModule, isNgModuleDef } from './util/module';
+  resolvePromiseWithRetries,
+} from './util';
+import {
+  ImportsOrchestratorQueueItem,
+  ImportsOrchestratorQueueItemResolveFn,
+} from '../host-directive';
 
 export function importNgModuleBootstrap(
   promise: () => Promise<any>

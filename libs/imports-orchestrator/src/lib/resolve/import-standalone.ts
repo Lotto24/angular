@@ -1,19 +1,18 @@
 import { ChangeDetectorRef } from '@angular/core';
-import { resolvePromiseWithRetries } from './util/retry';
+import {
+  assertStandalone,
+  bindComponentInputs,
+  bindComponentOutputs,
+  Constructor,
+  ESModule,
+  mountComponent,
+  resolveConstructorsFromESModule,
+  resolvePromiseWithRetries,
+} from './util';
 import {
   ImportsOrchestratorQueueItem,
   ImportsOrchestratorQueueItemResolveFn,
-} from '../host-directive/import-queue.directive';
-import {
-  bindComponentInputs,
-  bindComponentOutputs,
-} from './util/bind-component-io';
-import { assertStandalone, mountComponent } from './util/component';
-import {
-  Constructor,
-  resolveConstructorsFromESModule,
-} from './util/resolve-constructor';
-import { ESModule } from './util/module';
+} from '../host-directive';
 
 export function importStandalone(
   promise: () => Promise<any>
