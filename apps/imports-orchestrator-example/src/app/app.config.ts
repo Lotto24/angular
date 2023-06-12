@@ -2,6 +2,7 @@ import { ApplicationConfig } from '@angular/core';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
+  withHashLocation,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
 import { provideImportsOrchestration } from '@lotto24-angular/imports-orchestrator';
@@ -30,7 +31,11 @@ export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
+    provideRouter(
+      appRoutes,
+      withEnabledBlockingInitialNavigation(),
+      withHashLocation()
+    ),
     provideImportsOrchestration(APP_IMPORTS_ORCHESTRATION, { parallel: 2 }),
   ],
 };
