@@ -1,4 +1,3 @@
-import { ApplicationConfig } from '@angular/core';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -29,7 +28,7 @@ const APP_IMPORTS_ORCHESTRATION = {
 
 export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;
 
-export const appConfig: ApplicationConfig = {
+export const appConfig = {
   providers: [
     provideRouter(
       appRoutes,

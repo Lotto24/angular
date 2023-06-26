@@ -1,4 +1,4 @@
-import {joinPathFragments, Tree} from "@nx/devkit";
+import {joinPathFragments, Tree} from "@nrwl/devkit";
 
 export function visitAllFiles(tree: Tree, path: string, callback: (path: string) => void) {
   const children = tree.children(path);
