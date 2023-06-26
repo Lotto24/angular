@@ -1,8 +1,8 @@
-import {formatFiles, Tree,} from '@nx/devkit';
+import {formatFiles, Tree,} from '@nrwl/devkit';
 import {ScaffoldExamplesGeneratorSchema} from './schema';
-import {componentGenerator, libraryGenerator, UnitTestRunner} from "@nx/angular/generators";
-import {Schema as NxAngularLibrarySchema} from "@nx/angular/src/generators/library/schema";
-import {Schema as NxAngularComponentSchema} from "@nx/angular/src/generators/component/schema";
+import {componentGenerator, libraryGenerator, UnitTestRunner} from "@nrwl/angular/generators";
+import {Schema as NxAngularLibrarySchema} from "@nrwl/angular/src/generators/library/schema";
+import {Schema as NxAngularComponentSchema} from "@nrwl/angular/src/generators/component/schema";
 import {FileUpdates, ModuleGeneratorUtil, updateSourceFiles} from "../util/ts-morph.util";
 import {ts} from "ts-morph";
 import * as fs from "fs";
