@@ -1,4 +1,4 @@
-import {formatFiles, Tree, updateJson,} from '@nx/devkit';
+import {formatFiles, Tree, updateJson,} from '@nrwl/devkit';
 import {CleanupExamplesGeneratorSchema} from './schema';
 
 export default async function (
