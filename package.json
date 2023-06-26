@@ -1,6 +1,6 @@
 {
   "name": "lotto24-angular",
-  "version": "0.0.0-prerelease.1",
+  "version": "0.0.0-prerelease.2",
   "license": "MIT",
   "scripts": {
     "prepare": "husky install",
