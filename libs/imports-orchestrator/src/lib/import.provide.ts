@@ -5,18 +5,25 @@ import {
 } from '@angular/core';
 import { ImportsOrchestratorQueueItemResolveFn } from './host-directive';
 import {
-  ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS,
   AngularImportOrchestratorOptions,
+  IMPORTS_ORCHESTRATOR_IMPORTS,
   ImportsOrchestratorConfig,
   Orchestration,
 } from './config/import.config';
 
 export const provideImports = <T>(
   imports: Partial<{ [key in keyof T]: ImportsOrchestratorQueueItemResolveFn }>
-): Provider => ({
-  provide: ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS,
-  useValue: imports,
-});
+): Provider[] => {
+  const store = IMPORTS_ORCHESTRATOR_IMPORTS();
+
+  Object.keys(imports).forEach((key) => {
+    store[key] = imports[
+      key as keyof T
+    ] as ImportsOrchestratorQueueItemResolveFn;
+  });
+
+  return [];
+};
 
 export const provideImportsOrchestration = <T>(
   orchestration: T & Orchestration,

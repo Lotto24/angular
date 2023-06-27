@@ -10,15 +10,12 @@ import {
   inject,
   Injector,
   Input,
-  Output,
+  Output, ReflectiveInjector,
   ViewContainerRef,
 } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
-import {
-  ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS,
-  ImportsOrchestratorConfig,
-} from '../config/import.config';
+import { ImportsOrchestratorConfig } from '../config/import.config';
 
 export type ImportsOrchestratorQueueItemResolveFn = (
   item: ImportsOrchestratorQueueItem
@@ -55,11 +52,10 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
   public readonly destroy$ = new Subject<void>();
 
   private readonly config = inject(ImportsOrchestratorConfig);
-  private readonly imports = inject(ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS);
-  private readonly injector = inject(Injector);
+  private readonly injector = this.viewContainerRef.injector
 
   public ngOnInit(): void {
-    const resolveFn = createResolveFn(this.imports, this.import);
+    const resolveFn = createResolveFn(this.config.imports, this.import);
     const priority = resolveImportPriority(
       this.config.orchestration,
       this.orderKey || this.import
@@ -69,7 +65,6 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
       providers: this.providers ?? [],
       parent: this.injector,
     });
-
     this.config.queue.insert(priority, {
       ...this,
       instance: this,
@@ -79,6 +74,10 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
       injector,
       priority,
     });
+
+    this.config.logger.debug(
+      `queue insert w/ priority=${priority}, import=${this.import}`
+    );
   }
 
   public ngOnDestroy(): void {

@@ -5,7 +5,6 @@ import {
   bindComponentOutputs,
   Constructor,
   ESModule,
-  mountComponent,
   resolveConstructorsFromESModule,
   resolvePromiseWithRetries,
 } from './util';
@@ -29,7 +28,9 @@ export function importStandalone(
 
     assertStandalone(constructor);
 
-    const componentRef = await mountComponent(item, constructor);
+    const componentRef = item.viewContainerRef.createComponent(constructor, {
+      injector: item.injector,
+    });
 
     // logger.debug(`loading import="${item.import}", providers=${item.providers?.length}`);
     const componentChangeDetectorRef =

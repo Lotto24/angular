@@ -5,7 +5,6 @@ import {
   Constructor,
   ESModule,
   isNgModuleDef,
-  mountComponent,
   resolveConstructorsFromESModule,
   resolvePromiseWithRetries,
 } from './util';
@@ -40,7 +39,10 @@ export function importNgModuleBootstrap(
       throw new Error('no class found');
     }
 
-    const componentRef = await mountComponent(item, componentConstructor);
+    const componentRef = item.viewContainerRef.createComponent(
+      componentConstructor,
+      { injector: ngModuleRef.injector, ngModuleRef }
+    );
 
     // logger.debug(`loading import="${item.import}", providers=${item.providers?.length}`);
     const componentChangeDetectorRef =

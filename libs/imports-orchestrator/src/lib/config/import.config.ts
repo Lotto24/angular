@@ -3,7 +3,6 @@ import {
   ImportsOrchestratorQueueItemResolveFn,
 } from '../host-directive';
 import { Queue } from '../queue/queue';
-import { InjectionToken } from '@angular/core';
 
 export type Orchestration = {
   [index: string]: number;
@@ -22,29 +21,31 @@ export interface AngularImportOrchestratorOptions {
   parallel: number;
 }
 
-export const ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS =
-  new InjectionToken<ImportsOrchestrators>(
-    'ANGULAR_IMPORTS_ORCHESTRATOR_IMPORTS'
-  );
+let importsOrchestratorImports: ImportsOrchestrators = {};
+
+export const IMPORTS_ORCHESTRATOR_IMPORTS: () => ImportsOrchestrators = () =>
+  importsOrchestratorImports;
 
 const DEFAULTS: Pick<
   AngularImportOrchestratorOptions,
   'logger' | 'prefix' | 'parallel'
 > = {
   logger: console,
-  prefix: 'ImportsOrchestratorOrchestrator',
+  prefix: 'ImportsOrchestrator',
   parallel: 1,
 };
 
 export class ImportsOrchestratorConfig
   implements AngularImportOrchestratorOptions
 {
+  public readonly imports = importsOrchestratorImports;
   public readonly parallel = this.options.parallel ?? DEFAULTS.parallel;
   public readonly prefix = this.options.prefix ?? DEFAULTS.prefix;
   public readonly logger = createLogger(
     this.options.logger ?? DEFAULTS.logger,
     `[${this.prefix}]`
   );
+
   public readonly queue =
     this.options.queue ?? new Queue<ImportsOrchestratorQueueItem>();
 
