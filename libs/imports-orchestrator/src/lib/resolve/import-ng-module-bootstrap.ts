@@ -64,7 +64,7 @@ export function importNgModuleBootstrap(
     // * Projected content will be processed
     // * Usages of ImportsOrchestratorQueueDirective in the tree will then insert items to the queue
     // * It is of vital importance that items are queued before triggering processQueue again
-    // IMPORTANT: markForCheck is not enough. This will not cause an immediate change detection cycle
+    // IMPORTANT: markForCheck is not enough, as it would not cause an immediate change detection cycle
     componentChangeDetectorRef.detectChanges();
   };
 }

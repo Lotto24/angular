@@ -1,4 +1,4 @@
-import { createNgModule } from '@angular/core';
+import { ChangeDetectorRef, createNgModule } from '@angular/core';
 import {
   Constructor,
   ESModule,
@@ -26,6 +26,8 @@ export function importNgModuleNoBootstrap(
       throw new Error('no class found');
     }
 
-    createNgModule(ngModuleConstructor, item.injector);
+    const module = createNgModule(ngModuleConstructor, item.injector);
+    const changeDetectorRef = module.injector.get(ChangeDetectorRef);
+    changeDetectorRef.detectChanges();
   };
 }
