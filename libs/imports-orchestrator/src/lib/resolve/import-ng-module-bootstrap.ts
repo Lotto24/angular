@@ -12,6 +12,10 @@ import {
   ImportsOrchestratorQueueItem,
   ImportsOrchestratorQueueItemResolveFn,
 } from '../host-directive';
+import {
+  assertImportedComponentReadyEmitter,
+  deferUntilComponentReady,
+} from './util/defer-until-component-ready';
 
 export function importNgModuleBootstrap(
   promise: () => Promise<any>
@@ -58,6 +62,17 @@ export function importNgModuleBootstrap(
 
     item.instance.componentMount.next(componentRef);
     item.instance.componentMount.complete();
+
+    if (assertImportedComponentReadyEmitter(componentRef.instance)) {
+      item.logger.debug(
+        `deferring until component w/import=${item.import} emits ready`
+      );
+      await deferUntilComponentReady(
+        componentRef.instance.importedComponentReady,
+        item.destroy$,
+        item.timeout
+      );
+    }
 
     // This will trigger Angular lifecycle on componentRef's entire component tree
     // * Bindings will be resolved

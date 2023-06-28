@@ -19,6 +19,7 @@ export interface AngularImportOrchestratorOptions {
   prefix: string;
   queue: Queue<ImportsOrchestratorQueueItem>;
   parallel: number;
+  timeout: number;
 }
 
 let importsOrchestratorImports: ImportsOrchestrators = {};
@@ -28,11 +29,12 @@ export const IMPORTS_ORCHESTRATOR_IMPORTS: () => ImportsOrchestrators = () =>
 
 const DEFAULTS: Pick<
   AngularImportOrchestratorOptions,
-  'logger' | 'prefix' | 'parallel'
+  'logger' | 'prefix' | 'parallel' | 'timeout'
 > = {
   logger: console,
   prefix: 'ImportsOrchestrator',
   parallel: 1,
+  timeout: 10000,
 };
 
 export class ImportsOrchestratorConfig
@@ -41,6 +43,7 @@ export class ImportsOrchestratorConfig
   public readonly imports = importsOrchestratorImports;
   public readonly parallel = this.options.parallel ?? DEFAULTS.parallel;
   public readonly prefix = this.options.prefix ?? DEFAULTS.prefix;
+  public readonly timeout: number = this.options.timeout ?? DEFAULTS.timeout;
   public readonly logger = createLogger(
     this.options.logger ?? DEFAULTS.logger,
     `[${this.prefix}]`
