@@ -12,7 +12,6 @@ export async function processImportQueue(
   router: Router
 ): Promise<void> {
   const { queue, logger } = config;
-
   // suspend processing while routing, as navigation takes precedence
   await routingFinished(pid, config, router);
 
@@ -31,7 +30,7 @@ export async function processImportQueue(
   );
 
   try {
-    await item.resolveFn(item);;
+    await item.resolveFn(item);
     // logger.debug(`changeDetection following import=${item.import}, componentRef${componentRef.instance}`);
 
     // let's loop recursively until the queue is processed
@@ -41,7 +40,7 @@ export async function processImportQueue(
       `(pid=${pid})`,
       x
     );
-};
+  }
 }
 
 /**
