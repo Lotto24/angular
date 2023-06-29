@@ -1,7 +1,7 @@
 import type { AfterViewInit } from '@angular/core';
 import { Directive, inject, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { processImportQueue } from '../queue/process-import-queue';
+import { processImportQueue as processImportItem } from '../queue/process-import-queue';
 import { ImportsOrchestratorConfig } from '../config/import.config';
 
 @Directive({
@@ -20,11 +20,34 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
       // do not await, as it would block the lifecycle callback from completing until the queue is processed
       this.zone.runOutsideAngular(async () => {
         ImportsOrchestratorLoaderDirective.processing = true;
-        this.config.logger.debug(`queue processing started (parallel=${this.config.parallel})`);
-        const processes = Array.from(Array(this.config.parallel)).map((_, pid) =>
-          processImportQueue(pid, this.config, this.router)
+        this.config.logger.debug(
+          `queue processing started (parallel=${this.config.parallel})`
         );
-        await Promise.all(processes);
+        let item = 0;
+      
+        while (this.config.queue.length > 0) {
+          const currentBatch = [];
+          for (let i = 0; i < this.config.parallel; i++) {
+            currentBatch.push(processImportItem(item++,this.config, this.router));
+          }
+          await Promise.any(currentBatch);
+        }
+
+
+        let runningTasks = 0;
+        while (
+          this.config.queue.length > 0 ||
+          this.config.parallel > runningTasks
+        ) {
+          const processes = Array.from(Array(this.config.parallel)).map(
+            (_, pid) => {
+              runningTasks++;
+              processImportItem(pid, this.config, this.router);
+            }
+          );
+          await Promise.all(processes);
+          runningTasks--;
+        }
 
         ImportsOrchestratorLoaderDirective.processing = false;
         this.config.logger.debug('queue processing ended');
