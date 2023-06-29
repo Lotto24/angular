@@ -10,7 +10,7 @@ import {
   inject,
   Injector,
   Input,
-  Output, ReflectiveInjector,
+  Output,
   ViewContainerRef,
 } from '@angular/core';
 import type { Observable } from 'rxjs';
@@ -27,12 +27,18 @@ interface ImportsOrchestratorQueueItemExtras {
   instance: ImportsOrchestratorQueueDirective;
   injector: Injector;
   destroy$: Observable<void>;
+  timeout: number;
 }
 
 export type ImportsOrchestratorQueueItem = ImportsOrchestratorQueueItemExtras &
   Pick<
     ImportsOrchestratorQueueDirective,
-    'import' | 'providers' | 'inputs' | 'outputs' | 'viewContainerRef'
+    | 'import'
+    | 'providers'
+    | 'inputs'
+    | 'outputs'
+    | 'viewContainerRef'
+    | 'logger'
   >;
 
 @Directive({
@@ -45,14 +51,17 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
   @Input() public providers!: StaticProvider[];
   @Input() public inputs!: { [index: string]: unknown };
   @Input() public outputs!: { [index: string]: unknown };
+  @Input() public timeout!: number;
 
-  @Output() public componentMount = new EventEmitter<ComponentRef<unknown>>();
+  @Output() public importFinished = new EventEmitter<
+    ComponentRef<any>[] | void
+  >();
 
   public readonly viewContainerRef = inject(ViewContainerRef);
   public readonly destroy$ = new Subject<void>();
 
   private readonly config = inject(ImportsOrchestratorConfig);
-  private readonly injector = this.viewContainerRef.injector
+  public readonly logger = this.config.logger;
 
   public ngOnInit(): void {
     const resolveFn = createResolveFn(this.config.imports, this.import);
@@ -63,20 +72,27 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
 
     const injector = Injector.create({
       providers: this.providers ?? [],
-      parent: this.injector,
+      parent: this.viewContainerRef.injector,
     });
+
+    const timeout = this.timeout ?? this.config.timeout;
+
     this.config.queue.insert(priority, {
       ...this,
       instance: this,
       import: this.import,
       destroy$: this.destroy$,
+      logger: this.logger,
       resolveFn,
+      timeout,
       injector,
       priority,
     });
 
-    this.config.logger.debug(
-      `queue insert w/ priority=${priority}, import=${this.import}`
+    const orderKeyMessage = this.orderKey ? ` (orderKey=${this.orderKey})` : '';
+
+    this.logger.debug(
+      `queue insert @priority=${priority}${orderKeyMessage}, @import=${this.import}`
     );
   }
 

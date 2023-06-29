@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   ImportsOrchestratorDirective,
-  importNgModuleBootstrap,
+  importNgModule,
   importStandalone,
   provideImports,
 } from '@lotto24-angular/imports-orchestrator';
@@ -34,7 +34,7 @@ import type { AppImportsOrchestration } from '../app.config';
       home2: importStandalone(() => import('@lotto24-angular/imports-orchestrator-examples/home2')),
 
       // or import an NgModule with the component referenced in bootstrap
-      home3: importNgModuleBootstrap(
+      home3: importNgModule(
         () => import('@lotto24-angular/imports-orchestrator-examples/home3')
       ),
 

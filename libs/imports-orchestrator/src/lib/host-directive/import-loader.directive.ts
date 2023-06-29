@@ -18,40 +18,25 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
   public async ngAfterViewInit(): Promise<void> {
     if (!ImportsOrchestratorLoaderDirective.processing) {
       // do not await, as it would block the lifecycle callback from completing until the queue is processed
-      this.zone.runOutsideAngular(async () => {
-        ImportsOrchestratorLoaderDirective.processing = true;
-        this.config.logger.debug(
-          `queue processing started (parallel=${this.config.parallel})`
-        );
-        let item = 0;
-      
-        while (this.config.queue.length > 0) {
-          const currentBatch = [];
-          for (let i = 0; i < this.config.parallel; i++) {
-            currentBatch.push(processImportItem(item++,this.config, this.router));
-          }
-          await Promise.any(currentBatch);
-        }
+      ImportsOrchestratorLoaderDirective.processing = true;
+      this.config.logger.debug(
+        `queue processing started (parallel=${this.config.parallel})`
+      );
+      let item = 0;
 
-
-        let runningTasks = 0;
-        while (
-          this.config.queue.length > 0 ||
-          this.config.parallel > runningTasks
-        ) {
-          const processes = Array.from(Array(this.config.parallel)).map(
-            (_, pid) => {
-              runningTasks++;
-              processImportItem(pid, this.config, this.router);
-            }
+      while (this.config.queue.length > 0) {
+        const currentBatch = [];
+        for (let i = 0; i < this.config.parallel; i++) {
+          currentBatch.push(
+            processImportItem(item++, this.config, this.router)
           );
-          await Promise.all(processes);
-          runningTasks--;
         }
+        await Promise.any(currentBatch);
+        this.config.parallel = 4;
+      }
 
-        ImportsOrchestratorLoaderDirective.processing = false;
-        this.config.logger.debug('queue processing ended');
-      });
+      ImportsOrchestratorLoaderDirective.processing = false;
+      this.config.logger.debug('queue processing ended');
     }
   }
 }

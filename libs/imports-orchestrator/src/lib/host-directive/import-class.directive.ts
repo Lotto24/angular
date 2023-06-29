@@ -21,19 +21,23 @@ export class ImportsOrchestratorClassDirective {
   });
 
   constructor() {
-    this.queue.componentMount
+    this.queue.importFinished
       .pipe(takeUntil(this.queue.destroy$))
-      .subscribe((ref) => this.onComponentMount(ref));
+      .subscribe((refs) => this.onImportFinished(refs));
   }
 
-  public onComponentMount(componentRef: ComponentRef<unknown>): void {
-    if (!this.cssClass) return;
+  private onImportFinished(
+    componentRefs: ComponentRef<unknown>[] | void
+  ): void {
+    if (!this.cssClass || !componentRefs?.length) return;
 
-    const renderer2 = componentRef.injector.get(Renderer2);
-    const elementRef = componentRef.injector.get(ElementRef);
-    const htmlElement = elementRef.nativeElement as HTMLElement;
+    componentRefs.forEach((componentRef) => {
+      const renderer2 = componentRef.injector.get(Renderer2);
+      const elementRef = componentRef.injector.get(ElementRef);
+      const htmlElement = elementRef.nativeElement as HTMLElement;
 
-    const classes = this.cssClass.match(/[^\s]+/gi);
-    classes?.forEach((c) => renderer2.addClass(htmlElement, c));
+      const classes = this.cssClass.match(/[^\s]+/gi);
+      classes?.forEach((c) => renderer2.addClass(htmlElement, c));
+    });
   }
 }
