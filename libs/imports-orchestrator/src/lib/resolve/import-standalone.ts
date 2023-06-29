@@ -1,10 +1,8 @@
-import { ChangeDetectorRef } from '@angular/core';
 import {
   assertStandalone,
-  bindComponentInputs,
-  bindComponentOutputs,
   Constructor,
   ESModule,
+  mountComponent,
   resolveConstructorsFromESModule,
   resolvePromiseWithRetries,
 } from './util';
@@ -12,10 +10,6 @@ import {
   ImportsOrchestratorQueueItem,
   ImportsOrchestratorQueueItemResolveFn,
 } from '../host-directive';
-import {
-  assertImportedComponentReadyEmitter,
-  deferUntilComponentReady,
-} from './util/defer-until-component-ready';
 
 export function importStandalone(
   promise: () => Promise<any>
@@ -36,37 +30,9 @@ export function importStandalone(
       injector: item.injector,
     });
 
-    // logger.debug(`loading import="${item.import}", providers=${item.providers?.length}`);
-    const componentChangeDetectorRef =
-      componentRef.injector.get(ChangeDetectorRef);
+    await mountComponent(componentRef, item);
 
-    if (item.inputs) {
-      bindComponentInputs(componentRef, item.inputs);
-    }
-
-    if (item.outputs) {
-      bindComponentOutputs(componentRef, item.outputs, item.destroy$);
-    }
-
-    if (assertImportedComponentReadyEmitter(componentRef.instance)) {
-      item.logger.debug(
-        `deferring until component w/import=${item.import} emits ready`
-      );
-      await deferUntilComponentReady(
-        componentRef.instance.importedComponentReady,
-        item.destroy$,
-        item.timeout
-      );
-    }
-    // This will trigger Angular lifecycle on componentRef's entire component tree
-    // * Bindings will be resolved
-    // * Projected content will be processed
-    // * Usages of ImportsOrchestratorQueueDirective in the tree will then insert items to the queue
-    // * It is of vital importance that items are queued before triggering processQueue again
-    // IMPORTANT: markForCheck is not enough. This will not cause an immediate change detection cycle
-    componentChangeDetectorRef.detectChanges();
-
-    item.instance.componentReady.next(componentRef);
-    item.instance.componentReady.complete();
+    item.instance.importFinished.next([componentRef]);
+    item.instance.importFinished.complete();
   };
 }

@@ -1,10 +1,9 @@
-import { ChangeDetectorRef, createNgModule, Type } from '@angular/core';
+import { createNgModule, Type } from '@angular/core';
 import {
-  bindComponentInputs,
-  bindComponentOutputs,
   Constructor,
   ESModule,
   isNgModuleDef,
+  mountComponent,
   resolveConstructorsFromESModule,
   resolvePromiseWithRetries,
 } from './util';
@@ -12,10 +11,6 @@ import {
   ImportsOrchestratorQueueItem,
   ImportsOrchestratorQueueItemResolveFn,
 } from '../host-directive';
-import {
-  assertImportedComponentReadyEmitter,
-  deferUntilComponentReady,
-} from './util/defer-until-component-ready';
 
 export function importNgModule(
   promise: () => Promise<any>
@@ -34,55 +29,29 @@ export function importNgModule(
 
     const ngModuleRef = createNgModule(ngModuleConstructor, item.injector);
 
-    // TODO: bootstrap all components, not just the first one
-    const componentConstructor = (
-      (ngModuleRef as any)._bootstrapComponents as Array<Type<any>>
-    )
-      ?.slice()
-      .shift();
+    const componentConstructors = (ngModuleRef as any)
+      ._bootstrapComponents as Array<Type<any>> | null;
 
-    if (!componentConstructor) {
+    if (!componentConstructors?.length) {
       item.logger.debug('no bootstrap components found in ngModuleRef');
+      item.instance.importFinished.next();
+      item.instance.importFinished.complete();
       return;
     }
 
-    const componentRef = item.viewContainerRef.createComponent(
-      componentConstructor,
-      { injector: ngModuleRef.injector, ngModuleRef }
+    const mountComponentPromises = componentConstructors.map(
+      (componentConstructor) => {
+        const componentRef = item.viewContainerRef.createComponent(
+          componentConstructor,
+          { injector: ngModuleRef.injector, ngModuleRef }
+        );
+
+        return mountComponent(componentRef, item).then(() => componentRef);
+      }
     );
 
-    // logger.debug(`loading import="${item.import}", providers=${item.providers?.length}`);
-    const componentChangeDetectorRef =
-      componentRef.injector.get(ChangeDetectorRef);
-
-    if (item.inputs) {
-      bindComponentInputs(componentRef, item.inputs);
-    }
-
-    if (item.outputs) {
-      bindComponentOutputs(componentRef, item.outputs, item.destroy$);
-    }
-
-    if (assertImportedComponentReadyEmitter(componentRef.instance)) {
-      item.logger.debug(
-        `deferring until component w/import=${item.import} emits ready`
-      );
-      await deferUntilComponentReady(
-        componentRef.instance.importedComponentReady,
-        item.destroy$,
-        item.timeout
-      );
-    }
-
-    // This will trigger Angular lifecycle on componentRef's entire component tree
-    // * Bindings will be resolved
-    // * Projected content will be processed
-    // * Usages of ImportsOrchestratorQueueDirective in the tree will then insert items to the queue
-    // * It is of vital importance that items are queued before triggering processQueue again
-    // IMPORTANT: markForCheck is not enough, as it would not cause an immediate change detection cycle
-    componentChangeDetectorRef.detectChanges();
-
-    item.instance.componentReady.next(componentRef);
-    item.instance.componentReady.complete();
+    const resolvedComponentRefs = await Promise.all(mountComponentPromises);
+    item.instance.importFinished.next(resolvedComponentRefs);
+    item.instance.importFinished.complete();
   };
 }

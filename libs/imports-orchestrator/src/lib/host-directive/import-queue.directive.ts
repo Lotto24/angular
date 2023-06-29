@@ -53,7 +53,9 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
   @Input() public outputs!: { [index: string]: unknown };
   @Input() public timeout!: number;
 
-  @Output() public componentReady = new EventEmitter<ComponentRef<unknown>>();
+  @Output() public importFinished = new EventEmitter<
+    ComponentRef<any>[] | void
+  >();
 
   public readonly viewContainerRef = inject(ViewContainerRef);
   public readonly destroy$ = new Subject<void>();
@@ -87,8 +89,10 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
       priority,
     });
 
+    const orderKeyMessage = this.orderKey ? ` (orderKey=${this.orderKey})` : '';
+
     this.logger.debug(
-      `queue insert w/ priority=${priority}, import=${this.import}`
+      `queue insert @priority=${priority}${orderKeyMessage}, @import=${this.import}`
     );
   }
 
