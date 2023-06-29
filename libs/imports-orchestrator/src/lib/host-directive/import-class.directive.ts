@@ -21,7 +21,7 @@ export class ImportsOrchestratorClassDirective {
   });
 
   constructor() {
-    this.queue.componentMount
+    this.queue.componentReady
       .pipe(takeUntil(this.queue.destroy$))
       .subscribe((ref) => this.onComponentMount(ref));
   }

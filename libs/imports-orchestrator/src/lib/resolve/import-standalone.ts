@@ -48,9 +48,6 @@ export function importStandalone(
       bindComponentOutputs(componentRef, item.outputs, item.destroy$);
     }
 
-    item.instance.componentMount.next(componentRef);
-    item.instance.componentMount.complete();
-
     if (assertImportedComponentReadyEmitter(componentRef.instance)) {
       item.logger.debug(
         `deferring until component w/import=${item.import} emits ready`
@@ -68,5 +65,8 @@ export function importStandalone(
     // * It is of vital importance that items are queued before triggering processQueue again
     // IMPORTANT: markForCheck is not enough. This will not cause an immediate change detection cycle
     componentChangeDetectorRef.detectChanges();
+
+    item.instance.componentReady.next(componentRef);
+    item.instance.componentReady.complete();
   };
 }

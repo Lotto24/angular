@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   ImportsOrchestratorDirective,
-  importNgModuleBootstrap,
+  importNgModule,
   importStandalone,
   provideImports,
 } from '@lotto24-angular/imports-orchestrator';
@@ -37,16 +37,16 @@ import type { AppImportsOrchestration } from '../app.config';
       fruit2: importStandalone(
         () => import('@lotto24-angular/imports-orchestrator-examples/fruit2')
       ),
-      fruit3: importNgModuleBootstrap(
+      fruit3: importNgModule(
         () => import('@lotto24-angular/imports-orchestrator-examples/fruit3')
       ),
       fruit4: importStandalone(
         () => import('@lotto24-angular/imports-orchestrator-examples/fruit4')
       ),
-      fruit5: importNgModuleBootstrap(
+      fruit5: importNgModule(
         () => import('@lotto24-angular/imports-orchestrator-examples/fruit5')
       ),
-      fruit6: importNgModuleBootstrap(
+      fruit6: importNgModule(
         () => import('@lotto24-angular/imports-orchestrator-examples/fruit6')
       ),
       fruit7: importStandalone(

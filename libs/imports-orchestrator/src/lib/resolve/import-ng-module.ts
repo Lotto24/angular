@@ -17,7 +17,7 @@ import {
   deferUntilComponentReady,
 } from './util/defer-until-component-ready';
 
-export function importNgModuleBootstrap(
+export function importNgModule(
   promise: () => Promise<any>
 ): ImportsOrchestratorQueueItemResolveFn {
   return async (item: ImportsOrchestratorQueueItem) => {
@@ -29,10 +29,12 @@ export function importNgModuleBootstrap(
       ?.shift();
 
     if (!ngModuleConstructor) {
-      throw new Error('no class found');
+      throw new Error('no ngModuleRef constructor found');
     }
 
     const ngModuleRef = createNgModule(ngModuleConstructor, item.injector);
+
+    // TODO: bootstrap all components, not just the first one
     const componentConstructor = (
       (ngModuleRef as any)._bootstrapComponents as Array<Type<any>>
     )
@@ -40,7 +42,8 @@ export function importNgModuleBootstrap(
       .shift();
 
     if (!componentConstructor) {
-      throw new Error('no class found');
+      item.logger.debug('no bootstrap components found in ngModuleRef');
+      return;
     }
 
     const componentRef = item.viewContainerRef.createComponent(
@@ -60,9 +63,6 @@ export function importNgModuleBootstrap(
       bindComponentOutputs(componentRef, item.outputs, item.destroy$);
     }
 
-    item.instance.componentMount.next(componentRef);
-    item.instance.componentMount.complete();
-
     if (assertImportedComponentReadyEmitter(componentRef.instance)) {
       item.logger.debug(
         `deferring until component w/import=${item.import} emits ready`
@@ -81,5 +81,8 @@ export function importNgModuleBootstrap(
     // * It is of vital importance that items are queued before triggering processQueue again
     // IMPORTANT: markForCheck is not enough, as it would not cause an immediate change detection cycle
     componentChangeDetectorRef.detectChanges();
+
+    item.instance.componentReady.next(componentRef);
+    item.instance.componentReady.complete();
   };
 }

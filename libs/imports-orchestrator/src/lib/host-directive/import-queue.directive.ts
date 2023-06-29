@@ -53,7 +53,7 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
   @Input() public outputs!: { [index: string]: unknown };
   @Input() public timeout!: number;
 
-  @Output() public componentMount = new EventEmitter<ComponentRef<unknown>>();
+  @Output() public componentReady = new EventEmitter<ComponentRef<unknown>>();
 
   public readonly viewContainerRef = inject(ViewContainerRef);
   public readonly destroy$ = new Subject<void>();
