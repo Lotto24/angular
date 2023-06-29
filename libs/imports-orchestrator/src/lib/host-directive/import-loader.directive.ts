@@ -19,18 +19,21 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
     if (!ImportsOrchestratorLoaderDirective.processing) {
       // do not await, as it would block the lifecycle callback from completing until the queue is processed
       ImportsOrchestratorLoaderDirective.processing = true;
-      this.config.logger.debug(
-        `queue processing started (parallel=${this.config.parallel})`
-      );
       let item = 0;
+      let concurrent = 0;
 
       while (this.config.queue.length > 0) {
         const currentBatch = [];
-        for (let i = 0; i < this.config.parallel; i++) {
+        for (let i = concurrent; i < this.config.parallel; i++) {
           currentBatch.push(
-            processImportItem(item++, this.config, this.router)
+            processImportItem(item++, this.config, this.router).then(() => {
+              concurrent--;
+              this.config.logger.debug(`Queue resolved item, concurrent now ${concurrent}`);
+            })
           );
         }
+        concurrent += currentBatch.length;
+        this.config.logger.debug(`Queue started batch with ${currentBatch.length} items, concurrency now ${concurrent}`);
         await Promise.any(currentBatch);
       }
 
