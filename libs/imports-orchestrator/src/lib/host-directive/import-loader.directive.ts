@@ -32,7 +32,6 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
           );
         }
         await Promise.any(currentBatch);
-        this.config.parallel = 4;
       }
 
       ImportsOrchestratorLoaderDirective.processing = false;
