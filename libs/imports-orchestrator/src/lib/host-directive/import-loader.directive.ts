@@ -27,8 +27,9 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
         for (let i = concurrent; i < this.config.parallel; i++) {
           currentBatch.push(
             processImportItem(item++, this.config, this.router).then(() => {
-              concurrent--;
               this.config.logger.debug(`Queue resolved item, concurrent now ${concurrent}`);
+            }).finally(() => {
+              concurrent--;
             })
           );
         }
