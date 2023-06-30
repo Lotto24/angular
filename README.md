@@ -6,15 +6,15 @@ Currently working with
 * standalone components
 * NgModule bootstrapped legacy components
 
-Please see `apps/example/src/app/app.component.ts` and `apps/example/src/app/home/home.component.ts` on how to use.
+Please see `apps/imports-orchestrator-example/src/app/app.component.ts` and `apps/imports-orchestrator-example/src/app/home/home.component.ts` on how to use.
 
 Warning: API is not stable. Everything is subject to change.
 
-Run `nx serve example` to explore.
+Run `nx serve imports-orchestrator-example` to explore.
 
 ## Development server
 
-Run `nx serve example` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+Run `nx serve imports-orchestrator-example` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
 
 ## Built on Nx
 

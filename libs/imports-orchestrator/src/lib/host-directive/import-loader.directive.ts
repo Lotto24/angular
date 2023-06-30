@@ -1,7 +1,7 @@
 import type { AfterViewInit } from '@angular/core';
 import { Directive, inject, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { processImportQueue } from '../queue/process-import-queue';
+import { processImportItem } from '../queue/process-import-item';
 import { ImportsOrchestratorConfig } from '../config/import.config';
 
 @Directive({
@@ -13,22 +13,47 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
 
   private config = inject(ImportsOrchestratorConfig);
   private router = inject(Router);
-  private zone = inject(NgZone);
 
-  public async ngAfterViewInit(): Promise<void> {
+  private running = 0;
+
+  public ngAfterViewInit(): void {
     if (!ImportsOrchestratorLoaderDirective.processing) {
       // do not await, as it would block the lifecycle callback from completing until the queue is processed
       ImportsOrchestratorLoaderDirective.processing = true;
-      this.config.logger.debug(
-        `queue processing started (parallel=${this.config.parallel})`
-      );
-      const processes = Array.from(Array(this.config.parallel)).map((_, pid) =>
-        processImportQueue(pid, this.config, this.router)
-      );
-      await Promise.all(processes);
 
-      ImportsOrchestratorLoaderDirective.processing = false;
-      this.config.logger.debug('queue processing ended');
+      this.processQueue()
+        .then(() => {
+          this.config.logger.debug('queue processing ended');
+        })
+        .catch(() => {
+          this.config.logger.debug('queue processing failed');
+        })
+        .finally(() => {
+          ImportsOrchestratorLoaderDirective.processing = false;
+        });
+    }
+  }
+
+  private async processQueue(pid: number = 0): Promise<void> {
+    const concurrentBatch = [];
+    for (let i = this.running; i < this.config.parallel; i++) {
+      this.running++;
+      concurrentBatch.push(this.processItemAndContinueQueue(pid++));
+    }
+    this.config.logger.debug(
+      `Queue starting ${concurrentBatch.length} item(s) to reach max parallel, concurrent now ${this.running}`
+    );
+    await Promise.all(concurrentBatch);
+  }
+
+  private async processItemAndContinueQueue(pid: number): Promise<void> {
+    await processImportItem(pid++, this.config, this.router);
+    this.running--;
+    this.config.logger.debug(
+      `Queue item resolved, concurrent now ${this.running}`
+    );
+    if (this.config.queue.length !== 0) {
+      await this.processQueue(pid++);
     }
   }
 }

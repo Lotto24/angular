@@ -41,7 +41,7 @@ export class ImportsOrchestratorConfig
   implements AngularImportOrchestratorOptions
 {
   public readonly imports = importsOrchestratorImports;
-  public readonly parallel = this.options.parallel ?? DEFAULTS.parallel;
+  public parallel = this.options.parallel ?? DEFAULTS.parallel;
   public readonly prefix = this.options.prefix ?? DEFAULTS.prefix;
   public readonly timeout: number = this.options.timeout ?? DEFAULTS.timeout;
   public readonly logger = createLogger(
