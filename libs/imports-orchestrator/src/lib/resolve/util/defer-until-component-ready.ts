@@ -1,30 +1,20 @@
-import {EventEmitter} from '@angular/core';
-import {ImportedComponentReadyEmitter} from '../imported-component-ready.interface';
-import {firstValueFrom, Observable, takeUntil, throwError, timeout,} from 'rxjs';
+import { ImportedComponentReady } from '../imported-component-ready.interface';
 
-export async function deferUntilComponentReady<T>(
-  importedComponentReady: EventEmitter<undefined>,
-  destroy$: Observable<void>,
+export function deferUntilComponentReady<T>(
+  importedComponentReady: () => Promise<void>,
   timeoutMs: number
 ): Promise<void> {
-  return firstValueFrom(
-    importedComponentReady.pipe(
-      takeUntil(destroy$),
-      timeout({
-        each: timeoutMs,
-        with: () =>
-          throwError(
-            () => new Error('imported component ready did not emit in time')
-          ),
-      })
+  const timeout = new Promise<void>((_, reject) =>
+    setTimeout(
+      () => reject(`component ready timeout=${timeoutMs}ms`),
+      timeoutMs
     )
   );
+  return Promise.race([importedComponentReady(), timeout]);
 }
 
 export function assertImportedComponentReadyEmitter(
   type: any
-): type is ImportedComponentReadyEmitter {
-  return (
-    (type as ImportedComponentReadyEmitter).importedComponentReady !== undefined
-  );
+): type is ImportedComponentReady {
+  return (type as ImportedComponentReady).importedComponentReady !== undefined;
 }

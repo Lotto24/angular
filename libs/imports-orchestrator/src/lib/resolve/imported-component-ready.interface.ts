@@ -1,8 +1,6 @@
-import { EventEmitter } from '@angular/core';
-
 /**
- * When implementing this interface, the queue will be interrupted until `importedComponentReady` emits
+ * When implementing this interface, the queue will be interrupted until the promise returned by importedComponentReady resolves.
  */
-export interface ImportedComponentReadyEmitter {
-  importedComponentReady: EventEmitter<undefined>;
+export interface ImportedComponentReady {
+  importedComponentReady(): Promise<void>;
 }
