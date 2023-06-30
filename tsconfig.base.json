@@ -63,6 +63,18 @@
       "@lotto24-angular/imports-orchestrator-examples/home3": [
         "libs/imports-orchestrator-examples/home3/src/index.ts"
       ],
+      "@lotto24-angular/imports-orchestrator-examples/tab-keep": [
+        "libs/imports-orchestrator-examples/tab-keep/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/tab0": [
+        "libs/imports-orchestrator-examples/tab0/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/tab1": [
+        "libs/imports-orchestrator-examples/tab1/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/tab2": [
+        "libs/imports-orchestrator-examples/tab2/src/index.ts"
+      ],
       "@lotto24-angular/workspace": ["libs/workspace/src/index.ts"]
     }
   },

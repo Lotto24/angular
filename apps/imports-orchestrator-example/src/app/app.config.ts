@@ -24,6 +24,11 @@ const APP_IMPORTS_ORCHESTRATION = {
   footer0: 1001,
   footer1: 1002,
   footer2: 1003,
+
+  tab0: 31,
+  tab1: 32,
+  tab2: 33,
+  tabKeep: 34,
 };
 
 export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;

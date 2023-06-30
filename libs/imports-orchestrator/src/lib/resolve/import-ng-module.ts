@@ -51,7 +51,6 @@ export function importNgModule(
     );
 
     const resolvedComponentRefs = await Promise.all(mountComponentPromises);
-    item.instance.importFinished.next(resolvedComponentRefs);
-    item.instance.importFinished.complete();
+    item.instance.importFinished.emit(resolvedComponentRefs);
   };
 }

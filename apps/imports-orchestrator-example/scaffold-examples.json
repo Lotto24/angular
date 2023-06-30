@@ -11,6 +11,10 @@
   { "name": "fruit5", "bloatSizeKb": 48, "type": "ng-module-bootstrap" },
   { "name": "fruit6", "bloatSizeKb": 84, "type": "ng-module-bootstrap" },
   { "name": "fruit7", "bloatSizeKb": 112, "type": "standalone" },
+  { "name": "tab0", "bloatSizeKb": 128, "type": "ng-module-bootstrap" },
+  { "name": "tab1", "bloatSizeKb": 84, "type": "ng-module-bootstrap" },
+  { "name": "tab2", "bloatSizeKb": 96, "type": "standalone" },
+  { "name": "tab-keep", "bloatSizeKb": 48, "type": "standalone" },
   { "name": "footer0", "bloatSizeKb": 16, "type": "standalone" },
   { "name": "footer1", "bloatSizeKb": 16, "type": "standalone" },
   { "name": "footer2", "bloatSizeKb": 16, "type": "standalone" }

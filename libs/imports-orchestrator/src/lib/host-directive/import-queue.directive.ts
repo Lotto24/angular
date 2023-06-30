@@ -1,7 +1,8 @@
 import type {
   ComponentRef,
+  OnChanges,
   OnDestroy,
-  OnInit,
+  SimpleChanges,
   StaticProvider,
 } from '@angular/core';
 import {
@@ -16,6 +17,7 @@ import {
 import type { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
 import { ImportsOrchestratorConfig } from '../config/import.config';
+import { ImportsQueueProcessor } from '../queue/imports-queue-processor.service';
 
 export type ImportsOrchestratorQueueItemResolveFn = (
   item: ImportsOrchestratorQueueItem
@@ -45,7 +47,7 @@ export type ImportsOrchestratorQueueItem = ImportsOrchestratorQueueItemExtras &
   selector: '[importQueue]',
   standalone: true,
 })
-export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
+export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   @Input() public import!: string;
   @Input() public orderKey!: string;
   @Input() public providers!: StaticProvider[];
@@ -61,9 +63,18 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
   public readonly destroy$ = new Subject<void>();
 
   private readonly config = inject(ImportsOrchestratorConfig);
+  private readonly queueProcessor = inject(ImportsQueueProcessor);
   public readonly logger = this.config.logger;
 
-  public ngOnInit(): void {
+  public ngOnChanges(changes: SimpleChanges): void {
+    const importInput = changes['import'];
+    if (importInput.currentValue !== importInput.previousValue) {
+      this.updateImport();
+    }
+  }
+
+  public updateImport(): void {
+
     const resolveFn = createResolveFn(this.config.imports, this.import);
     const priority = resolveImportPriority(
       this.config.orchestration,
@@ -76,6 +87,8 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
     });
 
     const timeout = this.timeout ?? this.config.timeout;
+
+    this.viewContainerRef.clear(); // clean up before adding the new component
 
     this.config.queue.insert(priority, {
       ...this,
@@ -94,6 +107,8 @@ export class ImportsOrchestratorQueueDirective implements OnInit, OnDestroy {
     this.logger.debug(
       `queue insert @priority=${priority}${orderKeyMessage}, @import=${this.import}`
     );
+
+    this.queueProcessor.process();
   }
 
   public ngOnDestroy(): void {

@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { HomeComponent } from './pages/home.component';
 import { FruitComponent } from './pages/fruit.component';
+import {TabComponent} from "./pages/tab.component";
 
 export const appRoutes: Route[] = [
   {
@@ -15,5 +16,9 @@ export const appRoutes: Route[] = [
   {
     path: 'fruit',
     component: FruitComponent,
+  },
+  {
+    path: 'tab',
+    component: TabComponent,
   },
 ];

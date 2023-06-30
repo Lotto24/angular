@@ -1,14 +1,10 @@
-import type { AfterViewInit } from '@angular/core';
-import { Directive, inject, NgZone } from '@angular/core';
-import { Router } from '@angular/router';
-import { processImportItem } from '../queue/process-import-item';
 import { ImportsOrchestratorConfig } from '../config/import.config';
+import { Router } from '@angular/router';
+import { inject, Injectable } from '@angular/core';
+import { processQueueItem } from './process-queue-item';
 
-@Directive({
-  selector: '[importLoader]',
-  standalone: true,
-})
-export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
+@Injectable({ providedIn: 'root' })
+export class ImportsQueueProcessor {
   private static processing = false;
 
   private config = inject(ImportsOrchestratorConfig);
@@ -16,10 +12,10 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
 
   private running = 0;
 
-  public ngAfterViewInit(): void {
-    if (!ImportsOrchestratorLoaderDirective.processing) {
+  public process(): void {
+    if (!ImportsQueueProcessor.processing) {
       // do not await, as it would block the lifecycle callback from completing until the queue is processed
-      ImportsOrchestratorLoaderDirective.processing = true;
+      ImportsQueueProcessor.processing = true;
 
       this.processQueue()
         .then(() => {
@@ -29,7 +25,7 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
           this.config.logger.debug('queue processing failed');
         })
         .finally(() => {
-          ImportsOrchestratorLoaderDirective.processing = false;
+          ImportsQueueProcessor.processing = false;
         });
     }
   }
@@ -47,7 +43,7 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
   }
 
   private async processItemAndContinueQueue(pid: number): Promise<void> {
-    await processImportItem(pid++, this.config, this.router);
+    await processQueueItem(pid++, this.config, this.router);
     this.running--;
     this.config.logger.debug(
       `Queue item resolved, concurrent now ${this.running}`
