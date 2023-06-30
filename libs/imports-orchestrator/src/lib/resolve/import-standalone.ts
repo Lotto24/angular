@@ -32,7 +32,6 @@ export function importStandalone(
 
     await mountComponent(componentRef, item);
 
-    item.instance.importFinished.next([componentRef]);
-    item.instance.importFinished.complete();
+    item.instance.importFinished.emit([componentRef]);
   };
 }

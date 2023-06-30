@@ -6,7 +6,7 @@ import { ImportsOrchestratorConfig } from '../config/import.config';
 /**
  * recursive loading of queued features
  */
-export async function processImportItem(
+export async function processQueueItem(
   pid: number,
   config: ImportsOrchestratorConfig,
   router: Router
