@@ -1,7 +1,7 @@
 import { ImportedComponentReady } from '../imported-component-ready.interface';
 
 export function deferUntilComponentReady<T>(
-  importedComponentReady: () => Promise<void>,
+  instance: ImportedComponentReady,
   timeoutMs: number
 ): Promise<void> {
   const timeout = new Promise<void>((_, reject) =>
@@ -10,7 +10,11 @@ export function deferUntilComponentReady<T>(
       timeoutMs
     )
   );
-  return Promise.race([importedComponentReady(), timeout]);
+
+  return Promise.race([
+    instance.importedComponentReady.call(instance),
+    timeout,
+  ]);
 }
 
 export function assertImportedComponentReadyEmitter(
