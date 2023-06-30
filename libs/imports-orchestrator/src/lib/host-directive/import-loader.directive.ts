@@ -18,8 +18,6 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
   private running = 0;
 
   public async ngAfterViewInit(): Promise<void> {
-    this.config.parallel = 3;
-
     if (!ImportsOrchestratorLoaderDirective.processing) {
       // do not await, as it would block the lifecycle callback from completing until the queue is processed
       ImportsOrchestratorLoaderDirective.processing = true;
