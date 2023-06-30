@@ -28,7 +28,6 @@ export async function mountComponent(
     );
     await deferUntilComponentReady(
       componentRef.instance.importedComponentReady,
-      item.destroy$,
       item.timeout
     );
   }
