@@ -68,7 +68,7 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
 
   public ngOnChanges(changes: SimpleChanges): void {
     const importInput = changes['import'];
-    if (importInput.currentValue !== importInput.previousValue) {
+    if (importInput !== undefined && importInput.currentValue !== importInput.previousValue) {
       this.updateImport();
     }
   }
