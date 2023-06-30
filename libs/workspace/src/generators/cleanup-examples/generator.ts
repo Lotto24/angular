@@ -1,5 +1,5 @@
-import {formatFiles, Tree, updateJson,} from '@nrwl/devkit';
-import {CleanupExamplesGeneratorSchema} from './schema';
+import { formatFiles, Tree, updateJson } from '@nrwl/devkit';
+import { CleanupExamplesGeneratorSchema } from './schema';
 
 export default async function (
   tree: Tree,
@@ -11,7 +11,11 @@ export default async function (
 
 async function cleanUpNamespace(tree: Tree, namespace: string): Promise<void> {
   cleanUpLibraries(tree, namespace);
-  await updateJson(tree, 'tsconfig.base.json', createTsConfigBaseCleanupUpdaterFn(namespace));
+  await updateJson(
+    tree,
+    'tsconfig.base.json',
+    createTsConfigBaseCleanupUpdaterFn(namespace)
+  );
 }
 
 function cleanUpLibraries(tree: Tree, namespace: string): void {
@@ -19,19 +23,23 @@ function cleanUpLibraries(tree: Tree, namespace: string): void {
   tree.delete(directory);
 }
 
-function createTsConfigBaseCleanupUpdaterFn(namespace: string): (tsConfigBase: any) => any {
+function createTsConfigBaseCleanupUpdaterFn(
+  namespace: string
+): (tsConfigBase: any) => any {
   return (tsConfigBase) => {
-    tsConfigBase.compilerOptions.paths = Object.entries(tsConfigBase.compilerOptions.paths).reduce((r, [key, value]) => {
-      if (key.includes(namespace)) {
+    tsConfigBase.compilerOptions.paths = Object.entries(
+      tsConfigBase.compilerOptions.paths
+    ).reduce((r, [key, value]) => {
+      if (key.match(namespace + '/')) {
         return r;
       }
 
       return {
         ...r,
-        [key]: value
+        [key]: value,
       };
     }, {});
 
     return tsConfigBase;
-  }
+  };
 }

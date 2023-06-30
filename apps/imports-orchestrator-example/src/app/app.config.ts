@@ -29,6 +29,8 @@ const APP_IMPORTS_ORCHESTRATION = {
   tab1: 32,
   tab2: 33,
   tabKeep: 34,
+
+  input: 501,
 };
 
 export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;
