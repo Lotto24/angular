@@ -13,7 +13,6 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
 
   private config = inject(ImportsOrchestratorConfig);
   private router = inject(Router);
-  private zone = inject(NgZone);
 
   private running = 0;
 
