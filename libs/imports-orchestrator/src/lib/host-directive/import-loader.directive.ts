@@ -1,7 +1,7 @@
 import type { AfterViewInit } from '@angular/core';
 import { Directive, inject, NgZone } from '@angular/core';
 import { Router } from '@angular/router';
-import { processImportQueue as processImportItem } from '../queue/process-import-queue';
+import { processImportItem } from '../queue/process-import-item';
 import { ImportsOrchestratorConfig } from '../config/import.config';
 
 @Directive({
