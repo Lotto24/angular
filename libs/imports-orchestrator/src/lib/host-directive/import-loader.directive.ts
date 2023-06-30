@@ -15,31 +15,49 @@ export class ImportsOrchestratorLoaderDirective implements AfterViewInit {
   private router = inject(Router);
   private zone = inject(NgZone);
 
+  private running = 0;
+
   public async ngAfterViewInit(): Promise<void> {
+    this.config.parallel = 3;
+
     if (!ImportsOrchestratorLoaderDirective.processing) {
       // do not await, as it would block the lifecycle callback from completing until the queue is processed
       ImportsOrchestratorLoaderDirective.processing = true;
-      let item = 0;
-      let concurrent = 0;
 
-      while (this.config.queue.length > 0) {
-        const currentBatch = [];
-        for (let i = concurrent; i < this.config.parallel; i++) {
-          currentBatch.push(
-            processImportItem(item++, this.config, this.router).then(() => {
-              this.config.logger.debug(`Queue resolved item, concurrent now ${concurrent}`);
-            }).finally(() => {
-              concurrent--;
-            })
-          );
-        }
-        concurrent += currentBatch.length;
-        this.config.logger.debug(`Queue started batch with ${currentBatch.length} items, concurrency now ${concurrent}`);
-        await Promise.any(currentBatch);
-      }
+      await this.processQueue();
 
-      ImportsOrchestratorLoaderDirective.processing = false;
       this.config.logger.debug('queue processing ended');
+      ImportsOrchestratorLoaderDirective.processing = false;
     }
+  }
+
+  private processQueue(pid: number = 0): Promise<void> {
+    return new Promise<void>((resolve) => {
+      const currentBatch: Promise<void>[] = [];
+      for (let i = this.running; i < this.config.parallel; i++) {
+        this.running++;
+        currentBatch.push(
+          processImportItem(pid++, this.config, this.router)
+            .then(() => {
+              this.config.logger.debug(
+                `Queue resolved item, concurrent now ${this.running}`
+              );
+            })
+            .finally(() => {
+              this.running--;
+              if (this.config.queue.length !== 0) {
+                this.processQueue(pid++).then(() => {
+                  resolve();
+                });
+              } else if (this.running === 0) {
+                resolve();
+              }
+            })
+        );
+      }
+      this.config.logger.debug(
+        `Queue starting batch with ${currentBatch.length}, concurrent now ${this.running}`
+      );
+    });
   }
 }
