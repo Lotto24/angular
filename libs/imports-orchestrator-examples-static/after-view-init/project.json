@@ -1,0 +1,20 @@
+{
+  "name": "imports-orchestrator-examples--static-after-view-init",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/imports-orchestrator-examples/-static-after-view-init/src",
+  "prefix": "imports-orchestrator-examples",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/imports-orchestrator-examples/-static-after-view-init/**/*.ts",
+          "libs/imports-orchestrator-examples/home1/**/*.html"
+        ]
+      }
+    }
+  }
+}
