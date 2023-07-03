@@ -9,10 +9,10 @@ import { provideImportsOrchestration } from '@lotto24-angular/imports-orchestrat
 const APP_IMPORTS_ORCHESTRATION = {
   home0: 1,
   home1: 2,
-  afterViewInit001: 2,
-  afterViewInit002: 6,
-  afterViewInit003: 7,
-  afterViewInit004: 5,
+  afterViewInit0: 2,
+  afterViewInit1: 6,
+  afterViewInit2: 7,
+  afterViewInit3: 5,
   home2: 3,
   home3: 4,
 

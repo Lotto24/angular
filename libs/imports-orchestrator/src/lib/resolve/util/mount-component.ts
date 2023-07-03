@@ -18,15 +18,8 @@ export async function mountComponent(
   bindComponentInputs(componentRef, item.inputs$, item.destroy$);
   bindComponentOutputs(componentRef, item.outputs$, item.destroy$);
 
-  // This will trigger Angular lifecycle on componentRef's entire component tree
-  // * Bindings will be resolved
-  // * Projected content will be processed
-  // * Usages of ImportsOrchestratorQueueDirective in the tree will then insert items to the queue
-  // * It is of vital importance that items are queued before triggering processQueue again
-  // IMPORTANT: markForCheck is not enough, as it would not cause an immediate change detection cycle
-  componentChangeDetectorRef.detectChanges();
-
   if (assertImportedComponentReadyEmitter(componentRef.instance)) {
+    componentChangeDetectorRef.markForCheck();
     item.logger.debug(
       `deferring until component w/ import=${item.import} emits ready`
     );
@@ -39,5 +32,11 @@ export async function mountComponent(
     }
   }
 
-
+  // This will trigger Angular lifecycle on componentRef's entire component tree
+  // * Bindings will be resolved
+  // * Projected content will be processed
+  // * Usages of ImportsOrchestratorQueueDirective in the tree will then insert items to the queue
+  // * It is of vital importance that items are queued before triggering processQueue again
+  // IMPORTANT: markForCheck is not enough, as it would not cause an immediate change detection cycle
+  componentChangeDetectorRef.detectChanges();
 }

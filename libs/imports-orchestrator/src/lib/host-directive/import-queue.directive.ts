@@ -48,7 +48,6 @@ export type ImportsOrchestratorQueueItem = ImportsOrchestratorQueueItemExtras &
 })
 export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   @Input() public import!: string;
-  @Input() public orderKey!: string;
   @Input() public providers!: StaticProvider[];
   @Input() public timeout!: number;
 
@@ -112,7 +111,7 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
     const resolveFn = createResolveFn(this.config.imports, this.import);
     const priority = resolveImportPriority(
       this.config.orchestration,
-      this.orderKey || this.import
+      this.import
     );
 
     const injector = Injector.create({
@@ -138,10 +137,8 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
 
     this.importQueued.emit();
 
-    const orderKeyMessage = this.orderKey ? ` (orderKey=${this.orderKey})` : '';
-
     this.logger.debug(
-      `queue insert @priority=${priority}${orderKeyMessage}, @import=${this.import}`
+      `queue insert @priority=${priority}, @import=${this.import}`
     );
 
     this.queueProcessor.process();
@@ -154,16 +151,27 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
 }
 
 function createResolveFn(
-  config: { [key: string]: ImportsOrchestratorQueueItemResolveFn },
-  importId: string
+  config: { [key: string]: string | ImportsOrchestratorQueueItemResolveFn },
+  importId: string,
+  depth = 0
 ): ImportsOrchestratorQueueItemResolveFn {
-  const resolveFn = config[importId];
+  const resolveFnOrString = config[importId];
 
-  if (!resolveFn) {
-    throw new Error(`Missing resolve configuration for import: ${importId}`);
+  if (depth > 100) {
+    throw new Error(
+      `circular import resolution detected w/ import=${importId}`
+    );
   }
 
-  return resolveFn;
+  if (typeof resolveFnOrString === 'string') {
+    return createResolveFn(config, resolveFnOrString, ++depth);
+  }
+
+  if (typeof resolveFnOrString === 'function') {
+    return resolveFnOrString as ImportsOrchestratorQueueItemResolveFn;
+  }
+
+  throw new Error(`Missing resolve configuration for import: ${importId}`);
 }
 
 function resolveImportPriority(

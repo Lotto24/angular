@@ -11,8 +11,19 @@ import {
   Orchestration,
 } from './config/import.config';
 
+/**
+ * @param imports
+ *
+ * @example
+ * {
+ *   'componentA': importStandalone(() => import('my/package/componentA')),
+ *   'componentB': 'componentA' // Alias, for reusing the same import
+ * }
+ */
 export const provideImports = <T>(
-  imports: Partial<{ [key in keyof T]: ImportsOrchestratorQueueItemResolveFn }>
+  imports: Partial<{
+    [key in keyof T]: keyof T | ImportsOrchestratorQueueItemResolveFn;
+  }>
 ): Provider[] => {
   const store = IMPORTS_ORCHESTRATOR_IMPORTS();
 
