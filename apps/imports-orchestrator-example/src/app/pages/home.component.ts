@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  ImportsOrchestratorDirective,
   importNgModule,
+  ImportsOrchestratorDirective,
   importStandalone,
   provideImports,
 } from '@lotto24-angular/imports-orchestrator';

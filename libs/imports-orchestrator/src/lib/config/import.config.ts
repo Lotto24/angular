@@ -9,7 +9,7 @@ export type Orchestration = {
 };
 
 export type ImportsOrchestrators = {
-  [index: string]: ImportsOrchestratorQueueItemResolveFn;
+  [index: string]: string | ImportsOrchestratorQueueItemResolveFn;
 };
 
 export type Logger = Pick<Console, 'info' | 'warn' | 'error' | 'debug'>;

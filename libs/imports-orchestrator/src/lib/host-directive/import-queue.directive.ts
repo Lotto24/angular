@@ -16,7 +16,10 @@ import {
 } from '@angular/core';
 import type { Observable } from 'rxjs';
 import { BehaviorSubject, race, Subject } from 'rxjs';
-import { ImportsOrchestratorConfig } from '../config/import.config';
+import {
+  ImportsOrchestratorConfig,
+  ImportsOrchestrators,
+} from '../config/import.config';
 import { ImportsQueueProcessor } from '../queue/imports-queue-processor.service';
 
 export type ImportsOrchestratorQueueItemResolveFn = (
@@ -151,20 +154,20 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
 }
 
 function createResolveFn(
-  config: { [key: string]: string | ImportsOrchestratorQueueItemResolveFn },
+  config: ImportsOrchestrators,
   importId: string,
-  depth = 0
+  trail: string[] = []
 ): ImportsOrchestratorQueueItemResolveFn {
   const resolveFnOrString = config[importId];
 
-  if (depth > 100) {
+  if (trail.includes(importId)) {
     throw new Error(
-      `circular import resolution detected w/ import=${importId}`
+      `circular imports found: ${[...trail, importId].join(' => ')}`
     );
   }
 
   if (typeof resolveFnOrString === 'string') {
-    return createResolveFn(config, resolveFnOrString, ++depth);
+    return createResolveFn(config, resolveFnOrString, [...trail, importId]);
   }
 
   if (typeof resolveFnOrString === 'function') {
