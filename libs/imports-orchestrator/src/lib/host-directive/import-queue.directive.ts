@@ -51,18 +51,38 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   @Input() public orderKey!: string;
   @Input() public providers!: StaticProvider[];
   @Input() public timeout!: number;
+
+  /**
+   * Emits when the import has been added to the queue (not started though). As the [import]-@Input may change, this may emit multiple times.
+   */
+  @Output() public importQueued = new EventEmitter<void>();
+
+  /**
+   * Emits when importing has started. As the [import]-@Input may change, this may emit multiple times.
+   */
+  @Output() public importStarted = new EventEmitter<void>();
+
+  /**
+   * Emits when importing has finished. As the [import]-@Input may change, this may emit multiple times.
+   * The emitted value may be void if the import does not yield any components (eg. an NgModule without bootstrap components).
+   * Otherwise an array of ComponentRefs is emitted.
+   */
   @Output() public importFinished = new EventEmitter<
     ComponentRef<any>[] | void
   >();
-  @Output() public importQueued = new EventEmitter<void>();
+
+  /**
+   * Emits when importing encounters an error. As the [import]-@Input may change, this may emit multiple times.
+   */
+  @Output() public importError = new EventEmitter<any>();
 
   public readonly viewContainerRef = inject(ViewContainerRef);
-  public destroyQueueDirective$ = new Subject<void>();
-  public destroyComponents$ = new Subject<void>();
+  public readonly destroyQueueDirective$ = new Subject<void>();
+  public readonly destroyComponents$ = new Subject<void>();
 
   private readonly config = inject(ImportsOrchestratorConfig);
-  private readonly queueProcessor = inject(ImportsQueueProcessor);
   public readonly logger = this.config.logger;
+  private readonly queueProcessor = inject(ImportsQueueProcessor);
 
   private readonly inputs$ = new BehaviorSubject<ComponentIO>({});
   private readonly outputs$ = new BehaviorSubject<ComponentIO>({});

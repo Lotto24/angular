@@ -31,10 +31,8 @@ export async function processQueueItem(
 
   try {
     await item.resolveFn(item);
-    // logger.debug(`changeDetection following import=${item.import}, componentRef${componentRef.instance}`);
-
-    // let's loop recursively until the queue is processed
   } catch (x) {
+    item.instance.importError.emit(x);
     logger.error(
       `error processing item w/ import="${item.import}"`,
       `(pid=${pid})`,

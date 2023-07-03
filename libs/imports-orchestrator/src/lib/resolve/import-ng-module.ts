@@ -16,6 +16,8 @@ export function importNgModule(
   promise: () => Promise<any>
 ): ImportsOrchestratorQueueItemResolveFn {
   return async (item: ImportsOrchestratorQueueItem) => {
+    item.instance.importStarted.emit();
+
     const resolvedImport = (await resolvePromiseWithRetries(promise)) as
       | Constructor
       | ESModule;
