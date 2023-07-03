@@ -12,7 +12,7 @@ import {
     {
       directive: ImportsOrchestratorQueueDirective,
       inputs: ['import', 'orderKey', 'providers', 'inputs', 'outputs'],
-      outputs: ['importFinished'],
+      outputs: ['importFinished', 'importQueued'],
     },
     {
       directive: ImportsOrchestratorClassDirective,
