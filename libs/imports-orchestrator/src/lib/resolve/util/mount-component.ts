@@ -14,6 +14,7 @@ export async function mountComponent(
   const componentChangeDetectorRef =
     componentRef.injector.get(ChangeDetectorRef);
 
+  item.destroy$.subscribe(() => componentRef.destroy());
   bindComponentInputs(componentRef, item.inputs$, item.destroy$);
   bindComponentOutputs(componentRef, item.outputs$, item.destroy$);
 

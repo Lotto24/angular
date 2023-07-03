@@ -15,7 +15,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import type { Observable } from 'rxjs';
-import {BehaviorSubject, race, Subject} from 'rxjs';
+import { BehaviorSubject, race, Subject } from 'rxjs';
 import { ImportsOrchestratorConfig } from '../config/import.config';
 import { ImportsQueueProcessor } from '../queue/imports-queue-processor.service';
 
@@ -84,7 +84,6 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
       importInput.currentValue !== importInput.previousValue
     ) {
       this.destroyComponents$.next(); // destroy a previously mounted component(s)
-      this.viewContainerRef.clear(); // clean up before adding the new component(s)
       this.updateImport();
     }
   }
