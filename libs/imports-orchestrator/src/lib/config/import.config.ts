@@ -3,6 +3,7 @@ import {
   ImportsOrchestratorQueueItemResolveFn,
 } from '../host-directive';
 import { Queue } from '../queue/queue';
+import { validateOrchestration } from './validate';
 
 export type Orchestration = {
   [index: string]: number;
@@ -55,7 +56,9 @@ export class ImportsOrchestratorConfig
   constructor(
     public readonly orchestration: Orchestration,
     private readonly options: Partial<AngularImportOrchestratorOptions>
-  ) {}
+  ) {
+    validateOrchestration(orchestration, this.logger);
+  }
 }
 
 function createLogger(logger: Logger, prefix: string): Logger {
