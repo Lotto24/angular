@@ -5,6 +5,7 @@ import {Schema as NxAngularLibrarySchema} from "@nrwl/angular/src/generators/lib
 import {Schema as NxAngularComponentSchema} from "@nrwl/angular/src/generators/component/schema";
 import {FileUpdates, ModuleGeneratorUtil, updateSourceFiles} from "../util/ts-morph.util";
 import {ts} from "ts-morph";
+import { Blob } from 'buffer';
 import * as fs from "fs";
 
 interface ExamplesScaffolderLibrary {

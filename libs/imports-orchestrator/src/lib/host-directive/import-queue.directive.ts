@@ -58,6 +58,7 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   @Output() public importFinished = new EventEmitter<
     ComponentRef<any>[] | void
   >();
+  @Output() public importQueued = new EventEmitter<void>();
 
   public readonly viewContainerRef = inject(ViewContainerRef);
   public readonly destroy$ = new Subject<void>();
@@ -87,7 +88,7 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
     });
 
     const timeout = this.timeout ?? this.config.timeout;
-
+    
     this.viewContainerRef.clear(); // clean up before adding the new component
 
     this.config.queue.insert(priority, {
@@ -101,6 +102,8 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
       injector,
       priority,
     });
+
+    this.importQueued.emit();
 
     const orderKeyMessage = this.orderKey ? ` (orderKey=${this.orderKey})` : '';
 
