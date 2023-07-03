@@ -20,9 +20,15 @@ export async function mountComponent(
 
   if (assertImportedComponentReadyEmitter(componentRef.instance)) {
     item.logger.debug(
-      `deferring until component w/import=${item.import} emits ready`
+      `deferring until component w/ import=${item.import} emits ready`
     );
-    await deferUntilComponentReady(componentRef.instance, item.timeout);
+    try {
+      await deferUntilComponentReady(componentRef.instance, item.timeout);
+    } catch (x) {
+      item.logger.warn(
+        `deferred component w/ import=${item.import} timed out after ${item.timeout}ms`
+      );
+    }
   }
 
   // This will trigger Angular lifecycle on componentRef's entire component tree
