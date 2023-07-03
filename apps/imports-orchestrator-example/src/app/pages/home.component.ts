@@ -15,12 +15,16 @@ import type { AppImportsOrchestration } from '../app.config';
     <h2>Home</h2>
     <ng-container import="home0"></ng-container>
     <ng-container import="home1"></ng-container>
+    <ng-container import="afterViewInit" orderKey="afterViewInit001"></ng-container>
+    <ng-container import="afterViewInit" orderKey="afterViewInit002"></ng-container>
+    <ng-container import="afterViewInit" orderKey="afterViewInit003"></ng-container>
+    <ng-container import="afterViewInit" orderKey="afterViewInit004"></ng-container>
     <ng-container import="home2"></ng-container>
     <ng-container import="home3"></ng-container>
   `,
   imports: [ImportsOrchestratorDirective],
   providers: [
-    provideImports<AppImportsOrchestration>({
+    provideImports<any>({
       // just add an import to the ES-Module exporting a standalone component
       home0: importStandalone(() => import('@lotto24-angular/imports-orchestrator-examples/home0')),
 
@@ -32,12 +36,13 @@ import type { AppImportsOrchestration } from '../app.config';
       ),
 
       home2: importStandalone(() => import('@lotto24-angular/imports-orchestrator-examples/home2')),
-
+      
       // or import an NgModule with the component referenced in bootstrap
       home3: importNgModule(
         () => import('@lotto24-angular/imports-orchestrator-examples/home3')
-      ),
-
+        ),
+        
+      afterViewInit: importStandalone(() => import('@lotto24-angular/imports-orchestrator-examples-static/after-view-init-home')),
       /**
        * Type-safety ensures you stay on top of your priorities:
        *
