@@ -4,41 +4,34 @@ import { takeUntil } from 'rxjs';
 
 export function bindComponentInputs(
   componentRef: ComponentRef<any>,
-  inputs: { [key: string]: any }
+  inputs$: Observable<{ [key: string]: any }>,
+  destroy$: Observable<void>
 ): void {
-  if (inputs == null) {
-    return;
-  }
-
-  if (typeof inputs !== 'object') {
-    throw new Error(`inputs must be provided as object.`);
-  }
-
-  Object.entries(inputs).forEach(
-    ([key, value]) => (componentRef.instance[key] = value)
-  );
+  inputs$.pipe(takeUntil(destroy$)).subscribe((inputs) => {
+    Object.entries(inputs).forEach(
+      ([key, value]) => (componentRef.instance[key] = value)
+    );
+  });
 }
 
 export function bindComponentOutputs(
   componentRef: ComponentRef<any>,
-  outputs: { [key: string]: any },
+  outputs$: Observable<{ [key: string]: any }>,
   destroy$: Observable<void>
 ): void {
-  if (typeof outputs !== 'object') {
-    throw new Error(`outputs must be provided as object.`);
-  }
+  outputs$.pipe(takeUntil(destroy$)).subscribe((outputs) => {
+    Object.entries(outputs).forEach(([key, value]) => {
+      if (typeof value !== 'function') {
+        throw new Error(
+          `outputs.${key} must be a function, got '${typeof value}'`
+        );
+      }
 
-  Object.entries(outputs).forEach(([key, value]) => {
-    if (typeof value !== 'function') {
-      throw new Error(
-        `outputs.${key} must be a function, got '${typeof value}'`
-      );
-    }
-
-    componentRef.instance[key]
-      .pipe(takeUntil(destroy$))
-      .subscribe((data: any) => {
-        value(data);
-      });
+      componentRef.instance[key]
+        .pipe(takeUntil(destroy$))
+        .subscribe((data: any) => {
+          value(data);
+        });
+    });
   });
 }

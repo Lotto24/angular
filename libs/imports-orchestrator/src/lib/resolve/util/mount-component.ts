@@ -14,13 +14,8 @@ export async function mountComponent(
   const componentChangeDetectorRef =
     componentRef.injector.get(ChangeDetectorRef);
 
-  if (item.inputs) {
-    bindComponentInputs(componentRef, item.inputs);
-  }
-
-  if (item.outputs) {
-    bindComponentOutputs(componentRef, item.outputs, item.destroy$);
-  }
+  bindComponentInputs(componentRef, item.inputs$, item.destroy$);
+  bindComponentOutputs(componentRef, item.outputs$, item.destroy$);
 
   if (assertImportedComponentReadyEmitter(componentRef.instance)) {
     item.logger.debug(

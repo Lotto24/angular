@@ -22,7 +22,7 @@ export class ImportsOrchestratorClassDirective {
 
   constructor() {
     this.queue.importFinished
-      .pipe(takeUntil(this.queue.destroy$))
+      .pipe(takeUntil(this.queue.destroyQueueDirective$))
       .subscribe((refs) => this.onImportFinished(refs));
   }
 
