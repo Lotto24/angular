@@ -13,7 +13,7 @@ import {
   hostDirectives: [
     {
       directive: ImportsOrchestratorQueueDirective,
-      inputs: ['import', 'providers'],
+      inputs: ['import', 'providers', 'timeout'],
     },
     {
       directive: ImportsOrchestratorIODirective,
