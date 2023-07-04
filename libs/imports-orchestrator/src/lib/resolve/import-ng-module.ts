@@ -37,7 +37,6 @@ export function importNgModule(
     if (!componentConstructors?.length) {
       item.logger.debug('no bootstrap components found in ngModuleRef');
       item.lifecycle.importFinished.next();
-      item.lifecycle.importFinished.complete();
       return;
     }
 
