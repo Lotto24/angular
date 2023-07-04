@@ -15,7 +15,7 @@ export function importStandalone(
   promise: () => Promise<any>
 ): ImportsOrchestratorQueueItemResolveFn {
   return async (item: ImportsOrchestratorQueueItem) => {
-    item.instance.importStarted.emit();
+    item.lifecycle.importStarted.emit();
 
     const resolvedImport = (await resolvePromiseWithRetries(promise)) as
       | Constructor
@@ -34,6 +34,6 @@ export function importStandalone(
 
     await mountComponent(componentRef, item);
 
-    item.instance.importFinished.emit([componentRef]);
+    item.lifecycle.importFinished.emit([componentRef]);
   };
 }

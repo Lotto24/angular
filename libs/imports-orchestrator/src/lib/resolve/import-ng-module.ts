@@ -16,7 +16,7 @@ export function importNgModule(
   promise: () => Promise<any>
 ): ImportsOrchestratorQueueItemResolveFn {
   return async (item: ImportsOrchestratorQueueItem) => {
-    item.instance.importStarted.emit();
+    item.lifecycle.importStarted.emit();
 
     const resolvedImport = (await resolvePromiseWithRetries(promise)) as
       | Constructor
@@ -36,8 +36,8 @@ export function importNgModule(
 
     if (!componentConstructors?.length) {
       item.logger.debug('no bootstrap components found in ngModuleRef');
-      item.instance.importFinished.next();
-      item.instance.importFinished.complete();
+      item.lifecycle.importFinished.next();
+      item.lifecycle.importFinished.complete();
       return;
     }
 
@@ -53,6 +53,6 @@ export function importNgModule(
     );
 
     const resolvedComponentRefs = await Promise.all(mountComponentPromises);
-    item.instance.importFinished.emit(resolvedComponentRefs);
+    item.lifecycle.importFinished.emit(resolvedComponentRefs);
   };
 }

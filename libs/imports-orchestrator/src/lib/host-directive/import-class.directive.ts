@@ -4,26 +4,28 @@ import {
   ElementRef,
   inject,
   Input,
+  OnDestroy,
   Renderer2,
 } from '@angular/core';
-import { ImportsOrchestratorQueueDirective } from './import-queue.directive';
-import { takeUntil } from 'rxjs';
+import { Subscription } from 'rxjs';
+import { ImportsOrchestratorLifecycleDirective } from './import-lifecycle.directive';
 
 @Directive({
   selector: '[importCssClass]',
   standalone: true,
 })
-export class ImportsOrchestratorClassDirective {
+export class ImportsOrchestratorClassDirective implements OnDestroy {
   @Input() public cssClass!: string;
 
-  private readonly queue = inject(ImportsOrchestratorQueueDirective, {
+  private readonly subscriptions = new Subscription();
+  private readonly lifecycle = inject(ImportsOrchestratorLifecycleDirective, {
     self: true,
   });
 
   constructor() {
-    this.queue.importFinished
-      .pipe(takeUntil(this.queue.destroyQueueDirective$))
-      .subscribe((refs) => this.onImportFinished(refs));
+    this.subscriptions.add(
+      this.lifecycle.importFinished.subscribe(this.onImportFinished.bind(this))
+    );
   }
 
   private onImportFinished(
@@ -39,5 +41,9 @@ export class ImportsOrchestratorClassDirective {
       const classes = this.cssClass.match(/[^\s]+/gi);
       classes?.forEach((c) => renderer2.addClass(htmlElement, c));
     });
+  }
+
+  public ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

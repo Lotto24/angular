@@ -1,5 +1,4 @@
 import type {
-  ComponentRef,
   OnChanges,
   OnDestroy,
   SimpleChanges,
@@ -7,43 +6,38 @@ import type {
 } from '@angular/core';
 import {
   Directive,
-  EventEmitter,
   inject,
   Injector,
   Input,
-  Output,
   ViewContainerRef,
 } from '@angular/core';
 import type { Observable } from 'rxjs';
-import { BehaviorSubject, race, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import {
   ImportsOrchestratorConfig,
   ImportsOrchestrators,
 } from '../config/import.config';
 import { ImportsQueueProcessor } from '../queue/imports-queue-processor.service';
+import { ImportsOrchestratorIODirective } from './import-io.directive';
+import { ImportsOrchestratorLifecycleDirective } from './import-lifecycle.directive';
 
 export type ImportsOrchestratorQueueItemResolveFn = (
   item: ImportsOrchestratorQueueItem
 ) => Promise<void>;
 
-interface ImportsOrchestratorQueueItemExtras {
+export type ImportsOrchestratorQueueExposed = Pick<
+  ImportsOrchestratorQueueDirective,
+  'io' | 'lifecycle' | 'import' | 'providers' | 'viewContainerRef' | 'logger'
+>;
+
+export interface ImportsOrchestratorQueueItem
+  extends ImportsOrchestratorQueueExposed {
   resolveFn: ImportsOrchestratorQueueItemResolveFn;
   priority: number;
-  instance: ImportsOrchestratorQueueDirective;
   injector: Injector;
-  inputs$: Observable<ComponentIO>;
-  outputs$: Observable<ComponentIO>;
   destroy$: Observable<void>;
   timeout: number;
 }
-
-type ComponentIO = { [index: string]: unknown };
-
-export type ImportsOrchestratorQueueItem = ImportsOrchestratorQueueItemExtras &
-  Pick<
-    ImportsOrchestratorQueueDirective,
-    'import' | 'providers' | 'viewContainerRef' | 'logger'
-  >;
 
 @Directive({
   selector: '[importQueue]',
@@ -54,50 +48,18 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   @Input() public providers!: StaticProvider[];
   @Input() public timeout!: number;
 
-  /**
-   * Emits when the import has been added to the queue (not started though). As the [import]-@Input may change, this may emit multiple times.
-   */
-  @Output() public importQueued = new EventEmitter<void>();
+  public readonly io = inject(ImportsOrchestratorIODirective, {
+    self: true,
+  });
+  public readonly lifecycle = inject(ImportsOrchestratorLifecycleDirective, {
+    self: true,
+  });
 
-  /**
-   * Emits when importing has started. As the [import]-@Input may change, this may emit multiple times.
-   */
-  @Output() public importStarted = new EventEmitter<void>();
-
-  /**
-   * Emits when importing has finished. As the [import]-@Input may change, this may emit multiple times.
-   * The emitted value may be void if the import does not yield any components (eg. an NgModule without bootstrap components).
-   * Otherwise an array of ComponentRefs is emitted.
-   */
-  @Output() public importFinished = new EventEmitter<
-    ComponentRef<any>[] | void
-  >();
-
-  /**
-   * Emits when importing encounters an error. As the [import]-@Input may change, this may emit multiple times.
-   */
-  @Output() public importError = new EventEmitter<any>();
-
-  public readonly viewContainerRef = inject(ViewContainerRef);
-  public readonly destroyQueueDirective$ = new Subject<void>();
   public readonly destroyComponents$ = new Subject<void>();
-
+  public readonly viewContainerRef = inject(ViewContainerRef);
   private readonly config = inject(ImportsOrchestratorConfig);
   public readonly logger = this.config.logger;
   private readonly queueProcessor = inject(ImportsQueueProcessor);
-
-  private readonly inputs$ = new BehaviorSubject<ComponentIO>({});
-  private readonly outputs$ = new BehaviorSubject<ComponentIO>({});
-
-  @Input()
-  public set inputs(value: ComponentIO | null) {
-    this.inputs$.next(value ?? {});
-  }
-
-  @Input()
-  public outputs(value: ComponentIO | null) {
-    this.outputs$.next(value ?? {});
-  }
 
   public ngOnChanges(changes: SimpleChanges): void {
     const importInput = changes['import'];
@@ -125,20 +87,15 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
     const timeout = this.timeout ?? this.config.timeout;
 
     this.config.queue.insert(priority, {
-      ...this,
-      instance: this,
-      import: this.import,
-      destroy$: race(this.destroyComponents$, this.destroyQueueDirective$),
-      inputs$: this.inputs$,
-      outputs$: this.outputs$,
-      logger: this.logger,
+      ...(this as ImportsOrchestratorQueueExposed),
+      destroy$: this.destroyComponents$,
       resolveFn,
       timeout,
       injector,
       priority,
     });
 
-    this.importQueued.emit();
+    this.lifecycle.importQueued.emit();
 
     this.logger.debug(
       `queue insert @priority=${priority}, @import=${this.import}`
@@ -148,8 +105,8 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   }
 
   public ngOnDestroy(): void {
-    this.destroyQueueDirective$.next();
-    this.destroyQueueDirective$.complete();
+    this.destroyComponents$.next();
+    this.destroyComponents$.complete();
   }
 }
 

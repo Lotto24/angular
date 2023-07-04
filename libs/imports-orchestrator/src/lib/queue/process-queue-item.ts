@@ -32,7 +32,7 @@ export async function processQueueItem(
   try {
     await item.resolveFn(item);
   } catch (x) {
-    item.instance.importError.emit(x);
+    item.lifecycle.importErrored.emit(x);
     logger.error(
       `error processing item w/ import="${item.import}"`,
       `(pid=${pid})`,

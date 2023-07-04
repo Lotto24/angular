@@ -9,8 +9,8 @@ export async function mountComponent(
   item: ImportsOrchestratorQueueItem
 ): Promise<void> {
   item.destroy$.subscribe(() => componentRef.destroy());
-  bindComponentInputs(componentRef, item.inputs$, item.destroy$);
-  bindComponentOutputs(componentRef, item.outputs$, item.destroy$);
+  bindComponentInputs(componentRef, item.io.inputs$, item.destroy$);
+  bindComponentOutputs(componentRef, item.io.outputs$, item.destroy$);
 
   try {
     await firstValueFrom(deferUntilComponentReady$(componentRef, item));
