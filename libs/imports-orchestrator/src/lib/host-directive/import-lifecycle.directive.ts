@@ -1,7 +1,7 @@
 import {ComponentRef, Directive, EventEmitter, Output} from "@angular/core";
 
 @Directive({
-  selector: '[importLi]',
+  selector: '[importLifecycle]',
   standalone: true,
 })
 export class ImportsOrchestratorLifecycleDirective {
