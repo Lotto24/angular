@@ -8,6 +8,8 @@ export class ImportsQueueProcessor {
   private static processing = false;
 
   private config = inject(ImportsOrchestratorConfig);
+  private logger = this.config.logger;
+  private queue = this.config.queue;
   private router = inject(Router);
 
   private running = 0;
@@ -19,10 +21,10 @@ export class ImportsQueueProcessor {
 
       this.processQueue()
         .then(() => {
-          this.config.logger.debug('queue processing ended');
+          this.logger.debug('queue processing ended');
         })
         .catch(() => {
-          this.config.logger.debug('queue processing failed');
+          this.logger.debug('queue processing failed');
         })
         .finally(() => {
           ImportsQueueProcessor.processing = false;
@@ -30,26 +32,24 @@ export class ImportsQueueProcessor {
     }
   }
 
-  private async processQueue(pid: number = 0): Promise<void> {
+  private async processQueue(): Promise<void> {
     const concurrentBatch = [];
     for (let i = this.running; i < this.config.parallel; i++) {
       this.running++;
-      concurrentBatch.push(this.processItemAndContinueQueue(pid++));
+      concurrentBatch.push(this.processItem());
     }
-    this.config.logger.debug(
-      `Queue starting ${concurrentBatch.length} item(s) to reach max parallel, concurrent now ${this.running}`
+    this.logger.debug(
+      `queue starting ${concurrentBatch.length} item(s) to reach max parallel (concurrency=${this.running})`
     );
     await Promise.all(concurrentBatch);
   }
 
-  private async processItemAndContinueQueue(pid: number): Promise<void> {
-    await processQueueItem(pid++, this.config, this.router);
+  private async processItem(): Promise<void> {
+    await processQueueItem(this.config, this.router);
     this.running--;
-    this.config.logger.debug(
-      `Queue item resolved, concurrent now ${this.running}`
-    );
-    if (this.config.queue.length !== 0) {
-      await this.processQueue(pid++);
+    this.logger.debug(`queue item resolved, (concurrency=${this.running})`);
+    if (!this.queue.empty) {
+      await this.processQueue();
     }
   }
 }

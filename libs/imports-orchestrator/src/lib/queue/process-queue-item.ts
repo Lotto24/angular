@@ -7,37 +7,31 @@ import { ImportsOrchestratorConfig } from '../config/import.config';
  * recursive loading of queued features
  */
 export async function processQueueItem(
-  pid: number,
   config: ImportsOrchestratorConfig,
   router: Router
 ): Promise<void> {
   const { queue, logger } = config;
   // suspend processing while routing, as navigation takes precedence
-  await routingFinished(pid, config, router);
+  await routingFinished(config, router);
 
   // let's take the next item off the queue
   const item = queue.take();
 
   // let's stop if there are no items in the queue
   if (!item) {
-    logger.debug('queue is drained', `(pid=${pid})`);
+    logger.debug('queue is drained');
     return;
   }
 
   logger.debug(
-    `queue item @priority=${item?.priority}, @import=${item?.import}`,
-    `(pid=${pid})`
+    `queue item @priority=${item?.priority}, @import=${item?.import}`
   );
 
   try {
     await item.resolveFn(item);
   } catch (x) {
     item.lifecycle.importErrored.emit(x);
-    logger.error(
-      `error processing item w/ import="${item.import}"`,
-      `(pid=${pid})`,
-      x
-    );
+    logger.error(`error processing item w/ import="${item.import}"`, x);
   }
 }
 
@@ -46,7 +40,6 @@ export async function processQueueItem(
  * Returns immediately if routing is not ongoing.
  */
 async function routingFinished(
-  pid: number,
   config: ImportsOrchestratorConfig,
   router: Router
 ): Promise<void> {
@@ -56,7 +49,7 @@ async function routingFinished(
     // return immediately, if routing is not ongoing
     return;
   }
-  logger.debug('suspend while routing', `(pid=${pid})`);
+  logger.debug('suspend while routing');
 
   const routingFinished$ = router.events.pipe(
     filter((event) => event instanceof ActivationEnd),
@@ -64,6 +57,6 @@ async function routingFinished(
   );
 
   await firstValueFrom(routingFinished$);
-  logger.debug('resume after routing', `(pid=${pid})`);
+  logger.debug('resume after routing');
   return;
 }
