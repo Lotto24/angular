@@ -2,10 +2,10 @@ import { Directive } from '@angular/core';
 
 import {
   ImportsOrchestratorClassDirective,
+  ImportsOrchestratorIODirective,
+  ImportsOrchestratorLifecycleDirective,
   ImportsOrchestratorQueueDirective,
 } from './host-directive';
-import { ImportsOrchestratorIODirective } from './host-directive/import-io.directive';
-import { ImportsOrchestratorLifecycleDirective } from './host-directive/import-lifecycle.directive';
 
 @Directive({
   selector: '[import]',
@@ -21,7 +21,12 @@ import { ImportsOrchestratorLifecycleDirective } from './host-directive/import-l
     },
     {
       directive: ImportsOrchestratorLifecycleDirective,
-      outputs: ['importQueued', 'importStarted', 'importFinished', 'importErrored'],
+      outputs: [
+        'importQueued',
+        'importStarted',
+        'importFinished',
+        'importErrored',
+      ],
     },
     {
       directive: ImportsOrchestratorClassDirective,

@@ -6,7 +6,7 @@ export function validateOrchestration(
 ) {
   const conflicts = findConflictingPriorities(orchestration).map(
     ([priority, imports]) =>
-      `conflicting prioritiy=${priority} for @imports="${imports.join('", "')}"`
+      `conflicting priority=${priority} for @imports="${imports.join('", "')}"`
   );
 
   if (conflicts.length > 0) {
