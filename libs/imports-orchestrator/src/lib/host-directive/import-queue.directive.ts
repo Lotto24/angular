@@ -24,7 +24,13 @@ export type ImportsOrchestratorQueueItemResolveFn = (
 
 export type ImportsOrchestratorQueueExposed = Pick<
   ImportsOrchestratorQueueDirective,
-  'io' | 'lifecycle' | 'import' | 'providers' | 'viewContainerRef' | 'destroyComponents$' | 'logger'
+  | 'io'
+  | 'lifecycle'
+  | 'import'
+  | 'providers'
+  | 'viewContainerRef'
+  | 'destroyComponents$'
+  | 'logger'
 >;
 
 export interface ImportsOrchestratorQueueItem
@@ -57,18 +63,22 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   public readonly logger = this.config.logger;
   private readonly queueProcessor = inject(ImportsQueueProcessor);
 
+  private item: ImportsOrchestratorQueueItem | null = null;
+
   public ngOnChanges(changes: SimpleChanges): void {
     const importInput = changes['import'];
     if (
       importInput !== undefined &&
       importInput.currentValue !== importInput.previousValue
     ) {
+      this.clearQueuedItem();
       this.destroyComponents$.next(); // destroy a previously mounted component(s)
-      this.updateImport();
+      this.item = this.createQueueItem();
+      this.addItemToQueue(this.item);
     }
   }
 
-  public updateImport(): void {
+  private createQueueItem(): ImportsOrchestratorQueueItem {
     const resolveFn = findResolveFn(
       this.config.imports,
       this.import
@@ -83,24 +93,36 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
 
     const timeout = this.timeout ?? this.config.timeout;
 
-    this.config.queue.insert(priority, {
+    return {
       ...(this as ImportsOrchestratorQueueExposed),
       resolveFn,
       timeout,
       injector,
       priority,
-    });
+    };
+  }
+
+  private addItemToQueue(item: ImportsOrchestratorQueueItem): void {
+    this.config.queue.insert(item.priority, item);
 
     this.lifecycle.importQueued.emit();
 
     this.logger.debug(
-      `queue insert @priority=${priority}, @import=${this.import}`
+      `queue insert @priority=${item.priority}, @import=${this.import}`
     );
 
     this.queueProcessor.process();
   }
 
+  private clearQueuedItem(): void {
+    if (!!this.item) {
+      this.config.queue.take(this.item);
+      this.item = null;
+    }
+  }
+
   public ngOnDestroy(): void {
+    this.clearQueuedItem();
     this.destroyComponents$.next();
     this.destroyComponents$.complete();
   }

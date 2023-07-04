@@ -10,8 +10,12 @@ export class Queue<T> {
     this.data = [...this.data, { priority, payload }].sort(comparePriority);
   }
 
-  public take(): T | undefined {
-    return this.data.shift()?.payload;
+  public take(payload: T | null = null): T | undefined {
+    if (!payload) {
+      return this.data.shift()?.payload;
+    }
+
+    return this.takeSpecific(payload);
   }
 
   public peek(): T | undefined {
@@ -24,6 +28,16 @@ export class Queue<T> {
 
   public get empty(): boolean {
     return this.length < 1;
+  }
+
+  private takeSpecific(payload: T): T | undefined {
+    const index = this.data.findIndex((s) => s.payload === payload);
+    if (index < 0) {
+      return undefined;
+    }
+    const item = this.data[index].payload;
+    this.data = this.data.slice().splice(index, 1);
+    return item;
   }
 }
 
