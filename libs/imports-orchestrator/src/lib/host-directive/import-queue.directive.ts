@@ -11,15 +11,12 @@ import {
   Input,
   ViewContainerRef,
 } from '@angular/core';
-import type { Observable } from 'rxjs';
 import { Subject } from 'rxjs';
-import {
-  ImportsOrchestratorConfig,
-  ImportsOrchestrators,
-} from '../config/import.config';
+import { ImportsOrchestratorConfig } from '../config/import.config';
 import { ImportsQueueProcessor } from '../queue/imports-queue-processor.service';
 import { ImportsOrchestratorIODirective } from './import-io.directive';
 import { ImportsOrchestratorLifecycleDirective } from './import-lifecycle.directive';
+import { findImportPriority, findResolveFn } from './util';
 
 export type ImportsOrchestratorQueueItemResolveFn = (
   item: ImportsOrchestratorQueueItem
@@ -27,7 +24,7 @@ export type ImportsOrchestratorQueueItemResolveFn = (
 
 export type ImportsOrchestratorQueueExposed = Pick<
   ImportsOrchestratorQueueDirective,
-  'io' | 'lifecycle' | 'import' | 'providers' | 'viewContainerRef' | 'logger'
+  'io' | 'lifecycle' | 'import' | 'providers' | 'viewContainerRef' | 'destroyComponents$' | 'logger'
 >;
 
 export interface ImportsOrchestratorQueueItem
@@ -35,7 +32,6 @@ export interface ImportsOrchestratorQueueItem
   resolveFn: ImportsOrchestratorQueueItemResolveFn;
   priority: number;
   injector: Injector;
-  destroy$: Observable<void>;
   timeout: number;
 }
 
@@ -73,11 +69,12 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   }
 
   public updateImport(): void {
-    const resolveFn = createResolveFn(this.config.imports, this.import);
-    const priority = resolveImportPriority(
-      this.config.orchestration,
+    const resolveFn = findResolveFn(
+      this.config.imports,
       this.import
-    );
+    ) as ImportsOrchestratorQueueItemResolveFn;
+
+    const priority = findImportPriority(this.config.orchestration, this.import);
 
     const injector = Injector.create({
       providers: this.providers ?? [],
@@ -88,7 +85,6 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
 
     this.config.queue.insert(priority, {
       ...(this as ImportsOrchestratorQueueExposed),
-      destroy$: this.destroyComponents$,
       resolveFn,
       timeout,
       injector,
@@ -108,45 +104,4 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
     this.destroyComponents$.next();
     this.destroyComponents$.complete();
   }
-}
-
-function createResolveFn(
-  config: ImportsOrchestrators,
-  importId: string,
-  trail: string[] = []
-): ImportsOrchestratorQueueItemResolveFn {
-  const resolveFnOrString = config[importId];
-
-  if (trail.includes(importId)) {
-    throw new Error(
-      `circular imports found: ${[...trail, importId].join(' => ')}`
-    );
-  }
-
-  if (typeof resolveFnOrString === 'string') {
-    return createResolveFn(config, resolveFnOrString, [...trail, importId]);
-  }
-
-  if (typeof resolveFnOrString === 'function') {
-    return resolveFnOrString as ImportsOrchestratorQueueItemResolveFn;
-  }
-
-  throw new Error(`Missing resolve configuration for import: ${importId}`);
-}
-
-function resolveImportPriority(
-  priorities: { [key: string]: number },
-  importId: string
-): number {
-  if (typeof priorities[importId] === 'number') {
-    return priorities[importId];
-  }
-
-  const key = Object.keys(priorities).find((key) => importId.startsWith(key));
-
-  if (key) {
-    return priorities[key];
-  }
-
-  return 9999;
 }

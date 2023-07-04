@@ -26,7 +26,7 @@ export function deferUntilComponentReady$<T>(
   componentRef.injector.get(ChangeDetectorRef).markForCheck(); // ensure Lifecycle hooks are called
 
   const ready$ = from(instance.importedComponentReady.call(instance));
-  return race(ready$, item.destroy$).pipe(
+  return race(ready$, item.destroyComponents$).pipe(
     timeout(item.timeout),
     catchError((err) => {
       if (err instanceof TimeoutError) {
