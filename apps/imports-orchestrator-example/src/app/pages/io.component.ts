@@ -26,7 +26,9 @@ import {interval, Subscription} from 'rxjs';
       <ng-container
         import="input"
         [inputs]="{ test: test, changing: changing }"
+        [outputs]="{ testChange: outputChange.bind(this) }"
       ></ng-container>
+    <h3>Output: {{ outputText }}</h3>
     </div>
   `,
 })
@@ -37,6 +39,7 @@ export class IOComponent implements OnDestroy {
   @Input()
   public changing: number = 0;
   private subscriptions = new Subscription();
+  public outputText: string = '';
 
   constructor(cdr: ChangeDetectorRef) {
     const sub = interval(500).subscribe((value) => {
@@ -46,6 +49,10 @@ export class IOComponent implements OnDestroy {
     });
 
     this.subscriptions.add(sub);
+  }
+
+  public outputChange(value: string): void {
+    this.outputText = value;
   }
 
   ngOnDestroy(): void {

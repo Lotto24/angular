@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,10 +8,17 @@ import { CommonModule } from '@angular/common';
   templateUrl: './imports-orchestrator-examples-static-io-input.component.html',
   styles: [],
 })
-export class ImportsOrchestratorExamplesStaticIoInputComponent {
+export class ImportsOrchestratorExamplesStaticIoInputComponent implements AfterViewInit {
   @Input()
   public test!: string;
-
+  
   @Input()
   public changing!: number;
+  
+  @Output()
+  public testChange = new EventEmitter<string>();
+
+  public ngAfterViewInit(): void {
+    this.testChange.emit('is working!');
+  }
 }
