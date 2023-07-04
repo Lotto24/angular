@@ -11,10 +11,10 @@ import { Subscription } from 'rxjs';
 import { ImportsOrchestratorLifecycleDirective } from './import-lifecycle.directive';
 
 @Directive({
-  selector: '[importCssClass]',
+  selector: '[importCSSClass]',
   standalone: true,
 })
-export class ImportsOrchestratorClassDirective implements OnDestroy {
+export class ImportsOrchestratorCSSClassDirective implements OnDestroy {
   @Input() public cssClass!: string;
 
   private readonly subscriptions = new Subscription();

@@ -1,7 +1,7 @@
 import { Directive } from '@angular/core';
 
 import {
-  ImportsOrchestratorClassDirective,
+  ImportsOrchestratorCSSClassDirective,
   ImportsOrchestratorIODirective,
   ImportsOrchestratorLifecycleDirective,
   ImportsOrchestratorQueueDirective,
@@ -29,7 +29,7 @@ import {
       ],
     },
     {
-      directive: ImportsOrchestratorClassDirective,
+      directive: ImportsOrchestratorCSSClassDirective,
       inputs: ['cssClass'],
     },
   ],
