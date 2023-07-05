@@ -16,7 +16,7 @@ import { ImportsOrchestratorConfig } from '../config/import.config';
 import { ImportsQueueProcessor } from '../queue/imports-queue-processor.service';
 import { ImportsOrchestratorIODirective } from './import-io.directive';
 import { ImportsOrchestratorLifecycleDirective } from './import-lifecycle.directive';
-import { findImportPriority, findFn } from './util';
+import { findFn, findImportPriority } from './util';
 
 export type ImportsOrchestratorQueueItemResolveFn = (
   item: ImportsOrchestratorQueueItem
@@ -79,12 +79,13 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   }
 
   private createQueueItem(): ImportsOrchestratorQueueItem {
-    const resolveFn = findFn(
-      this.config.imports,
-      this.import
-    );
+    const resolveFn = findFn(this.config.imports, this.import);
 
-    const priority = findImportPriority(this.config.orchestration, this.import);
+    const priority = findImportPriority(
+      this.config.orchestration,
+      this.import,
+      this.logger
+    );
 
     const injector = Injector.create({
       providers: this.providers ?? [],
@@ -115,7 +116,7 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   }
 
   private clearQueuedItem(): void {
-    if (!!this.item) {
+    if (this.item) {
       this.config.queue.take(this.item);
       this.item = null;
     }
