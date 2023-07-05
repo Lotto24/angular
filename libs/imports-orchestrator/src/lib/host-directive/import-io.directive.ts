@@ -1,5 +1,6 @@
 import { Directive, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { ImportObservableComponentIO } from '../import.service';
 
 export type ComponentIO = { [index: string]: unknown };
 
@@ -7,7 +8,9 @@ export type ComponentIO = { [index: string]: unknown };
   selector: '[importLifecycle]',
   standalone: true,
 })
-export class ImportsOrchestratorIODirective {
+export class ImportsOrchestratorIODirective
+  implements ImportObservableComponentIO
+{
   public readonly inputs$ = new BehaviorSubject<ComponentIO>({});
   public readonly outputs$ = new BehaviorSubject<ComponentIO>({});
 

@@ -36,7 +36,8 @@ const APP_IMPORTS_ORCHESTRATION = {
 
   input: 501,
 
-  promise: 600,
+  servicePromise: 600,
+  serviceComponent: 601,
 };
 
 export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;

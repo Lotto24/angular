@@ -24,14 +24,20 @@ export async function processQueueItem(
   }
 
   logger.debug(
-    `queue item @priority=${item?.priority}, @import=${item?.import}`
+    `queue item try resolve (@priority=${item?.priority}, @import=${item?.import})`
   );
 
   try {
     await item.resolveFn(item);
+    logger.debug(
+      `queue item resolved (@priority=${item?.priority}, @import=${item?.import})`
+    );
   } catch (x) {
-    item.lifecycle.importErrored.emit(x);
-    logger.error(`error processing item w/ import="${item.import}"`, x);
+    item.lifecycle?.importErrored?.emit(x);
+    logger.error(
+      `error resolving queue item (@priority=${item?.priority}, @import=${item?.import})`,
+      x
+    );
   }
 }
 

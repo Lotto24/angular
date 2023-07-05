@@ -5,13 +5,14 @@ import {
   Injectable,
   Injector,
 } from '@angular/core';
-import { ImportsOrchestratorConfig } from './config/import.config';
+import { ImportsOrchestratorConfig, Logger } from './config/import.config';
 import { findFn, findImportPriority } from './host-directive/util';
 import {
-  ImportsOrchestratorLifecycleDirective,
-  ImportsOrchestratorQueueItem,
+  ComponentIO,
+  ImportsOrchestratorQueueItemResolveFn,
 } from './host-directive';
 import { ImportsQueueProcessor } from './queue/imports-queue-processor.service';
+import { Observable } from 'rxjs';
 
 export interface ImportLifecycle {
   /**
@@ -37,10 +38,24 @@ export interface ImportLifecycle {
   importErrored: EventEmitter<any>;
 }
 
-interface ImportServiceOptions {
-  lifecycle?: ImportLifecycle;
-  injector?: Injector;
-  timeout?: number;
+export interface ImportObservableComponentIO {
+  readonly inputs$: Observable<ComponentIO>;
+  readonly outputs$: Observable<ComponentIO>;
+}
+
+export interface ImportServiceOptions {
+  lifecycle?: Partial<ImportLifecycle>;
+  io?: ImportObservableComponentIO;
+  injector: Injector;
+  timeout: number;
+}
+
+export interface ImportsOrchestratorQueueItem extends ImportServiceOptions {
+  import: string;
+  resolveFn: ImportsOrchestratorQueueItemResolveFn;
+  priority: number;
+  logger: Logger;
+  destroyComponents$: Observable<void>;
 }
 
 @Injectable({
@@ -52,21 +67,28 @@ export class ImportService {
   private readonly injector = inject(Injector);
   private readonly logger = this.config.logger;
 
-  public import(importId: string, options: ImportServiceOptions): void {
-    const timeout = options.timeout ?? this.config.timeout;
-    const injector = options.injector ?? this.injector;
-    const lifecycle = new ImportsOrchestratorLifecycleDirective();
-    const item = this.createQueueItem(importId, injector, lifecycle, timeout);
+  public import(
+    importId: string,
+    destroy$: Observable<void>,
+    options: Partial<ImportServiceOptions> = {}
+  ): Readonly<ImportsOrchestratorQueueItem> {
+    const item = this.createQueueItem(importId, destroy$, {
+      ...options,
+      injector: options.injector ?? this.injector,
+      timeout: options.timeout ?? this.config.timeout,
+    });
+    return this.addItemToQueue(item);
+  }
 
-    this.addItemToQueue(item);
+  public cancel(item: Readonly<ImportsOrchestratorQueueItem>): boolean {
+    return this.config.queue.take(item) !== undefined;
   }
 
   private createQueueItem(
     importId: string,
-    injector: Injector,
-    lifecycle: ImportLifecycle,
-    timeout: number
-  ): ImportsOrchestratorQueueItem {
+    destroy$: Observable<void>,
+    options: ImportServiceOptions
+  ): Readonly<ImportsOrchestratorQueueItem> {
     const resolveFn = findFn(this.config.imports, importId);
 
     const priority = findImportPriority(
@@ -76,25 +98,27 @@ export class ImportService {
     );
 
     return {
-      import: importId,
-      logger: this.logger,
-      lifecycle,
-      resolveFn,
-      timeout,
-      injector,
+      ...options,
       priority,
+      import: importId,
+      resolveFn,
+      logger: this.logger,
+      destroyComponents$: destroy$,
     };
   }
 
-  private addItemToQueue(item: ImportsOrchestratorQueueItem): void {
+  private addItemToQueue(
+    item: ImportsOrchestratorQueueItem
+  ): Readonly<ImportsOrchestratorQueueItem> {
     this.config.queue.insert(item.priority, item);
 
-    item.lifecycle.importQueued.emit();
+    item.lifecycle?.importQueued?.emit();
 
     this.logger.debug(
-      `queue insert @priority=${item.priority}, @import=${this.import}`
+      `queue insert @priority=${item.priority}, @import=${item.import}`
     );
 
     this.queueProcessor.process();
+    return item;
   }
 }

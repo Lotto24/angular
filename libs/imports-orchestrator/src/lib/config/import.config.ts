@@ -1,9 +1,9 @@
 import {
-  ImportsOrchestratorQueueItem,
   ImportsOrchestratorQueueItemResolveFn,
 } from '../host-directive';
 import { Queue } from '../queue/queue';
 import { validateOrchestration } from './validate';
+import {ImportsOrchestratorQueueItem} from "@lotto24-angular/imports-orchestrator";
 
 export type Orchestration = {
   [index: string]: number;

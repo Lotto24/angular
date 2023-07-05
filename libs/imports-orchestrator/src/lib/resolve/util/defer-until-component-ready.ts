@@ -9,7 +9,8 @@ import {
   TimeoutError,
 } from 'rxjs';
 import { ChangeDetectorRef, ComponentRef } from '@angular/core';
-import { ImportsOrchestratorQueueItem } from '../../host-directive';
+
+import {ImportsOrchestratorQueueItem} from "@lotto24-angular/imports-orchestrator";
 
 export function deferUntilComponentReady$<T>(
   componentRef: ComponentRef<any>,
