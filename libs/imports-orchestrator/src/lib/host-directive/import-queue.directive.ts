@@ -47,7 +47,7 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   });
 
   public readonly destroyComponents$ = new Subject<void>();
-  public readonly viewContainerRef = inject(ViewContainerRef);
+  public viewContainerRef = inject(ViewContainerRef);
   private readonly config = inject(ImportsOrchestratorConfig);
   public readonly logger = this.config.logger;
 
@@ -61,12 +61,12 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
       importInput !== undefined &&
       importInput.currentValue !== importInput.previousValue
     ) {
-      this.addItemToQueue();
+      this.createAndAddItemToQueue();
     }
   }
 
-  private addItemToQueue(): void {
-    this.clearQueuedItem();
+  public createAndAddItemToQueue(): void {
+    this.removeItemFromQueue();
     this.destroyComponents$.next(); // destroy a previously mounted component(s)
 
     const injector = Injector.create({
@@ -74,7 +74,7 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
       parent: this.viewContainerRef.injector,
     });
 
-    this.item = this.importService.import(
+    this.item = this.importService.createQueueItem(
       this.import,
       this.destroyComponents$,
       {
@@ -83,17 +83,19 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
         lifecycle: this.lifecycle,
       }
     );
+
+    this.importService.addItemToQueue(this.item);
   }
 
-  private clearQueuedItem(): void {
+  private removeItemFromQueue(): void {
     if (this.item) {
-      this.importService.cancel(this.item);
+      this.importService.removeItemFromQueue(this.item);
       this.item = null;
     }
   }
 
   public ngOnDestroy(): void {
-    this.clearQueuedItem();
+    this.removeItemFromQueue();
     this.destroyComponents$.next();
     this.destroyComponents$.complete();
   }

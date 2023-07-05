@@ -51,22 +51,29 @@ export class ServiceComponent implements AfterViewInit, OnDestroy {
   container!: ViewContainerRef;
 
   constructor() {
-    this.importService.import('servicePromise', NEVER, {
+    const item = this.importService.createQueueItem('servicePromise', NEVER, {
       lifecycle: { importFinished: this.importFinished },
     });
+    this.importService.addItemToQueue(item);
 
     this.importFinished
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => console.log('import finished'));
-    this.destroy$.subscribe(() => console.log('destroyed'));
+
+    this.destroy$.subscribe(() => console.log('service example destroyed'));
   }
 
   public ngAfterViewInit(): void {
     const injector = this.container.injector;
-    this.importService.import('serviceComponent', this.destroy$, {
-      lifecycle: { importFinished: this.importFinished },
-      injector,
-    });
+    const item = this.importService.createQueueItem(
+      'serviceComponent',
+      this.destroy$,
+      {
+        lifecycle: { importFinished: this.importFinished },
+        injector,
+      }
+    );
+    this.importService.addItemToQueue(item);
   }
 
   public ngOnDestroy(): void {

@@ -13,14 +13,17 @@ import {
   hostDirectives: [
     {
       directive: ImportsOrchestratorQueueDirective,
+      // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
       inputs: ['import', 'providers', 'timeout'],
     },
     {
       directive: ImportsOrchestratorIODirective,
+      // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
       inputs: ['inputs', 'outputs'],
     },
     {
       directive: ImportsOrchestratorLifecycleDirective,
+      // eslint-disable-next-line @angular-eslint/no-outputs-metadata-property
       outputs: [
         'importQueued',
         'importStarted',
@@ -30,6 +33,7 @@ import {
     },
     {
       directive: ImportsOrchestratorCSSClassDirective,
+      // eslint-disable-next-line @angular-eslint/no-inputs-metadata-property
       inputs: ['cssClass'],
     },
   ],

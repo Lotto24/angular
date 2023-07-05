@@ -67,28 +67,17 @@ export class ImportService {
   private readonly injector = inject(Injector);
   private readonly logger = this.config.logger;
 
-  public import(
+  public createQueueItem(
     importId: string,
     destroy$: Observable<void>,
     options: Partial<ImportServiceOptions> = {}
   ): Readonly<ImportsOrchestratorQueueItem> {
-    const item = this.createQueueItem(importId, destroy$, {
+    const opts: ImportServiceOptions = {
       ...options,
       injector: options.injector ?? this.injector,
       timeout: options.timeout ?? this.config.timeout,
-    });
-    return this.addItemToQueue(item);
-  }
+    };
 
-  public cancel(item: Readonly<ImportsOrchestratorQueueItem>): boolean {
-    return this.config.queue.take(item) !== undefined;
-  }
-
-  private createQueueItem(
-    importId: string,
-    destroy$: Observable<void>,
-    options: ImportServiceOptions
-  ): Readonly<ImportsOrchestratorQueueItem> {
     const resolveFn = findFn(this.config.imports, importId);
 
     const priority = findImportPriority(
@@ -98,7 +87,7 @@ export class ImportService {
     );
 
     return {
-      ...options,
+      ...opts,
       priority,
       import: importId,
       resolveFn,
@@ -107,9 +96,7 @@ export class ImportService {
     };
   }
 
-  private addItemToQueue(
-    item: ImportsOrchestratorQueueItem
-  ): Readonly<ImportsOrchestratorQueueItem> {
+  public addItemToQueue(item: ImportsOrchestratorQueueItem): void {
     this.config.queue.insert(item.priority, item);
 
     item.lifecycle?.importQueued?.emit();
@@ -119,6 +106,11 @@ export class ImportService {
     );
 
     this.queueProcessor.process();
-    return item;
+  }
+
+  public removeItemFromQueue(
+    item: Readonly<ImportsOrchestratorQueueItem>
+  ): boolean {
+    return this.config.queue.take(item) !== undefined;
   }
 }
