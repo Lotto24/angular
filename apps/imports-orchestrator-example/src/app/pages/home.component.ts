@@ -6,6 +6,7 @@ import {
   provideImports,
 } from '@lotto24-angular/imports-orchestrator';
 import type { AppImportsOrchestration } from '../app.config';
+import { importPromise } from '../../../../../libs/imports-orchestrator/src/lib/resolve/import-promise';
 
 @Component({
   selector: 'example-home',
@@ -56,6 +57,11 @@ import type { AppImportsOrchestration } from '../app.config';
       afterViewInit2: 'afterViewInit0',
       afterViewInit3: 'afterViewInit0',
 
+      promise: importPromise(() =>
+        new Promise((resolve) => setTimeout(resolve, 1000)).then(() =>
+          console.log('test promise resolved')
+        )
+      ),
       /**
        * Type-safety ensures you stay on top of your priorities:
        *

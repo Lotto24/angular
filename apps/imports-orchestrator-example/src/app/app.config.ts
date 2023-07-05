@@ -35,6 +35,8 @@ const APP_IMPORTS_ORCHESTRATION = {
   tabKeep: 34,
 
   input: 501,
+
+  promise: 600,
 };
 
 export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;

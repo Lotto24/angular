@@ -12,11 +12,12 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ImportsOrchestratorConfig } from '../config/import.config';
+import { ImportsOrchestratorConfig, Logger } from '../config/import.config';
 import { ImportsQueueProcessor } from '../queue/imports-queue-processor.service';
 import { ImportsOrchestratorIODirective } from './import-io.directive';
 import { ImportsOrchestratorLifecycleDirective } from './import-lifecycle.directive';
 import { findFn, findImportPriority } from './util';
+import { ImportLifecycle } from '../import.service';
 
 export type ImportsOrchestratorQueueItemResolveFn = (
   item: ImportsOrchestratorQueueItem
@@ -33,13 +34,15 @@ export type ImportsOrchestratorQueueExposed = Pick<
   | 'logger'
 >;
 
-export interface ImportsOrchestratorQueueItem
-  extends ImportsOrchestratorQueueExposed {
+export type ImportsOrchestratorQueueItem = {
+  import: string;
   resolveFn: ImportsOrchestratorQueueItemResolveFn;
   priority: number;
   injector: Injector;
+  lifecycle: ImportLifecycle;
   timeout: number;
-}
+  logger: Logger;
+};
 
 @Directive({
   selector: '[importQueue]',
@@ -79,6 +82,11 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   }
 
   private createQueueItem(): ImportsOrchestratorQueueItem {
+    const injector = Injector.create({
+      providers: this.providers ?? [],
+      parent: this.viewContainerRef.injector,
+    });
+
     const resolveFn = findFn(this.config.imports, this.import);
 
     const priority = findImportPriority(
@@ -86,11 +94,6 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
       this.import,
       this.logger
     );
-
-    const injector = Injector.create({
-      providers: this.providers ?? [],
-      parent: this.viewContainerRef.injector,
-    });
 
     const timeout = this.timeout ?? this.config.timeout;
 

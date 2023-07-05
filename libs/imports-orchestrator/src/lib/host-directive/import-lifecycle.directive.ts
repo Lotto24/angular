@@ -1,10 +1,11 @@
-import {ComponentRef, Directive, EventEmitter, Output} from "@angular/core";
+import { ComponentRef, Directive, EventEmitter, Output } from '@angular/core';
+import { ImportLifecycle } from '../import.service';
 
 @Directive({
   selector: '[importLifecycle]',
   standalone: true,
 })
-export class ImportsOrchestratorLifecycleDirective {
+export class ImportsOrchestratorLifecycleDirective implements ImportLifecycle {
   /**
    * Emits when the import has been added to the queue (not started though). As the [import]-@Input may change, this may emit multiple times.
    */
