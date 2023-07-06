@@ -24,7 +24,7 @@ export async function processQueueItem(
   }
 
   logger.debug(
-    `queue item try resolve (@priority=${item?.priority}, @import=${item?.import})`
+    `queue item try resolve (@priority=${item?.priority}, @identifier=${item?.identifier})`
   );
 
   try {
@@ -34,13 +34,13 @@ export async function processQueueItem(
     item.callback && item.callback(result, null);
 
     logger.debug(
-      `queue item resolved (@priority=${item?.priority}, @import=${item?.import})`
+      `queue item resolved (@priority=${item?.priority}, @identifier=${item?.identifier})`
     );
   } catch (x) {
     item.lifecycle?.importErrored?.emit(x);
     item.callback && item.callback(null, x);
     logger.error(
-      `error resolving queue item (@priority=${item?.priority}, @import=${item?.import})`,
+      `error resolving queue item (@priority=${item?.priority}, @identifier=${item?.identifier})`,
       x
     );
   }

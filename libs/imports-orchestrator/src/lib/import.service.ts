@@ -1,55 +1,13 @@
-import {
-  ComponentRef,
-  EventEmitter,
-  inject,
-  Injectable,
-  Injector,
-} from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { ImportsOrchestratorConfig, Logger } from './config/import.config';
 import { findFn, findImportPriority } from './host-directive/util';
-import {
-  ComponentIO,
-
-} from './host-directive';
 import { ImportsQueueProcessor } from './queue/imports-queue-processor.service';
 import { Observable } from 'rxjs';
-import {ImportResolveFn} from "./resolve";
-
-export interface ImportLifecycle {
-  /**
-   * Emits when the import has been added to the queue (not started though). As the [import]-@Input may change, this may emit multiple times.
-   */
-  importQueued: EventEmitter<void>;
-
-  /**
-   * Emits when importing has started. As the [import]-@Input may change, this may emit multiple times.
-   */
-  importStarted: EventEmitter<void>;
-
-  /**
-   * Emits when importing has finished. As the [import]-@Input may change, this may emit multiple times.
-   * The emitted value is whatever is returned as the result of the resolve function
-   */
-  importFinished: EventEmitter<unknown>;
-
-  /**
-   * Emits when importing encounters an error. As the [import]-@Input may change, this may emit multiple times.
-   */
-  importErrored: EventEmitter<unknown>;
-
-  /**
-   * Emits when importing has finished. Emits for every component that was imported.
-   * When bootstrapping multiple components, this will emit multiple times
-   * Plus, as the [import]-@Input may change, this may emit multiple times for the same component.
-   *
-   */
-  importComponent: EventEmitter<ComponentRef<unknown>>;
-}
-
-export interface ImportObservableComponentIO {
-  readonly inputs$: Observable<ComponentIO>;
-  readonly outputs$: Observable<ComponentIO>;
-}
+import { ImportResolveFn } from './resolve';
+import {
+  ImportLifecycle,
+  ImportObservableComponentIO,
+} from './import.interface';
 
 export interface ImportServiceOptions {
   lifecycle?: Partial<ImportLifecycle>;
@@ -59,11 +17,11 @@ export interface ImportServiceOptions {
 }
 
 export interface ImportsOrchestratorQueueItem extends ImportServiceOptions {
-  import: string;
+  identifier: string;
   resolveFn: ImportResolveFn;
   priority: number;
   logger: Logger;
-  destroyComponents$: Observable<void>;
+  destroy$: Observable<void>;
   callback?: (result: unknown, err: unknown) => void;
 }
 
@@ -77,7 +35,7 @@ export class ImportService {
   private readonly logger = this.config.logger;
 
   public createQueueItem(
-    importId: string,
+    identifier: string,
     destroy$: Observable<void>,
     options: Partial<ImportServiceOptions> = {}
   ): Readonly<ImportsOrchestratorQueueItem> {
@@ -87,21 +45,21 @@ export class ImportService {
       timeout: options.timeout ?? this.config.timeout,
     };
 
-    const resolveFn = findFn(this.config.imports, importId);
+    const resolveFn = findFn(this.config.imports, identifier);
 
     const priority = findImportPriority(
       this.config.orchestration,
-      importId,
+      identifier,
       this.logger
     );
 
     return {
       ...opts,
       priority,
-      import: importId,
+      identifier,
       resolveFn,
+      destroy$,
       logger: this.logger,
-      destroyComponents$: destroy$,
     };
   }
 
@@ -122,7 +80,7 @@ export class ImportService {
     item.lifecycle?.importQueued?.emit();
 
     this.logger.debug(
-      `queue insert @priority=${item.priority}, @import=${item.import}`
+      `queue insert @priority=${item.priority}, @import=${item.identifier}`
     );
 
     this.queueProcessor.process();

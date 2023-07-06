@@ -15,8 +15,8 @@ import {
   importStandalone,
   provideImports,
 } from '@lotto24-angular/imports-orchestrator';
-import type {AppImportsOrchestration} from '../app.config';
-import {NEVER, Subject, takeUntil} from 'rxjs';
+import type { AppImportsOrchestration } from '../app.config';
+import { NEVER, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'example-service',
@@ -29,7 +29,9 @@ import {NEVER, Subject, takeUntil} from 'rxjs';
   imports: [ImportsOrchestratorDirective],
   providers: [
     provideImports<AppImportsOrchestration>({
-      servicePromise: importPromise(() => fetch('/assets/example.json').then(res => res.json())),
+      servicePromise: importPromise(() =>
+        fetch('/assets/example.json').then((res) => res.json())
+      ),
       serviceComponent: importStandalone(
         () => import('@lotto24-angular/imports-orchestrator-examples/fruit2')
       ),

@@ -1,6 +1,6 @@
 import { Directive, Input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { ImportObservableComponentIO } from '../import.service';
+import { ImportObservableComponentIO } from '../import.interface';
 
 export type ComponentIO = { [index: string]: unknown };
 

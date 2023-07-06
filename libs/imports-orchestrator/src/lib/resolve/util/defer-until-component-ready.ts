@@ -22,21 +22,21 @@ export function deferUntilComponentReady$<T>(
   }
 
   item.logger.debug(
-    `deferring until component w/ import=${item.import} emits ready`
+    `deferring until component w/ import=${item.identifier} emits ready`
   );
   componentRef.injector.get(ChangeDetectorRef).markForCheck(); // ensure Lifecycle hooks are called
 
   const ready$ = from(instance.importedComponentReady.call(instance));
-  return race(ready$, item.destroyComponents$).pipe(
+  return race(ready$, item.destroy$).pipe(
     timeout(item.timeout),
     catchError((err) => {
       if (err instanceof TimeoutError) {
         item.logger.warn(
-          `deferred component w/ import=${item.import} timed out after ${item.timeout}ms`
+          `deferred component w/ import=${item.identifier} timed out after ${item.timeout}ms`
         );
       } else {
         item.logger.error(
-          `deferred component w/ import=${item.import} errored: ${err}`
+          `deferred component w/ import=${item.identifier} errored: ${err}`
         );
       }
       return of(undefined);

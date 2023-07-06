@@ -28,6 +28,7 @@ import {
         'importQueued',
         'importStarted',
         'importFinished',
+        'importComponent',
         'importErrored',
       ],
     },

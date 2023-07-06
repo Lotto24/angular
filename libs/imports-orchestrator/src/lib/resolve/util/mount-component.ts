@@ -8,13 +8,13 @@ export async function mountComponent(
   componentRef: ComponentRef<unknown>,
   item: ImportsOrchestratorQueueItem
 ): Promise<void> {
-  item.destroyComponents$.subscribe(() => componentRef.destroy());
+  item.destroy$.subscribe(() => componentRef.destroy());
   if (item.io) {
-    bindComponentInputs(componentRef, item.io.inputs$, item.destroyComponents$);
+    bindComponentInputs(componentRef, item.io.inputs$, item.destroy$);
     bindComponentOutputs(
       componentRef,
       item.io.outputs$,
-      item.destroyComponents$
+      item.destroy$
     );
   }
 
