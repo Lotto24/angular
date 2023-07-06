@@ -1,18 +1,19 @@
 import type { Router } from '@angular/router';
 import { ActivationEnd } from '@angular/router';
 import { filter, firstValueFrom, map } from 'rxjs';
-import { ImportsOrchestratorConfig } from '../config/import.config';
+import { ImportsOrchestratorQueueItem } from '../import.service';
+import { Queue } from './queue';
 
 /**
  * recursive loading of queued features
  */
 export async function processQueueItem(
-  config: ImportsOrchestratorConfig,
-  router: Router
+  queue: Queue<ImportsOrchestratorQueueItem>,
+  router: Router,
+  logger: Console
 ): Promise<void> {
-  const { queue, logger } = config;
   // suspend processing while routing, as navigation takes precedence
-  await routingFinished(config, router);
+  await routingFinished(router, logger);
 
   // let's take the next item off the queue
   const item = queue.take();
@@ -50,12 +51,7 @@ export async function processQueueItem(
  * Returns once routing has finished.
  * Returns immediately if routing is not ongoing.
  */
-async function routingFinished(
-  config: ImportsOrchestratorConfig,
-  router: Router
-): Promise<void> {
-  const { logger } = config;
-
+async function routingFinished(router: Router, logger: Console): Promise<void> {
   if (!router.getCurrentNavigation()) {
     // return immediately, if routing is not ongoing
     return;
