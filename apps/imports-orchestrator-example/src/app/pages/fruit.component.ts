@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ComponentRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   importNgModule,
   ImportsOrchestratorDirective,
@@ -68,10 +64,7 @@ import type { AppImportsOrchestration } from '../app.config';
   ],
 })
 export class FruitComponent {
-  public onImportFinsihed(
-    name: string,
-    componentRefs: ComponentRef<any>[] | void
-  ): void {
-    console.log('FruitComponent.onImportFinished', name, componentRefs);
+  public onImportFinsihed(name: string, result: unknown): void {
+    console.log('FruitComponent.onImportFinished', name, result);
   }
 }

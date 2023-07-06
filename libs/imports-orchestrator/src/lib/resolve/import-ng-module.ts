@@ -1,4 +1,4 @@
-import {createNgModule, Type, ViewContainerRef} from '@angular/core';
+import { createNgModule, Type, ViewContainerRef } from '@angular/core';
 import {
   Constructor,
   ESModule,
@@ -14,8 +14,6 @@ export function importNgModule(
   promise: () => Promise<unknown>
 ): ImportsOrchestratorQueueItemResolveFn {
   return async (item: ImportsOrchestratorQueueItem) => {
-    item.lifecycle?.importStarted?.emit();
-
     const resolvedImport = (await resolvePromiseWithRetries(promise)) as
       | Constructor
       | ESModule;
@@ -37,7 +35,7 @@ export function importNgModule(
 
     if (!componentConstructors?.length) {
       item.logger.debug('no bootstrap components found in ngModuleRef');
-      item.lifecycle?.importFinished?.next();
+      item.lifecycle?.importFinished?.emit(undefined);
       return;
     }
 
@@ -54,7 +52,6 @@ export function importNgModule(
       }
     );
 
-    const resolvedComponentRefs = await Promise.all(mountComponentPromises);
-    item.lifecycle?.importFinished?.emit(resolvedComponentRefs);
+    return Promise.all(mountComponentPromises);
   };
 }

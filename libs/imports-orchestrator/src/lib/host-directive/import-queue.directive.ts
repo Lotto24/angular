@@ -23,7 +23,7 @@ import {
 
 export type ImportsOrchestratorQueueItemResolveFn = (
   item: ImportsOrchestratorQueueItem
-) => Promise<void>;
+) => Promise<unknown>;
 
 type ImportsOrchestratorQueueDirectiveExposed = Pick<
   ImportServiceOptions,

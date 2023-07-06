@@ -14,8 +14,6 @@ export function importStandalone(
   promise: () => Promise<unknown>
 ): ImportsOrchestratorQueueItemResolveFn {
   return async (item: ImportsOrchestratorQueueItem) => {
-    item.lifecycle?.importStarted?.emit();
-
     const resolvedImport = (await resolvePromiseWithRetries(promise)) as
       | Constructor
       | ESModule;
@@ -35,6 +33,6 @@ export function importStandalone(
 
     await mountComponent(componentRef, item);
 
-    item.lifecycle?.importFinished?.emit([componentRef]);
+    return componentRef;
   };
 }
