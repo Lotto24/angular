@@ -52,6 +52,10 @@ export function importNgModule(
       }
     );
 
-    return Promise.all(mountComponentPromises);
+    const componentRefs = await Promise.all(mountComponentPromises);
+    componentRefs.forEach((componentRef) =>
+      item.lifecycle?.importComponent?.emit(componentRef)
+    );
+    return componentRefs;
   };
 }

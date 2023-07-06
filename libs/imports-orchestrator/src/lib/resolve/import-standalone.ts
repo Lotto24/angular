@@ -32,7 +32,7 @@ export function importStandalone(
     });
 
     await mountComponent(componentRef, item);
-
+    item.lifecycle?.importComponent?.emit(componentRef);
     return componentRef;
   };
 }

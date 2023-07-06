@@ -1,4 +1,10 @@
-import { EventEmitter, inject, Injectable, Injector } from '@angular/core';
+import {
+  ComponentRef,
+  EventEmitter,
+  inject,
+  Injectable,
+  Injector,
+} from '@angular/core';
 import { ImportsOrchestratorConfig, Logger } from './config/import.config';
 import { findFn, findImportPriority } from './host-directive/util';
 import {
@@ -21,8 +27,7 @@ export interface ImportLifecycle {
 
   /**
    * Emits when importing has finished. As the [import]-@Input may change, this may emit multiple times.
-   * The emitted value may be void if the import does not yield any components (eg. an NgModule without bootstrap components).
-   * Otherwise an array of ComponentRefs is emitted.
+   * The emitted value is whatever is returned as the result of the resolve function
    */
   importFinished: EventEmitter<unknown>;
 
@@ -30,6 +35,14 @@ export interface ImportLifecycle {
    * Emits when importing encounters an error. As the [import]-@Input may change, this may emit multiple times.
    */
   importErrored: EventEmitter<unknown>;
+
+  /**
+   * Emits when importing has finished. Emits for every component that was imported.
+   * When bootstrapping multiple components, this will emit multiple times
+   * Plus, as the [import]-@Input may change, this may emit multiple times for the same component.
+   *
+   */
+  importComponent: EventEmitter<ComponentRef<unknown>>;
 }
 
 export interface ImportObservableComponentIO {
@@ -91,7 +104,9 @@ export class ImportService {
     };
   }
 
-  public async addItemToQueue(item: ImportsOrchestratorQueueItem): Promise<unknown> {
+  public async addItemToQueue(
+    item: ImportsOrchestratorQueueItem
+  ): Promise<unknown> {
     const promise = new Promise((resolve, reject) => {
       item.callback = (result, err) => {
         if (err) {
@@ -99,7 +114,7 @@ export class ImportService {
         } else {
           resolve(result);
         }
-      }
+      };
     });
 
     this.config.queue.insert(item.priority, item);

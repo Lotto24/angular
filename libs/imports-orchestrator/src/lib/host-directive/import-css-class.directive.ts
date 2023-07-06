@@ -24,23 +24,21 @@ export class ImportsOrchestratorCSSClassDirective implements OnDestroy {
 
   constructor() {
     this.subscriptions.add(
-      this.lifecycle.importFinished.subscribe(this.onImportFinished.bind(this))
+      this.lifecycle.importComponent.subscribe(
+        this.onImportComponent.bind(this)
+      )
     );
   }
 
-  private onImportFinished(
-    componentRefs: ComponentRef<unknown>[] | void
-  ): void {
-    if (!this.cssClass || !componentRefs?.length) return;
+  private onImportComponent(componentRef: ComponentRef<unknown>): void {
+    if (!this.cssClass) return;
 
-    componentRefs.forEach((componentRef) => {
-      const renderer2 = componentRef.injector.get(Renderer2);
-      const elementRef = componentRef.injector.get(ElementRef);
-      const htmlElement = elementRef.nativeElement as HTMLElement;
+    const renderer2 = componentRef.injector.get(Renderer2);
+    const elementRef = componentRef.injector.get(ElementRef);
+    const htmlElement = elementRef.nativeElement as HTMLElement;
 
-      const classes = this.cssClass.match(/[^\s]+/gi);
-      classes?.forEach((c) => renderer2.addClass(htmlElement, c));
-    });
+    const classes = this.cssClass.match(/[^\s]+/gi);
+    classes?.forEach((c) => renderer2.addClass(htmlElement, c));
   }
 
   public ngOnDestroy(): void {
