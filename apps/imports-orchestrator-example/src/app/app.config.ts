@@ -53,7 +53,7 @@ export const appConfig = {
       withHashLocation()
     ),
     provideImportsOrchestration(APP_IMPORTS_ORCHESTRATION, {
-      concurrency: downlinkToConcurrencyFn(8, 1),
+      concurrency: downlinkToConcurrencyFn(4, 1),
     }),
   ],
 };

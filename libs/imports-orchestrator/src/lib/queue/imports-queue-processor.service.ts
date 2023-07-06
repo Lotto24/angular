@@ -12,6 +12,7 @@ export class ImportsQueueProcessor {
   private queue = this.config.queue;
   private router = inject(Router);
 
+  private concurrency = 0;
   private running = 0;
 
   public process(): void {
@@ -33,21 +34,15 @@ export class ImportsQueueProcessor {
   }
 
   private async processQueue(): Promise<void> {
+    const concurrency = this.updateConcurrency();
+
     const concurrentBatch = [];
-
-    const concurrency =
-      typeof this.config.concurrency === 'function'
-        ? this.config.concurrency()
-        : this.config.concurrency;
-
-    console.log('concurrency', concurrency);
-
     for (let i = this.running; i < concurrency; i++) {
       this.running++;
       concurrentBatch.push(this.processItem());
     }
     this.logger.debug(
-      `queue starting ${concurrentBatch.length} item(s) to reach max parallel (concurrency=${this.running})`
+      `queue starting ${concurrentBatch.length} item(s) to reach max concurrency (running=${this.running})`
     );
     await Promise.all(concurrentBatch);
   }
@@ -58,5 +53,21 @@ export class ImportsQueueProcessor {
     if (!this.queue.empty) {
       await this.processQueue();
     }
+  }
+
+  private updateConcurrency(): number {
+    const value =
+      typeof this.config.concurrency === 'function'
+        ? this.config.concurrency()
+        : this.config.concurrency;
+
+    if (value !== this.concurrency) {
+      this.logger.debug(
+        `queue concurrency changed to ${value} (previously ${this.concurrency})`
+      );
+      this.concurrency = value;
+    }
+
+    return this.concurrency;
   }
 }
