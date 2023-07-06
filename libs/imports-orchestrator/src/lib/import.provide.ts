@@ -3,13 +3,13 @@ import {
   makeEnvironmentProviders,
   Provider,
 } from '@angular/core';
-import { ImportsOrchestratorQueueItemResolveFn } from './host-directive';
 import {
   AngularImportOrchestratorOptions,
   IMPORTS_ORCHESTRATOR_IMPORTS,
   ImportsOrchestratorConfig,
   Orchestration,
 } from './config/import.config';
+import {ImportResolveFn} from "./resolve";
 
 /**
  * @param imports
@@ -22,7 +22,7 @@ import {
  */
 export const provideImports = <T>(
   imports: Partial<{
-    [key in keyof T]: keyof T | ImportsOrchestratorQueueItemResolveFn;
+    [key in keyof T]: keyof T | ImportResolveFn;
   }>
 ): Provider[] => {
   const store = IMPORTS_ORCHESTRATOR_IMPORTS();
@@ -30,7 +30,7 @@ export const provideImports = <T>(
   Object.keys(imports).forEach((key) => {
     store[key] = imports[
       key as keyof T
-    ] as ImportsOrchestratorQueueItemResolveFn;
+    ] as ImportResolveFn;
   });
 
   return [];

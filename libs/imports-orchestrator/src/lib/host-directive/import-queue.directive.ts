@@ -21,10 +21,6 @@ import {
   ImportsOrchestratorQueueItem,
 } from '../import.service';
 
-export type ImportsOrchestratorQueueItemResolveFn = (
-  item: ImportsOrchestratorQueueItem
-) => Promise<unknown>;
-
 type ImportsOrchestratorQueueDirectiveExposed = Pick<
   ImportServiceOptions,
   'io' | 'lifecycle'

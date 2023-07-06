@@ -9,10 +9,11 @@ import { ImportsOrchestratorConfig, Logger } from './config/import.config';
 import { findFn, findImportPriority } from './host-directive/util';
 import {
   ComponentIO,
-  ImportsOrchestratorQueueItemResolveFn,
+
 } from './host-directive';
 import { ImportsQueueProcessor } from './queue/imports-queue-processor.service';
 import { Observable } from 'rxjs';
+import {ImportResolveFn} from "./resolve";
 
 export interface ImportLifecycle {
   /**
@@ -59,7 +60,7 @@ export interface ImportServiceOptions {
 
 export interface ImportsOrchestratorQueueItem extends ImportServiceOptions {
   import: string;
-  resolveFn: ImportsOrchestratorQueueItemResolveFn;
+  resolveFn: ImportResolveFn;
   priority: number;
   logger: Logger;
   destroyComponents$: Observable<void>;

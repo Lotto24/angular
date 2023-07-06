@@ -7,12 +7,12 @@ import {
   resolveConstructorsFromESModule,
   resolvePromiseWithRetries,
 } from './util';
-import { ImportsOrchestratorQueueItemResolveFn } from '../host-directive';
 import { ImportsOrchestratorQueueItem } from '../import.service';
+import { ImportResolveFn } from './import-resolve-fn.interface';
 
 export function importNgModule(
   promise: () => Promise<unknown>
-): ImportsOrchestratorQueueItemResolveFn {
+): ImportResolveFn {
   return async (item: ImportsOrchestratorQueueItem) => {
     const resolvedImport = (await resolvePromiseWithRetries(promise)) as
       | Constructor
