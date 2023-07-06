@@ -1,18 +1,23 @@
-import { ImportsOrchestratorConfig } from '../config/import.config';
 import { Router } from '@angular/router';
 import { inject, Injectable } from '@angular/core';
 import { processQueueItem } from './process-queue-item';
+import {
+  IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY,
+  IMPORTS_ORCHESTRATOR_FEATURE_LOGGER,
+  IMPORTS_ORCHESTRATOR_FEATURE_QUEUE,
+} from '../token';
 
 @Injectable({ providedIn: 'root' })
 export class ImportsQueueProcessor {
   private static processing = false;
 
-  private config = inject(ImportsOrchestratorConfig);
-  private logger = this.config.logger;
-  private queue = this.config.queue;
+  private readonly logger = inject(IMPORTS_ORCHESTRATOR_FEATURE_LOGGER);
+  private readonly queue = inject(IMPORTS_ORCHESTRATOR_FEATURE_QUEUE);
+  private readonly concurrency = inject(
+    IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY
+  );
   private router = inject(Router);
 
-  private concurrency = 0;
   private running = 0;
 
   public process(): void {
@@ -35,7 +40,6 @@ export class ImportsQueueProcessor {
 
   private async processQueue(): Promise<void> {
     const concurrency = this.updateConcurrency();
-
     const concurrentBatch = [];
     for (let i = this.running; i < concurrency; i++) {
       this.running++;
@@ -48,7 +52,7 @@ export class ImportsQueueProcessor {
   }
 
   private async processItem(): Promise<void> {
-    const item = await processQueueItem(this.config, this.router);
+    await processQueueItem(this.queue, this.router, this.logger);
     this.running--;
     if (!this.queue.empty) {
       await this.processQueue();
@@ -57,17 +61,14 @@ export class ImportsQueueProcessor {
 
   private updateConcurrency(): number {
     const value =
-      typeof this.config.concurrency === 'function'
-        ? this.config.concurrency()
-        : this.config.concurrency;
+      typeof this.concurrency === 'function'
+        ? this.concurrency()
+        : this.concurrency;
 
     if (value !== this.concurrency) {
-      this.logger.debug(
-        `queue concurrency changed to ${value} (previously ${this.concurrency})`
-      );
-      this.concurrency = value;
+      this.logger.debug(`queue concurrency changed to ${value}`);
     }
 
-    return this.concurrency;
+    return value;
   }
 }

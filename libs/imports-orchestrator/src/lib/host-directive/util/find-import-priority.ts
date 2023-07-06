@@ -1,10 +1,8 @@
-import { Logger } from '../../config/import.config';
-
 export const IMPORT_PRIORITY_LOWEST = 9999999999;
 export function findImportPriority(
   priorities: { [p: string]: number },
   importId: string,
-  logger: Logger
+  logger: Console
 ): number {
   if (typeof priorities[importId] === 'number') {
     return priorities[importId];

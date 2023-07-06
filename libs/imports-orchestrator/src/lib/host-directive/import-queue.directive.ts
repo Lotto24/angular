@@ -12,7 +12,6 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { Subject } from 'rxjs';
-import { ImportsOrchestratorConfig } from '../config/import.config';
 import { ImportsOrchestratorIODirective } from './import-io.directive';
 import { ImportsOrchestratorLifecycleDirective } from './import-lifecycle.directive';
 import {
@@ -44,8 +43,6 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
 
   public readonly destroyComponents$ = new Subject<void>();
   public viewContainerRef = inject(ViewContainerRef);
-  private readonly config = inject(ImportsOrchestratorConfig);
-  public readonly logger = this.config.logger;
 
   private readonly importService = inject(ImportService);
 
