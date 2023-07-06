@@ -5,3 +5,4 @@ export * from './lib/import.directive';
 export * from './lib/import.interface';
 export * from './lib/import.provide';
 export * from './lib/import.service';
+export * from './lib/import.util';

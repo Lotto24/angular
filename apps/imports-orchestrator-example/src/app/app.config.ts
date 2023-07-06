@@ -4,7 +4,10 @@ import {
   withHashLocation,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideImportsOrchestration } from '@lotto24-angular/imports-orchestrator';
+import {
+  downlinkToConcurrencyFn,
+  provideImportsOrchestration,
+} from '@lotto24-angular/imports-orchestrator';
 
 const APP_IMPORTS_ORCHESTRATION = {
   home0: 1,
@@ -49,6 +52,8 @@ export const appConfig = {
       withEnabledBlockingInitialNavigation(),
       withHashLocation()
     ),
-    provideImportsOrchestration(APP_IMPORTS_ORCHESTRATION, { parallel: 2 }),
+    provideImportsOrchestration(APP_IMPORTS_ORCHESTRATION, {
+      concurrency: downlinkToConcurrencyFn(8, 1),
+    }),
   ],
 };

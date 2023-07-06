@@ -34,7 +34,15 @@ export class ImportsQueueProcessor {
 
   private async processQueue(): Promise<void> {
     const concurrentBatch = [];
-    for (let i = this.running; i < this.config.parallel; i++) {
+
+    const concurrency =
+      typeof this.config.concurrency === 'function'
+        ? this.config.concurrency()
+        : this.config.concurrency;
+
+    console.log('concurrency', concurrency);
+
+    for (let i = this.running; i < concurrency; i++) {
       this.running++;
       concurrentBatch.push(this.processItem());
     }
