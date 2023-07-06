@@ -1,7 +1,5 @@
-import {
-  ImportResolveFn,
-  resolvePromiseWithRetries,
-} from '@lotto24-angular/imports-orchestrator';
+import { ImportResolveFn } from './import-resolve-fn.interface';
+import { resolvePromiseWithRetries } from './util';
 
 export function importPromise(
   promise: () => Promise<unknown>

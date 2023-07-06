@@ -14,7 +14,7 @@ import {
   ImportsOrchestratorIODirective,
   ImportsOrchestratorLifecycleDirective,
   ImportsOrchestratorQueueDirective,
-} from '@lotto24-angular/imports-orchestrator';
+} from './host-directive';
 
 @Component({
   selector: 'import',
