@@ -1,20 +1,28 @@
 import { ChangeDetectorRef, ComponentRef } from '@angular/core';
-import { ImportsOrchestratorQueueItem } from '../../host-directive';
 import { bindComponentInputs, bindComponentOutputs } from './bind-component-io';
 import { firstValueFrom } from 'rxjs';
 import { deferUntilComponentReady$ } from './defer-until-component-ready';
+import { ImportsOrchestratorQueueItem } from '../../import.service';
 
 export async function mountComponent(
-  componentRef: ComponentRef<any>,
+  componentRef: ComponentRef<unknown>,
   item: ImportsOrchestratorQueueItem
 ): Promise<void> {
   item.destroyComponents$.subscribe(() => componentRef.destroy());
-  bindComponentInputs(componentRef, item.io.inputs$, item.destroyComponents$);
-  bindComponentOutputs(componentRef, item.io.outputs$, item.destroyComponents$);
+  if (item.io) {
+    bindComponentInputs(componentRef, item.io.inputs$, item.destroyComponents$);
+    bindComponentOutputs(
+      componentRef,
+      item.io.outputs$,
+      item.destroyComponents$
+    );
+  }
 
   try {
     await firstValueFrom(deferUntilComponentReady$(componentRef, item));
-  } catch (x) {}
+  } catch (x) {
+    // no-op
+  }
 
   // This will trigger Angular lifecycle on componentRef's entire component tree
   // * Bindings will be resolved

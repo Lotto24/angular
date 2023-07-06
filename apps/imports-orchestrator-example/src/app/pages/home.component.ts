@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  importNgModule,
+  importNgModule, ImportsOrchestratorComponent,
   ImportsOrchestratorDirective,
   importStandalone,
   provideImports,
@@ -14,7 +14,7 @@ import type { AppImportsOrchestration } from '../app.config';
   template: `
     <h2>Home</h2>
     <ng-container import="home0"></ng-container>
-    <ng-container import="home1"></ng-container>
+    <import import="home1"></import>
     <ng-container import="afterViewInit0"></ng-container>
     <ng-container import="afterViewInit1"></ng-container>
     <ng-container import="afterViewInit2"></ng-container>
@@ -22,7 +22,7 @@ import type { AppImportsOrchestration } from '../app.config';
     <ng-container import="home2"></ng-container>
     <ng-container import="home3"></ng-container>
   `,
-  imports: [ImportsOrchestratorDirective],
+  imports: [ImportsOrchestratorDirective, ImportsOrchestratorComponent],
   providers: [
     provideImports<AppImportsOrchestration>({
       // just add an import to the ES-Module exporting a standalone component
@@ -55,7 +55,6 @@ import type { AppImportsOrchestration } from '../app.config';
       afterViewInit1: 'afterViewInit0',
       afterViewInit2: 'afterViewInit0',
       afterViewInit3: 'afterViewInit0',
-
       /**
        * Type-safety ensures you stay on top of your priorities:
        *

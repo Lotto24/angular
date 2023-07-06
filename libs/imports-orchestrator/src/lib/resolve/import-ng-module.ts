@@ -1,4 +1,4 @@
-import { createNgModule, Type } from '@angular/core';
+import { createNgModule, Type, ViewContainerRef } from '@angular/core';
 import {
   Constructor,
   ESModule,
@@ -7,17 +7,13 @@ import {
   resolveConstructorsFromESModule,
   resolvePromiseWithRetries,
 } from './util';
-import {
-  ImportsOrchestratorQueueItem,
-  ImportsOrchestratorQueueItemResolveFn,
-} from '../host-directive';
+import { ImportsOrchestratorQueueItem } from '../import.service';
+import { ImportResolveFn } from './import-resolve-fn.interface';
 
 export function importNgModule(
-  promise: () => Promise<any>
-): ImportsOrchestratorQueueItemResolveFn {
+  promise: () => Promise<unknown>
+): ImportResolveFn {
   return async (item: ImportsOrchestratorQueueItem) => {
-    item.lifecycle.importStarted.emit();
-
     const resolvedImport = (await resolvePromiseWithRetries(promise)) as
       | Constructor
       | ESModule;
@@ -31,18 +27,23 @@ export function importNgModule(
 
     const ngModuleRef = createNgModule(ngModuleConstructor, item.injector);
 
-    const componentConstructors = (ngModuleRef as any)
-      ._bootstrapComponents as Array<Type<any>> | null;
+    const componentConstructors = (
+      ngModuleRef as unknown as {
+        _bootstrapComponents: Array<Type<unknown>> | null;
+      }
+    )._bootstrapComponents;
 
     if (!componentConstructors?.length) {
       item.logger.debug('no bootstrap components found in ngModuleRef');
-      item.lifecycle.importFinished.next();
+      item.lifecycle?.importFinished?.emit(undefined);
       return;
     }
 
+    const viewContainerRef = item.injector.get(ViewContainerRef);
+
     const mountComponentPromises = componentConstructors.map(
       (componentConstructor) => {
-        const componentRef = item.viewContainerRef.createComponent(
+        const componentRef = viewContainerRef.createComponent(
           componentConstructor,
           { injector: ngModuleRef.injector, ngModuleRef }
         );
@@ -51,7 +52,10 @@ export function importNgModule(
       }
     );
 
-    const resolvedComponentRefs = await Promise.all(mountComponentPromises);
-    item.lifecycle.importFinished.emit(resolvedComponentRefs);
+    const componentRefs = await Promise.all(mountComponentPromises);
+    componentRefs.forEach((componentRef) =>
+      item.lifecycle?.importComponent?.emit(componentRef)
+    );
+    return componentRefs;
   };
 }

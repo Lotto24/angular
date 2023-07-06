@@ -9,7 +9,8 @@ import {
   TimeoutError,
 } from 'rxjs';
 import { ChangeDetectorRef, ComponentRef } from '@angular/core';
-import { ImportsOrchestratorQueueItem } from '../../host-directive';
+
+import { ImportsOrchestratorQueueItem } from '../../import.service';
 
 export function deferUntilComponentReady$<T>(
   componentRef: ComponentRef<any>,

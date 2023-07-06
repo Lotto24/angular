@@ -1,16 +1,14 @@
-import {
-  ImportsOrchestratorQueueItem,
-  ImportsOrchestratorQueueItemResolveFn,
-} from '../host-directive';
 import { Queue } from '../queue/queue';
 import { validateOrchestration } from './validate';
+import { ImportsOrchestratorQueueItem } from '../import.service';
+import { ImportResolveFn } from '../resolve';
 
 export type Orchestration = {
   [index: string]: number;
 };
 
 export type ImportsOrchestrators = {
-  [index: string]: string | ImportsOrchestratorQueueItemResolveFn;
+  [index: string]: string | ImportResolveFn;
 };
 
 export type Logger = Pick<Console, 'info' | 'warn' | 'error' | 'debug'>;
@@ -23,7 +21,7 @@ export interface AngularImportOrchestratorOptions {
   timeout: number;
 }
 
-let importsOrchestratorImports: ImportsOrchestrators = {};
+const importsOrchestratorImports: ImportsOrchestrators = {};
 
 export const IMPORTS_ORCHESTRATOR_IMPORTS: () => ImportsOrchestrators = () =>
   importsOrchestratorImports;

@@ -3,6 +3,7 @@ import { HomeComponent } from './pages/home.component';
 import { FruitComponent } from './pages/fruit.component';
 import { TabComponent } from './pages/tab.component';
 import { IOComponent } from './pages/io.component';
+import {ServiceComponent} from "./pages/service.component";
 
 export const appRoutes: Route[] = [
   {
@@ -25,5 +26,9 @@ export const appRoutes: Route[] = [
   {
     path: 'tab',
     component: TabComponent,
+  },
+  {
+    path: 'service',
+    component: ServiceComponent,
   },
 ];

@@ -1,8 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ComponentRef,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   importNgModule,
   ImportsOrchestratorDirective,
@@ -72,10 +68,7 @@ export class TabComponent {
     this.importId = `tab${index}`;
   }
 
-  public onImportFinsihed(
-    name: string,
-    componentRefs: ComponentRef<any>[] | void
-  ): void {
-    console.log('TabComponent.onImportFinished', name, componentRefs);
+  public onImportFinsihed(name: string, result: unknown): void {
+    console.log('TabComponent.onImportFinished', name, result);
   }
 }

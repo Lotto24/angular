@@ -6,17 +6,14 @@ import {
   resolveConstructorsFromESModule,
   resolvePromiseWithRetries,
 } from './util';
-import {
-  ImportsOrchestratorQueueItem,
-  ImportsOrchestratorQueueItemResolveFn,
-} from '../host-directive';
+import { ImportsOrchestratorQueueItem } from '../import.service';
+import { ViewContainerRef } from '@angular/core';
+import {ImportResolveFn} from "./import-resolve-fn.interface";
 
 export function importStandalone(
-  promise: () => Promise<any>
-): ImportsOrchestratorQueueItemResolveFn {
+  promise: () => Promise<unknown>
+): ImportResolveFn {
   return async (item: ImportsOrchestratorQueueItem) => {
-    item.lifecycle.importStarted.emit();
-
     const resolvedImport = (await resolvePromiseWithRetries(promise)) as
       | Constructor
       | ESModule;
@@ -28,12 +25,14 @@ export function importStandalone(
 
     assertStandalone(constructor);
 
-    const componentRef = item.viewContainerRef.createComponent(constructor, {
+    const viewContainerRef = item.injector.get(ViewContainerRef);
+
+    const componentRef = viewContainerRef.createComponent(constructor, {
       injector: item.injector,
     });
 
     await mountComponent(componentRef, item);
-
-    item.lifecycle.importFinished.emit([componentRef]);
+    item.lifecycle?.importComponent?.emit(componentRef);
+    return componentRef;
   };
 }

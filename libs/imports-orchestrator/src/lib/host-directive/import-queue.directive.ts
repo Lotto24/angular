@@ -13,33 +13,18 @@ import {
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ImportsOrchestratorConfig } from '../config/import.config';
-import { ImportsQueueProcessor } from '../queue/imports-queue-processor.service';
 import { ImportsOrchestratorIODirective } from './import-io.directive';
 import { ImportsOrchestratorLifecycleDirective } from './import-lifecycle.directive';
-import { findFn, findImportPriority } from './util';
+import {
+  ImportService,
+  ImportServiceOptions,
+  ImportsOrchestratorQueueItem,
+} from '../import.service';
 
-export type ImportsOrchestratorQueueItemResolveFn = (
-  item: ImportsOrchestratorQueueItem
-) => Promise<void>;
-
-export type ImportsOrchestratorQueueExposed = Pick<
-  ImportsOrchestratorQueueDirective,
-  | 'io'
-  | 'lifecycle'
-  | 'import'
-  | 'providers'
-  | 'viewContainerRef'
-  | 'destroyComponents$'
-  | 'logger'
+type ImportsOrchestratorQueueDirectiveExposed = Pick<
+  ImportServiceOptions,
+  'io' | 'lifecycle'
 >;
-
-export interface ImportsOrchestratorQueueItem
-  extends ImportsOrchestratorQueueExposed {
-  resolveFn: ImportsOrchestratorQueueItemResolveFn;
-  priority: number;
-  injector: Injector;
-  timeout: number;
-}
 
 @Directive({
   selector: '[importQueue]',
@@ -58,10 +43,11 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   });
 
   public readonly destroyComponents$ = new Subject<void>();
-  public readonly viewContainerRef = inject(ViewContainerRef);
+  public viewContainerRef = inject(ViewContainerRef);
   private readonly config = inject(ImportsOrchestratorConfig);
   public readonly logger = this.config.logger;
-  private readonly queueProcessor = inject(ImportsQueueProcessor);
+
+  private readonly importService = inject(ImportService);
 
   private item: ImportsOrchestratorQueueItem | null = null;
 
@@ -71,59 +57,41 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
       importInput !== undefined &&
       importInput.currentValue !== importInput.previousValue
     ) {
-      this.clearQueuedItem();
-      this.destroyComponents$.next(); // destroy a previously mounted component(s)
-      this.item = this.createQueueItem();
-      this.addItemToQueue(this.item);
+      this.createAndAddItemToQueue();
     }
   }
 
-  private createQueueItem(): ImportsOrchestratorQueueItem {
-    const resolveFn = findFn(this.config.imports, this.import);
-
-    const priority = findImportPriority(
-      this.config.orchestration,
-      this.import,
-      this.logger
-    );
+  public createAndAddItemToQueue(): void {
+    this.removeItemFromQueue();
+    this.destroyComponents$.next(); // destroy a previously mounted component(s)
 
     const injector = Injector.create({
       providers: this.providers ?? [],
       parent: this.viewContainerRef.injector,
     });
 
-    const timeout = this.timeout ?? this.config.timeout;
-
-    return {
-      ...(this as ImportsOrchestratorQueueExposed),
-      resolveFn,
-      timeout,
-      injector,
-      priority,
-    };
-  }
-
-  private addItemToQueue(item: ImportsOrchestratorQueueItem): void {
-    this.config.queue.insert(item.priority, item);
-
-    this.lifecycle.importQueued.emit();
-
-    this.logger.debug(
-      `queue insert @priority=${item.priority}, @import=${this.import}`
+    this.item = this.importService.createQueueItem(
+      this.import,
+      this.destroyComponents$,
+      {
+        ...(this as ImportsOrchestratorQueueDirectiveExposed),
+        injector,
+        lifecycle: this.lifecycle,
+      }
     );
 
-    this.queueProcessor.process();
+    this.importService.addItemToQueue(this.item);
   }
 
-  private clearQueuedItem(): void {
+  private removeItemFromQueue(): void {
     if (this.item) {
-      this.config.queue.take(this.item);
+      this.importService.removeItemFromQueue(this.item);
       this.item = null;
     }
   }
 
   public ngOnDestroy(): void {
-    this.clearQueuedItem();
+    this.removeItemFromQueue();
     this.destroyComponents$.next();
     this.destroyComponents$.complete();
   }

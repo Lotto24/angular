@@ -45,9 +45,8 @@ export class ImportsQueueProcessor {
   }
 
   private async processItem(): Promise<void> {
-    await processQueueItem(this.config, this.router);
+    const item = await processQueueItem(this.config, this.router);
     this.running--;
-    this.logger.debug(`queue item resolved, (concurrency=${this.running})`);
     if (!this.queue.empty) {
       await this.processQueue();
     }
