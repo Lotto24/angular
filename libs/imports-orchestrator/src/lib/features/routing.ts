@@ -6,7 +6,16 @@ import {
 } from './internal';
 import { IMPORTS_ORCHESTRATOR_FEATURE_ROUTING } from '../token';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
-import { filter, map, Observable, of, shareReplay, startWith } from 'rxjs';
+import {
+  asyncScheduler,
+  filter,
+  map,
+  Observable,
+  observeOn,
+  of,
+  shareReplay,
+  startWith,
+} from 'rxjs';
 
 export function withSuspendWhileRouting(
   suspendForInitialNavigation = true
@@ -54,6 +63,7 @@ function isRoutingActive$(
 
       return false;
     }),
+    observeOn(asyncScheduler),
     startWith(suspendForInitialNavigation)
   );
 
