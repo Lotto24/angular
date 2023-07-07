@@ -1,20 +1,17 @@
 import {EnvironmentProviders, makeEnvironmentProviders, Provider,} from '@angular/core';
 import {ImportResolveFn} from './resolve';
 import {
-  Concurrency,
-  DeferUntilFirstNavigation,
   IMPORTS_ORCHESTRATOR_IMPORTS,
   ImportsOrchestration,
+  ImportsOrchestratorConcurrency,
   ImportsOrchestratorLogger,
+  ImportsOrchestratorRouting,
   ImportsOrchestratorTimeout,
 } from './features/internal';
-import {withLogger} from './features/logger';
-import {withTimeout} from './features/timeout';
-import {withConcurrencyStatic} from './features/concurrency';
+import {withConcurrencyStatic, withLogger, withoutRouting, withTimeout} from './features';
 import {Queue} from './queue/queue';
 import {ImportsOrchestratorQueueItem} from './import.service';
 import {withQueue} from './features/queue';
-import {withDeferUntilFirstNavigation} from './features/defer-until-first-navigation';
 import {withOrchestration} from './features/orchestration';
 import {withImportsStore} from './features/imports';
 
@@ -42,8 +39,8 @@ export const provideImports = <T>(
 };
 
 export type ImportsOrchestratorFeatures =
-  | DeferUntilFirstNavigation
-  | Concurrency
+  | ImportsOrchestratorRouting
+  | ImportsOrchestratorConcurrency
   | ImportsOrchestratorTimeout
   | ImportsOrchestratorLogger;
 
@@ -54,7 +51,7 @@ export const provideImportsOrchestration = <T>(
   makeEnvironmentProviders([
     // default values:
     ...[
-      withDeferUntilFirstNavigation(true),
+      withoutRouting(),
       withConcurrencyStatic(2),
       withLogger(console),
       withTimeout(10000),

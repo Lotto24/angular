@@ -5,6 +5,7 @@ import {
   IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY,
   IMPORTS_ORCHESTRATOR_FEATURE_LOGGER,
   IMPORTS_ORCHESTRATOR_FEATURE_QUEUE,
+  IMPORTS_ORCHESTRATOR_FEATURE_ROUTING,
 } from '../token';
 
 @Injectable({ providedIn: 'root' })
@@ -13,6 +14,9 @@ export class ImportsQueueProcessor {
 
   private readonly logger = inject(IMPORTS_ORCHESTRATOR_FEATURE_LOGGER);
   private readonly queue = inject(IMPORTS_ORCHESTRATOR_FEATURE_QUEUE);
+  private readonly isRoutingActive$ = inject(
+    IMPORTS_ORCHESTRATOR_FEATURE_ROUTING
+  );
   private readonly concurrency = inject(
     IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY
   );
@@ -52,7 +56,7 @@ export class ImportsQueueProcessor {
   }
 
   private async processItem(): Promise<void> {
-    await processQueueItem(this.queue, this.router, this.logger);
+    await processQueueItem(this.queue, this.logger, this.isRoutingActive$);
     this.running--;
     if (!this.queue.empty) {
       await this.processQueue();

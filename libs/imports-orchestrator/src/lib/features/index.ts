@@ -1,4 +1,4 @@
 export * from './concurrency';
-export * from './defer-until-first-navigation';
+export * from './routing';
 export * from './logger';
 export * from './timeout';

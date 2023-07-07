@@ -1,11 +1,11 @@
 import { Provider } from '@angular/core';
 import { ImportResolveFn } from '../resolve';
 
-export type Concurrency =
+export type ImportsOrchestratorConcurrency =
   ImportsOrchestratorFeature<ImportsOrchestratorFeatureKind.Concurrency>;
 
-export type DeferUntilFirstNavigation =
-  ImportsOrchestratorFeature<ImportsOrchestratorFeatureKind.DeferUntilFirstNavigation>;
+export type ImportsOrchestratorRouting =
+  ImportsOrchestratorFeature<ImportsOrchestratorFeatureKind.Routing>;
 
 export type ImportsOrchestratorTimeout =
   ImportsOrchestratorFeature<ImportsOrchestratorFeatureKind.Timeout>;
@@ -25,7 +25,7 @@ export type ImportsOrchestratorImportsStore =
 export enum ImportsOrchestratorFeatureKind {
   Logger,
   Timeout,
-  DeferUntilFirstNavigation,
+  Routing,
   Concurrency,
   // internal
   ImportsStore,

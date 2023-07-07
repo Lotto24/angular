@@ -1,6 +1,4 @@
-import type { Router } from '@angular/router';
-import { ActivationEnd } from '@angular/router';
-import { filter, firstValueFrom, map } from 'rxjs';
+import { filter, firstValueFrom, Observable, tap } from 'rxjs';
 import { ImportsOrchestratorQueueItem } from '../import.service';
 import { Queue } from './queue';
 
@@ -9,11 +7,16 @@ import { Queue } from './queue';
  */
 export async function processQueueItem(
   queue: Queue<ImportsOrchestratorQueueItem>,
-  router: Router,
-  logger: Console
+  logger: Console,
+  isRountingActive$: Observable<boolean>
 ): Promise<void> {
   // suspend processing while routing, as navigation takes precedence
-  await routingFinished(router, logger);
+  await firstValueFrom(
+    isRountingActive$.pipe(
+      tap((active) => logger.debug(`routing active: ${active}`)),
+      filter((active) => !active)
+    )
+  );
 
   // let's take the next item off the queue
   const item = queue.take();
@@ -45,25 +48,4 @@ export async function processQueueItem(
       x
     );
   }
-}
-
-/**
- * Returns once routing has finished.
- * Returns immediately if routing is not ongoing.
- */
-async function routingFinished(router: Router, logger: Console): Promise<void> {
-  if (!router.getCurrentNavigation()) {
-    // return immediately, if routing is not ongoing
-    return;
-  }
-  logger.debug('suspend while routing');
-
-  const routingFinished$ = router.events.pipe(
-    filter((event) => event instanceof ActivationEnd),
-    map(() => undefined)
-  );
-
-  await firstValueFrom(routingFinished$);
-  logger.debug('resume after routing');
-  return;
 }

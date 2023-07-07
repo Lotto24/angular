@@ -1,6 +1,6 @@
 import { Provider } from '@angular/core';
 import {
-  Concurrency,
+  ImportsOrchestratorConcurrency,
   importsOrchestratorFeature,
   ImportsOrchestratorFeatureKind,
 } from './internal';
@@ -9,7 +9,7 @@ import {IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY} from "../token";
 export function withConcurrencyRelativeToDownlinkSpeed(
   max: number = 4,
   min: number = 1
-): Concurrency {
+): ImportsOrchestratorConcurrency {
   const providers: Provider[] = [
     {
       provide: IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY,
@@ -22,7 +22,7 @@ export function withConcurrencyRelativeToDownlinkSpeed(
   );
 }
 
-export function withConcurrencyStatic(value: number): Concurrency {
+export function withConcurrencyStatic(value: number): ImportsOrchestratorConcurrency {
   const providers: Provider[] = [
     {
       provide: IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY,
