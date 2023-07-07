@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
-  importNgModule, ImportsOrchestratorComponent,
+  importNgModule,
+  ImportsOrchestratorComponent,
   ImportsOrchestratorDirective,
   importStandalone,
   provideImports,

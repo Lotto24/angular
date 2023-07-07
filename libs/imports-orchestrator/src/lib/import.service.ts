@@ -44,8 +44,6 @@ export class ImportService {
   private readonly orchestration = inject(
     IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION
   );
-  private readonly imports = inject(IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE);
-
   private readonly injector = inject(Injector);
 
   public createQueueItem(
@@ -59,7 +57,8 @@ export class ImportService {
       timeout: options.timeout ?? this.timeout,
     };
 
-    const resolveFn = findFn(this.imports, identifier);
+    const imports = opts.injector.get(IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE);
+    const resolveFn = findFn(imports, identifier);
 
     const priority = findImportPriority(
       this.orchestration,

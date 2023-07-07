@@ -1,19 +1,27 @@
-import {EnvironmentProviders, makeEnvironmentProviders, Provider,} from '@angular/core';
-import {ImportResolveFn} from './resolve';
 import {
-  IMPORTS_ORCHESTRATOR_IMPORTS,
+  EnvironmentProviders,
+  makeEnvironmentProviders,
+  Provider,
+} from '@angular/core';
+import { ImportResolveFn } from './resolve';
+import {
   ImportsOrchestration,
   ImportsOrchestratorConcurrency,
   ImportsOrchestratorLogger,
   ImportsOrchestratorRouting,
   ImportsOrchestratorTimeout,
 } from './features/internal';
-import {withConcurrencyStatic, withLogger, withoutRouting, withTimeout} from './features';
-import {Queue} from './queue/queue';
-import {ImportsOrchestratorQueueItem} from './import.service';
-import {withQueue} from './features/queue';
-import {withOrchestration} from './features/orchestration';
-import {withImportsStore} from './features/imports';
+import {
+  withConcurrencyStatic,
+  withLogger,
+  withoutRouting,
+  withTimeout,
+} from './features';
+import { Queue } from './queue/queue';
+import { ImportsOrchestratorQueueItem } from './import.service';
+import { withQueue } from './features/queue';
+import { withOrchestration } from './features/orchestration';
+import { IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE } from './token';
 
 /**
  * @param imports
@@ -29,13 +37,12 @@ export const provideImports = <T>(
     [key in keyof T]: keyof T | ImportResolveFn;
   }>
 ): Provider[] => {
-  const store = IMPORTS_ORCHESTRATOR_IMPORTS();
-
-  Object.keys(imports).forEach((key) => {
-    store[key] = imports[key as keyof T] as ImportResolveFn;
-  });
-
-  return [];
+  return [
+    {
+      provide: IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE,
+      useValue: imports,
+    },
+  ];
 };
 
 export type ImportsOrchestratorFeatures =
@@ -60,6 +67,5 @@ export const provideImportsOrchestration = <T>(
 
     // configured values from features
     ...(features || []).map((feature) => feature.providers),
-    ...withImportsStore(IMPORTS_ORCHESTRATOR_IMPORTS()).providers,
     ...withOrchestration(orchestration).providers,
   ]);

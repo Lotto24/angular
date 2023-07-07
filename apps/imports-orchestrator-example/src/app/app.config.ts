@@ -6,6 +6,9 @@ import {
 } from '@angular/router';
 import { appRoutes } from './app.routes';
 import {
+  importPromise,
+  importStandalone,
+  provideImports,
   provideImportsOrchestration,
   withConcurrencyRelativeToDownlinkSpeed,
   withSuspendWhileRouting,
@@ -60,5 +63,13 @@ export const appConfig = {
       withSuspendWhileRouting(),
       withConcurrencyRelativeToDownlinkSpeed(2, 1)
     ),
+    provideImports<AppImportsOrchestration>({
+      servicePromise: importPromise(() =>
+        fetch('/assets/example.json').then((res) => res.json())
+      ),
+      serviceComponent: importStandalone(
+        () => import('@lotto24-angular/imports-orchestrator-examples/fruit2')
+      ),
+    }),
   ],
 };

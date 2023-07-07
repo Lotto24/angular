@@ -4,19 +4,19 @@ import {
   Component,
   EventEmitter,
   inject,
+  Injector,
   OnDestroy,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
 import {
-  importPromise,
   ImportService,
   ImportsOrchestratorDirective,
   importStandalone,
   provideImports,
 } from '@lotto24-angular/imports-orchestrator';
-import type { AppImportsOrchestration } from '../app.config';
 import { NEVER, Subject, takeUntil } from 'rxjs';
+import { AppImportsOrchestration } from '../app.config';
 
 @Component({
   selector: 'example-service',
@@ -29,9 +29,6 @@ import { NEVER, Subject, takeUntil } from 'rxjs';
   imports: [ImportsOrchestratorDirective],
   providers: [
     provideImports<AppImportsOrchestration>({
-      servicePromise: importPromise(() =>
-        fetch('/assets/example.json').then((res) => res.json())
-      ),
       serviceComponent: importStandalone(
         () => import('@lotto24-angular/imports-orchestrator-examples/fruit2')
       ),
@@ -41,6 +38,7 @@ import { NEVER, Subject, takeUntil } from 'rxjs';
 export class ServiceComponent implements AfterViewInit, OnDestroy {
   private readonly importService = inject(ImportService);
 
+  private injector = inject(Injector);
   private importFinished = new EventEmitter<unknown>();
   private destroy$ = new Subject<void>();
 
