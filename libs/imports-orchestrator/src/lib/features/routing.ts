@@ -8,11 +8,14 @@ import { IMPORTS_ORCHESTRATOR_FEATURE_ROUTING } from '../token';
 import { ActivationEnd, ActivationStart, Router } from '@angular/router';
 import { filter, map, Observable, of, shareReplay, startWith } from 'rxjs';
 
-export function withSuspendWhileRouting(): ImportsOrchestratorRouting {
+export function withSuspendWhileRouting(
+  suspendForInitialNavigation = true
+): ImportsOrchestratorRouting {
   const providers: Provider[] = [
     {
       provide: IMPORTS_ORCHESTRATOR_FEATURE_ROUTING,
-      useFactory: (router: Router) => isRoutingActive$(router),
+      useFactory: (router: Router) =>
+        isRoutingActive$(router, suspendForInitialNavigation),
       deps: [Router],
     },
   ];
@@ -35,8 +38,11 @@ export function withoutRouting(): ImportsOrchestratorRouting {
   );
 }
 
-function isRoutingActive$(router: Router): Observable<boolean> {
-  return router.events.pipe(
+function isRoutingActive$(
+  router: Router,
+  suspendForInitialNavigation: boolean
+): Observable<boolean> {
+  const active$ = router.events.pipe(
     filter(
       (event) =>
         event instanceof ActivationStart || event instanceof ActivationEnd
@@ -48,7 +54,8 @@ function isRoutingActive$(router: Router): Observable<boolean> {
 
       return false;
     }),
-    startWith(!!router.getCurrentNavigation()),
-    shareReplay(1)
+    startWith(suspendForInitialNavigation)
   );
+
+  return active$.pipe(shareReplay(1));
 }

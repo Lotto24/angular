@@ -1,7 +1,8 @@
 import {
+  NoPreloading,
   provideRouter,
-  withEnabledBlockingInitialNavigation,
   withHashLocation,
+  withPreloading,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
 import {
@@ -50,8 +51,9 @@ export const appConfig = {
   providers: [
     provideRouter(
       appRoutes,
-      withEnabledBlockingInitialNavigation(),
-      withHashLocation()
+      // withEnabledBlockingInitialNavigation(),
+      withHashLocation(),
+      withPreloading(NoPreloading)
     ),
     provideImportsOrchestration(
       APP_IMPORTS_ORCHESTRATION,

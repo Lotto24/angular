@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterModule } from '@angular/router';
 import {
   ImportsOrchestratorDirective,
   importStandalone,
@@ -29,4 +29,10 @@ import type { AppImportsOrchestration } from './app.config';
 })
 export class AppComponent {
   title = 'example';
+
+  private router = inject(Router);
+
+  constructor() {
+    this.router.events.subscribe((event) => console.log('router', event));
+  }
 }
