@@ -5,7 +5,7 @@ import {
   ImportsOrchestratorRouting,
 } from './internal';
 import { IMPORTS_ORCHESTRATOR_FEATURE_ROUTING } from '../token';
-import { ActivationEnd, ActivationStart, Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import { filter, map, Observable, of, shareReplay, startWith } from 'rxjs';
 
 export function withSuspendWhileRouting(
@@ -42,13 +42,13 @@ function isRoutingActive$(
   router: Router,
   suspendForInitialNavigation: boolean
 ): Observable<boolean> {
-  const active$ = router.events.pipe(
+  const navigationActive$ = router.events.pipe(
     filter(
       (event) =>
-        event instanceof ActivationStart || event instanceof ActivationEnd
+        event instanceof NavigationStart || event instanceof NavigationEnd
     ),
     map((event) => {
-      if (event instanceof ActivationStart) {
+      if (event instanceof NavigationStart) {
         return true;
       }
 
@@ -57,5 +57,5 @@ function isRoutingActive$(
     startWith(suspendForInitialNavigation)
   );
 
-  return active$.pipe(shareReplay(1));
+  return navigationActive$.pipe(shareReplay(1));
 }

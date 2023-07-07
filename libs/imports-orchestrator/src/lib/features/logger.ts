@@ -8,7 +8,7 @@ import { IMPORTS_ORCHESTRATOR_FEATURE_LOGGER } from '../token';
 
 export function withLogger(
   logger: Console,
-  prefix: string = 'ImportsOrchestrator'
+  prefix: string = '[ImportsOrchestrator]'
 ): ImportsOrchestratorLogger {
   const providers: Provider[] = [
     {

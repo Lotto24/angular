@@ -7,6 +7,7 @@ import {
   IMPORTS_ORCHESTRATOR_FEATURE_QUEUE,
   IMPORTS_ORCHESTRATOR_FEATURE_ROUTING,
 } from '../token';
+import { filter, firstValueFrom, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ImportsQueueProcessor {
@@ -43,6 +44,8 @@ export class ImportsQueueProcessor {
   }
 
   private async processQueue(): Promise<void> {
+    await this.suspendForNavigation();
+
     const concurrency = this.updateConcurrency();
     const concurrentBatch = [];
     for (let i = this.running; i < concurrency; i++) {
@@ -56,7 +59,7 @@ export class ImportsQueueProcessor {
   }
 
   private async processItem(): Promise<void> {
-    await processQueueItem(this.queue, this.logger, this.isRoutingActive$);
+    await processQueueItem(this.queue, this.logger);
     this.running--;
     if (!this.queue.empty) {
       await this.processQueue();
@@ -74,5 +77,19 @@ export class ImportsQueueProcessor {
     }
 
     return value;
+  }
+
+  private async suspendForNavigation(): Promise<unknown> {
+    // suspend processing while routing, as navigation takes precedence
+    return firstValueFrom(
+      this.isRoutingActive$.pipe(
+        tap((active) => {
+          if (active) {
+            this.logger.debug('queue processing suspended for navigation');
+          }
+        }),
+        filter((active) => !active)
+      )
+    );
   }
 }

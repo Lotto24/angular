@@ -30,6 +30,7 @@ export interface ImportsOrchestratorQueueItem extends ImportServiceOptions {
   logger: Console;
   destroy$: Observable<void>;
   callback?: (result: unknown, err: unknown) => void;
+  toString: () => string;
 }
 
 @Injectable({
@@ -73,6 +74,7 @@ export class ImportService {
       resolveFn,
       destroy$,
       logger: this.logger,
+      toString: () => `@identifier="${identifier}", @priority=${priority}`,
     };
   }
 

@@ -1,6 +1,5 @@
-import { filter, firstValueFrom, Observable, tap } from 'rxjs';
-import { ImportsOrchestratorQueueItem } from '../import.service';
-import { Queue } from './queue';
+import {ImportsOrchestratorQueueItem} from '../import.service';
+import {Queue} from './queue';
 
 /**
  * recursive loading of queued features
@@ -8,16 +7,7 @@ import { Queue } from './queue';
 export async function processQueueItem(
   queue: Queue<ImportsOrchestratorQueueItem>,
   logger: Console,
-  isRountingActive$: Observable<boolean>
 ): Promise<void> {
-  // suspend processing while routing, as navigation takes precedence
-  await firstValueFrom(
-    isRountingActive$.pipe(
-      tap((active) => logger.debug(`routing active: ${active}`)),
-      filter((active) => !active)
-    )
-  );
-
   // let's take the next item off the queue
   const item = queue.take();
 
@@ -27,9 +17,7 @@ export async function processQueueItem(
     return;
   }
 
-  logger.debug(
-    `queue item try resolve (@priority=${item?.priority}, @identifier=${item?.identifier})`
-  );
+  logger.debug(`queue item resolve (${item})`);
 
   try {
     item.lifecycle?.importStarted?.emit();
@@ -37,15 +25,10 @@ export async function processQueueItem(
     item.lifecycle?.importFinished?.emit(result);
     item.callback && item.callback(result, null);
 
-    logger.debug(
-      `queue item resolved (@priority=${item?.priority}, @identifier=${item?.identifier})`
-    );
+    logger.debug(`queue item resolved (${item})`);
   } catch (x) {
     item.lifecycle?.importErrored?.emit(x);
     item.callback && item.callback(null, x);
-    logger.error(
-      `error resolving queue item (@priority=${item?.priority}, @identifier=${item?.identifier})`,
-      x
-    );
+    logger.error(`error resolving queue item (${item})`, x);
   }
 }
