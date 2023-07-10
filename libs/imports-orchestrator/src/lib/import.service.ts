@@ -15,6 +15,7 @@ import {
   IMPORTS_ORCHESTRATOR_FEATURE_QUEUE,
   IMPORTS_ORCHESTRATOR_FEATURE_TIMEOUT,
 } from './token';
+import { ImportsStore } from './features/internal';
 
 export interface ImportServiceOptions {
   lifecycle?: Partial<ImportLifecycle>;
@@ -57,8 +58,8 @@ export class ImportService {
       timeout: options.timeout ?? this.timeout,
     };
 
-    const imports = opts.injector.get(IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE);
-    const resolveFn = findFn(imports, identifier);
+    const imports = this.importsFromDI(opts.injector);
+    const resolveFn = this.resolveFnFromImports(imports, identifier);
 
     const priority = findImportPriority(
       this.orchestration,
@@ -106,5 +107,29 @@ export class ImportService {
     item: Readonly<ImportsOrchestratorQueueItem>
   ): boolean {
     return this.queue.take(item) !== undefined;
+  }
+
+  private importsFromDI(injector: Injector): ImportsStore {
+    try {
+      const store = injector.get(IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE);
+      return store.reduce<ImportsStore>((acc, cur) => ({ ...acc, ...cur }), {});
+    } catch (x: unknown) {
+      throw new Error(`
+        Could not inject ${IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE}. Did you \`provideImports({...})\` in a component or module? If you did, you may need to provide an Injector when calling createQueueItem.
+        ${x}`);
+    }
+  }
+
+  private resolveFnFromImports(
+    imports: ImportsStore,
+    identifier: string
+  ): ImportResolveFn {
+    try {
+      return findFn(imports, identifier);
+    } catch (x) {
+      throw new Error(`
+        Could not find ImportResolveFn. Did you \`provideImports({...})\` in a component or module? If you did, you may need to provide an Injector when calling createQueueItem.
+        ${x}`);
+    }
   }
 }

@@ -10,6 +10,7 @@ import {
   ImportsOrchestratorLogger,
   ImportsOrchestratorRouting,
   ImportsOrchestratorTimeout,
+  ImportsStore,
 } from './features/internal';
 import {
   withConcurrencyStatic,
@@ -21,7 +22,10 @@ import { Queue } from './queue/queue';
 import { ImportsOrchestratorQueueItem } from './import.service';
 import { withQueue } from './features/queue';
 import { withOrchestration } from './features/orchestration';
-import { IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE } from './token';
+import {
+  IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE,
+  IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE_GLOBAL,
+} from './token';
 
 /**
  * @param imports
@@ -32,7 +36,7 @@ import { IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE } from './token';
  *   'componentB': 'componentA' // Alias, for reusing the same import
  * }
  */
-export const provideImports = <T>(
+export const provideImports = <T extends ImportsOrchestration>(
   imports: Partial<{
     [key in keyof T]: keyof T | ImportResolveFn;
   }>
@@ -40,7 +44,14 @@ export const provideImports = <T>(
   return [
     {
       provide: IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE,
-      useValue: imports,
+      useFactory: (globalImports: ImportsStore) => {
+        Object.entries(imports).forEach(([key, value]) => {
+          globalImports[key] = value as ImportResolveFn;
+        });
+        return globalImports;
+      },
+      multi: true,
+      deps: [IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE_GLOBAL],
     },
   ];
 };
@@ -64,7 +75,6 @@ export const provideImportsOrchestration = <T>(
       withTimeout(10000),
       withQueue(new Queue<ImportsOrchestratorQueueItem>()),
     ].map((feature) => feature.providers),
-
     // configured values from features
     ...(features || []).map((feature) => feature.providers),
     ...withOrchestration(orchestration).providers,

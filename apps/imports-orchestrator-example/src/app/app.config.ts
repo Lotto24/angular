@@ -7,7 +7,6 @@ import {
 import { appRoutes } from './app.routes';
 import {
   importPromise,
-  importStandalone,
   provideImports,
   provideImportsOrchestration,
   withConcurrencyRelativeToDownlinkSpeed,
@@ -66,9 +65,6 @@ export const appConfig = {
     provideImports<AppImportsOrchestration>({
       servicePromise: importPromise(() =>
         fetch('/assets/example.json').then((res) => res.json())
-      ),
-      serviceComponent: importStandalone(
-        () => import('@lotto24-angular/imports-orchestrator-examples/fruit2')
       ),
     }),
   ],

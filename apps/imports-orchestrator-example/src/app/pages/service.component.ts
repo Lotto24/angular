@@ -4,7 +4,6 @@ import {
   Component,
   EventEmitter,
   inject,
-  Injector,
   OnDestroy,
   ViewChild,
   ViewContainerRef,
@@ -38,7 +37,6 @@ import { AppImportsOrchestration } from '../app.config';
 export class ServiceComponent implements AfterViewInit, OnDestroy {
   private readonly importService = inject(ImportService);
 
-  private injector = inject(Injector);
   private importFinished = new EventEmitter<unknown>();
   private destroy$ = new Subject<void>();
 
