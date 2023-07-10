@@ -6,6 +6,8 @@ import {
 } from '@angular/router';
 import { appRoutes } from './app.routes';
 import {
+  importPromise,
+  provideImports,
   provideImportsOrchestration,
   withConcurrencyRelativeToDownlinkSpeed,
   withSuspendWhileRouting,
@@ -60,5 +62,10 @@ export const appConfig = {
       withSuspendWhileRouting(),
       withConcurrencyRelativeToDownlinkSpeed(2, 1)
     ),
+    provideImports<AppImportsOrchestration>({
+      servicePromise: importPromise(() =>
+        fetch('/assets/example.json').then((res) => res.json())
+      ),
+    }),
   ],
 };
