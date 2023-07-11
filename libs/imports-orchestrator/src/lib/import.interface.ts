@@ -1,6 +1,6 @@
-import {ComponentRef, EventEmitter} from '@angular/core';
-import {Observable} from 'rxjs';
-import {ComponentIO} from './host-directive';
+import { ComponentRef, EventEmitter } from '@angular/core';
+import { Observable } from 'rxjs';
+import { ComponentIO } from './host-directive';
 
 export interface ImportLifecycle {
   /**
@@ -34,6 +34,6 @@ export interface ImportLifecycle {
 }
 
 export interface ImportObservableComponentIO {
-  readonly inputs$: Observable<ComponentIO>;
-  readonly outputs$: Observable<ComponentIO>;
+  readonly inputs$: Observable<ComponentIO | void>;
+  readonly outputs$: Observable<ComponentIO | void>;
 }

@@ -11,8 +11,8 @@ export type ComponentIO = { [index: string]: unknown };
 export class ImportsOrchestratorIODirective
   implements ImportObservableComponentIO
 {
-  public readonly inputs$ = new BehaviorSubject<ComponentIO>({});
-  public readonly outputs$ = new BehaviorSubject<ComponentIO>({});
+  public readonly inputs$ = new BehaviorSubject<ComponentIO | void>(undefined);
+  public readonly outputs$ = new BehaviorSubject<ComponentIO | void>(undefined);
 
   @Input()
   public set inputs(value: ComponentIO | null) {

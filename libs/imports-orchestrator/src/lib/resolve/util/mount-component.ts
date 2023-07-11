@@ -29,5 +29,6 @@ export async function mountComponent(
   // * Usages of ImportsOrchestratorQueueDirective in the tree will then insert items to the queue
   // * It is of vital importance that items are queued before triggering processQueue again
   // IMPORTANT: markForCheck is not enough, as it would not cause an immediate change detection cycle
+  componentRef.injector.get(ChangeDetectorRef).markForCheck();
   componentRef.injector.get(ChangeDetectorRef).detectChanges();
 }
