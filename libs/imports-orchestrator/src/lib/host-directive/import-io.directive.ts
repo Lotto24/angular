@@ -1,5 +1,5 @@
 import { Directive, Input } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { ImportObservableComponentIO } from '../import.interface';
 
 export type ComponentIO = { [index: string]: unknown };
@@ -11,8 +11,8 @@ export type ComponentIO = { [index: string]: unknown };
 export class ImportsOrchestratorIODirective
   implements ImportObservableComponentIO
 {
-  public readonly inputs$ = new BehaviorSubject<ComponentIO | void>(undefined);
-  public readonly outputs$ = new BehaviorSubject<ComponentIO | void>(undefined);
+  public readonly inputs$ = new ReplaySubject<ComponentIO>(1);
+  public readonly outputs$ = new ReplaySubject<ComponentIO>(1);
 
   @Input()
   public set inputs(value: ComponentIO | null) {

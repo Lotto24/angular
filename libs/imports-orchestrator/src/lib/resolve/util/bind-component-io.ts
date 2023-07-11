@@ -1,51 +1,67 @@
 import type { ComponentRef } from '@angular/core';
-import { ChangeDetectorRef } from '@angular/core';
-import type { Observable } from 'rxjs';
-import { asapScheduler, filter, map, observeOn, takeUntil, tap } from 'rxjs';
+import {
+  asapScheduler,
+  observeOn,
+  pairwise,
+  startWith,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import { ImportsOrchestratorQueueItem } from '../../import.service';
 
 export function bindComponentInputs(
   componentRef: ComponentRef<any>,
-  inputs$: Observable<{ [key: string]: any } | void>,
-  destroy$: Observable<void>
+  item: ImportsOrchestratorQueueItem
 ): void {
-  inputs$
+  item.io?.inputs$
     .pipe(
-      filter((value) => !!value),
-      map((value) => value as { [key: string]: any }),
-      takeUntil(destroy$),
-      observeOn(asapScheduler),
-      tap((value) => console.log(value))
+      takeUntil(item.destroy$),
+      startWith(undefined),
+      pairwise(),
+      tap(([previous, current]) =>
+        console.log(`previous=${previous}, current=${current}`)
+      )
     )
-    .subscribe((inputs) => {
-      Object.entries(inputs).forEach(
-        ([key, value]) => (componentRef.instance[key] = value)
-      );
-      const cdr = componentRef.injector.get(ChangeDetectorRef);
-      cdr.markForCheck();
+    .subscribe(([previous, current]) => {
+      if (!current) return;
+
+      Object.entries(current).forEach(([key, value]) => {
+        // if (!!previous && previous[key] === current[key]) {
+        //   return;
+        // }
+
+        componentRef.setInput(key, value);
+      });
     });
 }
 
 export function bindComponentOutputs(
   componentRef: ComponentRef<any>,
-  outputs$: Observable<{ [key: string]: any } | void>,
-  destroy$: Observable<void>
+  item: ImportsOrchestratorQueueItem
 ): void {
-  outputs$
+  item.io?.outputs$
     .pipe(
-      filter((value) => !!value),
-      map((value) => value as { [key: string]: any }),
-      takeUntil(destroy$)
+      takeUntil(item.destroy$),
+      startWith(undefined),
+      pairwise(),
+      observeOn(asapScheduler)
     )
-    .subscribe((outputs) => {
-      Object.entries(outputs).forEach(([key, value]) => {
+    .subscribe(([previous, current]) => {
+      if (!current) return;
+
+      Object.entries(current).forEach(([key, value]) => {
         if (typeof value !== 'function') {
           throw new Error(
             `outputs.${key} must be a function, got '${typeof value}'`
           );
         }
 
+        if (!!previous && previous[key] === current[key]) {
+          return;
+        }
+
         componentRef.instance[key]
-          .pipe(takeUntil(destroy$))
+          .pipe(takeUntil(item.destroy$))
           .subscribe((data: any) => {
             value(data);
           });

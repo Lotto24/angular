@@ -52,7 +52,7 @@ import {
 })
 export class ImportsOrchestratorComponent implements OnChanges, AfterViewInit {
   @Input()
-  public import!: string;
+  public identifier!: string;
 
   private readonly queue = inject(ImportsOrchestratorQueueDirective, {
     self: true,
@@ -76,12 +76,12 @@ export class ImportsOrchestratorComponent implements OnChanges, AfterViewInit {
   }
 
   private createAndAddItemToQueue(): void {
-    if (!this.import || !this.container) {
+    if (!this.identifier || !this.container) {
       return;
     }
 
     this.queue.viewContainerRef = this.container;
-    this.queue.import = this.import;
+    this.queue.import = this.identifier;
     this.queue.createAndAddItemToQueue();
   }
 }

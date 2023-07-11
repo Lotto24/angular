@@ -16,7 +16,7 @@ import { BehaviorSubject } from 'rxjs';
   template: `
     <h2>Home</h2>
     <ng-container import="home0"></ng-container>
-    <import import="home1"></import>
+    <import identifier="home1"></import>
     <ng-container import="observableInput" [inputs]="{testInput$}"]></ng-container>
     <ng-container import="afterViewInit0"></ng-container>
     <ng-container import="afterViewInit1"></ng-container>
