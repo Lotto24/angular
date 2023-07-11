@@ -16,6 +16,7 @@ import {
 const APP_IMPORTS_ORCHESTRATION = {
   home0: 1,
   home1: 2,
+  observableInput: 3,
   afterViewInit0: 2,
   afterViewInit1: 6,
   afterViewInit2: 7,
