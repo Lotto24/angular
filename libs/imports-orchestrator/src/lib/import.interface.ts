@@ -34,6 +34,6 @@ export interface ImportLifecycle {
 }
 
 export interface ImportObservableComponentIO {
-  readonly inputs$: Observable<ComponentIO | void>;
-  readonly outputs$: Observable<ComponentIO | void>;
+  readonly inputs$: Observable<ComponentIO>;
+  readonly outputs$: Observable<ComponentIO>;
 }

@@ -1,13 +1,7 @@
 import type { ComponentRef } from '@angular/core';
-import {
-  asapScheduler,
-  observeOn,
-  pairwise,
-  startWith,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { filter, mergeMap, pairwise, startWith, takeUntil } from 'rxjs';
 import { ImportsOrchestratorQueueItem } from '../../import.service';
+import { ComponentIO } from '../../host-directive';
 
 export function bindComponentInputs(
   componentRef: ComponentRef<any>,
@@ -16,23 +10,16 @@ export function bindComponentInputs(
   item.io?.inputs$
     .pipe(
       takeUntil(item.destroy$),
-      startWith(undefined),
+      startWith({} as ComponentIO),
       pairwise(),
-      tap(([previous, current]) =>
-        console.log(`previous=${previous}, current=${current}`)
+      filter(([_, current]) => Object.keys(current).length > 0),
+      mergeMap(([previous, current]) =>
+        Object.entries(current).filter(
+          ([key, value]) => previous[key] !== value
+        )
       )
     )
-    .subscribe(([previous, current]) => {
-      if (!current) return;
-
-      Object.entries(current).forEach(([key, value]) => {
-        // if (!!previous && previous[key] === current[key]) {
-        //   return;
-        // }
-
-        componentRef.setInput(key, value);
-      });
-    });
+    .subscribe(([key, value]) => componentRef.setInput(key, value));
 }
 
 export function bindComponentOutputs(
@@ -42,29 +29,26 @@ export function bindComponentOutputs(
   item.io?.outputs$
     .pipe(
       takeUntil(item.destroy$),
-      startWith(undefined),
+      startWith({} as ComponentIO),
       pairwise(),
-      observeOn(asapScheduler)
+      filter(([_, current]) => Object.keys(current).length > 0),
+      mergeMap(([previous, current]) =>
+        Object.entries(current).filter(
+          ([key, value]) => previous[key] !== value
+        )
+      )
     )
-    .subscribe(([previous, current]) => {
-      if (!current) return;
+    .subscribe(([key, value]) => {
+      if (typeof value !== 'function') {
+        throw new Error(
+          `outputs.${key} must be a function, got '${typeof value}'`
+        );
+      }
 
-      Object.entries(current).forEach(([key, value]) => {
-        if (typeof value !== 'function') {
-          throw new Error(
-            `outputs.${key} must be a function, got '${typeof value}'`
-          );
-        }
-
-        if (!!previous && previous[key] === current[key]) {
-          return;
-        }
-
-        componentRef.instance[key]
-          .pipe(takeUntil(item.destroy$))
-          .subscribe((data: any) => {
-            value(data);
-          });
-      });
+      componentRef.instance[key]
+        .pipe(takeUntil(item.destroy$))
+        .subscribe((data: any) => {
+          value(data);
+        });
     });
 }
