@@ -17,7 +17,6 @@ export async function mountComponent(
       item.destroy$
     );
   }
-
   try {
     await firstValueFrom(deferUntilComponentReady$(componentRef, item));
   } catch (x) {

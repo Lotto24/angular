@@ -7,6 +7,7 @@ import {
   provideImports,
 } from '@lotto24-angular/imports-orchestrator';
 import type { AppImportsOrchestration } from '../app.config';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'example-home',
@@ -16,6 +17,7 @@ import type { AppImportsOrchestration } from '../app.config';
     <h2>Home</h2>
     <ng-container import="home0"></ng-container>
     <import import="home1"></import>
+    <ng-container import="observableInput" [inputs]="{testInput$}"]></ng-container>
     <ng-container import="afterViewInit0"></ng-container>
     <ng-container import="afterViewInit1"></ng-container>
     <ng-container import="afterViewInit2"></ng-container>
@@ -53,6 +55,13 @@ import type { AppImportsOrchestration } from '../app.config';
             '@lotto24-angular/imports-orchestrator-examples-static/after-view-init-home'
           )
       ),
+
+      observableInput: importStandalone(
+        () =>
+          import(
+            '@lotto24-angular/imports-orchestrator-examples-static/observable-input-home'
+          )
+      ),
       afterViewInit1: 'afterViewInit0',
       afterViewInit2: 'afterViewInit0',
       afterViewInit3: 'afterViewInit0',
@@ -71,4 +80,6 @@ import type { AppImportsOrchestration } from '../app.config';
     }),
   ],
 })
-export class HomeComponent {}
+export class HomeComponent {
+  public testInput$ = new BehaviorSubject('Working!');
+}
