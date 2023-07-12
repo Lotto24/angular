@@ -1,24 +1,22 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy} from '@angular/core';
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+} from '@angular/core';
+import {
+  Imports,
   ImportsOrchestratorDirective,
   importStandalone,
-  provideImports,
 } from '@lotto24-angular/imports-orchestrator';
-import { AppImportsOrchestration } from '../app.config';
-import {interval, scan, Subscription} from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'example-io',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ImportsOrchestratorDirective],
-  providers: [
-    provideImports<AppImportsOrchestration>({
-      input: importStandalone(
-        () => import('@lotto24-angular/imports-orchestrator-examples-static/io')
-      ),
-    }),
-  ],
   styles: [],
   template: `
     <h2>Inputs/Outputs</h2>
@@ -28,9 +26,14 @@ import {interval, scan, Subscription} from 'rxjs';
         [inputs]="{ test: test, changing: changing }"
         [outputs]="{ testChange: outputChange.bind(this) }"
       ></ng-container>
-    <h3>Output: {{ outputText }}</h3>
+      <h3>Output: {{ outputText }}</h3>
     </div>
   `,
+})
+@Imports({
+  input: importStandalone(
+    () => import('@lotto24-angular/imports-orchestrator-examples-static/io')
+  ),
 })
 export class IOComponent implements OnDestroy {
   @Input()
@@ -42,12 +45,14 @@ export class IOComponent implements OnDestroy {
   public outputText: string = '';
 
   constructor(cdr: ChangeDetectorRef) {
-    const sub = interval(500).pipe().subscribe((value) => {
-      this.changing = value;
-      this.test = 'test'; // always emit the same value
-      console.log('this.inputs', this.changing);
-      cdr.markForCheck();
-    });
+    const sub = interval(500)
+      .pipe()
+      .subscribe((value) => {
+        this.changing = value;
+        this.test = 'test'; // always emit the same value
+        console.log('this.inputs', this.changing);
+        cdr.markForCheck();
+      });
 
     this.subscriptions.add(sub);
   }

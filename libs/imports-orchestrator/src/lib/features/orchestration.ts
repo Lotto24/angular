@@ -5,7 +5,7 @@ import {
   ImportsOrchestratorOrchestration,
 } from './internal';
 import { Provider } from '@angular/core';
-import {IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION, IMPORTS_ORCHESTRATOR_FEATURE_LOGGER} from "../token";
+import {IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION, IMPORTS_ORCHESTRATOR_FEATURE_LOGGER} from "../internal";
 
 export function withOrchestration(
   orchestration: ImportsOrchestration

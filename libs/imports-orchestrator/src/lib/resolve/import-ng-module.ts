@@ -7,7 +7,7 @@ import {
   resolveConstructorsFromESModule,
   resolvePromiseWithRetries,
 } from './util';
-import { ImportsOrchestratorQueueItem } from '../import.service';
+import { ImportsOrchestratorQueueItem } from '../service';
 import { ImportResolveFn } from './import-resolve-fn.interface';
 
 export function importNgModule(

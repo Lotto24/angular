@@ -10,7 +10,7 @@ import {
 } from 'rxjs';
 import { ChangeDetectorRef, ComponentRef } from '@angular/core';
 
-import { ImportsOrchestratorQueueItem } from '../../import.service';
+import { ImportsOrchestratorQueueItem } from '../../service';
 
 export function deferUntilComponentReady$<T>(
   componentRef: ComponentRef<any>,

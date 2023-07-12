@@ -4,7 +4,7 @@ import {
   ImportsOrchestratorTimeout,
 } from './internal';
 import { Provider } from '@angular/core';
-import {IMPORTS_ORCHESTRATOR_FEATURE_TIMEOUT} from "../token";
+import {IMPORTS_ORCHESTRATOR_FEATURE_TIMEOUT} from "../internal";
 
 export function withTimeout(timeout: number): ImportsOrchestratorTimeout {
   const providers: Provider[] = [

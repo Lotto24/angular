@@ -1,33 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   importNgModule,
+  Imports,
   ImportsOrchestratorDirective,
   importStandalone,
-  provideImports,
 } from '@lotto24-angular/imports-orchestrator';
-import { AppImportsOrchestration } from '../app.config';
 
 @Component({
   selector: 'example-tab',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ImportsOrchestratorDirective],
-  providers: [
-    provideImports<AppImportsOrchestration>({
-      tab0: importNgModule(
-        () => import('@lotto24-angular/imports-orchestrator-examples/tab0')
-      ),
-      tab1: importNgModule(
-        () => import('@lotto24-angular/imports-orchestrator-examples/tab1')
-      ),
-      tab2: importStandalone(
-        () => import('@lotto24-angular/imports-orchestrator-examples/tab2')
-      ),
-      tabKeep: importStandalone(
-        () => import('@lotto24-angular/imports-orchestrator-examples/tab-keep')
-      ),
-    }),
-  ],
   styles: [
     `
       .tabs {
@@ -60,6 +43,20 @@ import { AppImportsOrchestration } from '../app.config';
       <ng-container import="tabKeep"></ng-container>
     </div>
   `,
+})
+@Imports({
+  tab0: importNgModule(
+    () => import('@lotto24-angular/imports-orchestrator-examples/tab0')
+  ),
+  tab1: importNgModule(
+    () => import('@lotto24-angular/imports-orchestrator-examples/tab1')
+  ),
+  tab2: importStandalone(
+    () => import('@lotto24-angular/imports-orchestrator-examples/tab2')
+  ),
+  tabKeep: importStandalone(
+    () => import('@lotto24-angular/imports-orchestrator-examples/tab-keep')
+  ),
 })
 export class TabComponent {
   public importId: string = 'tab0';

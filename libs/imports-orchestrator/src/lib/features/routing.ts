@@ -4,7 +4,7 @@ import {
   ImportsOrchestratorFeatureKind,
   ImportsOrchestratorRouting,
 } from './internal';
-import { IMPORTS_ORCHESTRATOR_FEATURE_ROUTING } from '../token';
+import { IMPORTS_ORCHESTRATOR_FEATURE_ROUTING } from '../internal';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 import {
   asyncScheduler,

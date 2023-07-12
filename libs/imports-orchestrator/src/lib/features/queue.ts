@@ -5,8 +5,8 @@ import {
 } from './internal';
 import { Provider } from '@angular/core';
 import { Queue } from '../queue/queue';
-import { ImportsOrchestratorQueueItem } from '../import.service';
-import {IMPORTS_ORCHESTRATOR_FEATURE_QUEUE} from "../token";
+import { ImportsOrchestratorQueueItem } from '../service';
+import { IMPORTS_ORCHESTRATOR_FEATURE_QUEUE } from '../internal';
 
 export function withQueue(
   queue: Queue<ImportsOrchestratorQueueItem>

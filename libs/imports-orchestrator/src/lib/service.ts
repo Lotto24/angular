@@ -6,7 +6,7 @@ import { ImportResolveFn } from './resolve';
 import {
   ImportLifecycle,
   ImportObservableComponentIO,
-} from './import.interface';
+} from './interface';
 
 import {
   IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE,
@@ -14,7 +14,7 @@ import {
   IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION,
   IMPORTS_ORCHESTRATOR_FEATURE_QUEUE,
   IMPORTS_ORCHESTRATOR_FEATURE_TIMEOUT,
-} from './token';
+} from './internal';
 import { ImportsStore } from './features/internal';
 
 export interface ImportServiceOptions {
@@ -112,7 +112,7 @@ export class ImportService {
   private importsFromDI(injector: Injector): ImportsStore {
     try {
       const store = injector.get(IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE);
-      return store.reduce<ImportsStore>((acc, cur) => ({ ...acc, ...cur }), {});
+      return store;
     } catch (x: unknown) {
       throw new Error(`
         Could not inject ${IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE}. Did you \`provideImports({...})\` in a component or module? If you did, you may need to provide an Injector when calling createQueueItem.

@@ -1,6 +1,6 @@
 import { Directive, Input } from '@angular/core';
 import { ReplaySubject } from 'rxjs';
-import { ImportObservableComponentIO } from '../import.interface';
+import { ImportObservableComponentIO } from '../interface';
 
 export type ComponentIO = { [index: string]: unknown };
 

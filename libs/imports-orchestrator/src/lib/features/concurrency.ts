@@ -4,7 +4,7 @@ import {
   importsOrchestratorFeature,
   ImportsOrchestratorFeatureKind,
 } from './internal';
-import { IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY } from '../token';
+import { IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY } from '../internal';
 
 export function withConcurrencyRelativeToDownlinkSpeed(
   max: number = 4,

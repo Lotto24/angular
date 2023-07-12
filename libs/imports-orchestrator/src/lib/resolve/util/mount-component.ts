@@ -2,7 +2,7 @@ import { ChangeDetectorRef, ComponentRef } from '@angular/core';
 import { bindComponentInputs, bindComponentOutputs } from './bind-component-io';
 import { firstValueFrom } from 'rxjs';
 import { deferUntilComponentReady$ } from './defer-until-component-ready';
-import { ImportsOrchestratorQueueItem } from '../../import.service';
+import { ImportsOrchestratorQueueItem } from '../../service';
 
 export async function mountComponent(
   componentRef: ComponentRef<unknown>,

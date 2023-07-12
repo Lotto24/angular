@@ -9,13 +9,13 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import {
+  importPromise,
+  Imports,
   ImportService,
   ImportsOrchestratorDirective,
   importStandalone,
-  provideImports,
 } from '@lotto24-angular/imports-orchestrator';
 import { NEVER, Subject, takeUntil } from 'rxjs';
-import { AppImportsOrchestration } from '../app.config';
 
 @Component({
   selector: 'example-service',
@@ -26,13 +26,14 @@ import { AppImportsOrchestration } from '../app.config';
     <div>container: <ng-container #container></ng-container></div>
   `,
   imports: [ImportsOrchestratorDirective],
-  providers: [
-    provideImports<AppImportsOrchestration>({
-      serviceComponent: importStandalone(
-        () => import('@lotto24-angular/imports-orchestrator-examples/fruit2')
-      ),
-    }),
-  ],
+})
+@Imports({
+  serviceComponent: importStandalone(
+    () => import('@lotto24-angular/imports-orchestrator-examples/fruit2')
+  ),
+  servicePromise: importPromise(() =>
+    fetch('/assets/example.json').then((res) => res.json())
+  ),
 })
 export class ServiceComponent implements AfterViewInit, OnDestroy {
   private readonly importService = inject(ImportService);

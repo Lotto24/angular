@@ -18,7 +18,7 @@ import {
   ImportService,
   ImportServiceOptions,
   ImportsOrchestratorQueueItem,
-} from '../import.service';
+} from '../service';
 
 type ImportsOrchestratorQueueDirectiveExposed = Pick<
   ImportServiceOptions,

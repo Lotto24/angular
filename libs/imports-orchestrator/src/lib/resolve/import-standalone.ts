@@ -6,7 +6,7 @@ import {
   resolveConstructorsFromESModule,
   resolvePromiseWithRetries,
 } from './util';
-import { ImportsOrchestratorQueueItem } from '../import.service';
+import { ImportsOrchestratorQueueItem } from '../service';
 import { ViewContainerRef } from '@angular/core';
 import {ImportResolveFn} from "./import-resolve-fn.interface";
 

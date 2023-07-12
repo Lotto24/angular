@@ -1,4 +1,4 @@
-import {ImportsOrchestratorQueueItem} from '../import.service';
+import {ImportsOrchestratorQueueItem} from '../service';
 import {Queue} from './queue';
 
 /**

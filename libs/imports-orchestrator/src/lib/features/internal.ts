@@ -19,16 +19,12 @@ export type ImportsOrhestratorQueue =
 export type ImportsOrchestratorOrchestration =
   ImportsOrchestratorFeature<ImportsOrchestratorFeatureKind.Orchestration>;
 
-export type ImportsOrchestratorImportsStore =
-  ImportsOrchestratorFeature<ImportsOrchestratorFeatureKind.ImportsStore>;
-
 export enum ImportsOrchestratorFeatureKind {
   Logger,
   Timeout,
   Routing,
   Concurrency,
   // internal
-  ImportsStore,
   Orchestration,
   Queue,
 }
@@ -54,6 +50,3 @@ export type ImportsOrchestration = {
 export type ImportsStore = {
   [index: string]: string | ImportResolveFn;
 };
-const importsOrchestratorImportsStore: ImportsStore = {};
-export const IMPORTS_ORCHESTRATOR_IMPORTS: () => ImportsStore = () =>
-  importsOrchestratorImportsStore;

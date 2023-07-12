@@ -1,6 +1,6 @@
 import { InjectionToken } from '@angular/core';
 import { Queue } from './queue/queue';
-import { ImportsOrchestratorQueueItem } from './import.service';
+import { ImportsOrchestratorQueueItem } from './service';
 import { ImportsOrchestration, ImportsStore } from './features/internal';
 import { Observable } from 'rxjs';
 
@@ -25,13 +25,8 @@ export const IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION =
   );
 
 export const IMPORTS_STORE: ImportsStore = {};
-
-export const IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE = new InjectionToken<
-  ImportsStore[]
->('IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE');
-
-export const IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE_GLOBAL =
+export const IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE =
   new InjectionToken<ImportsStore>(
-    'IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE_GLOBAL',
+    'IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE',
     { providedIn: 'platform', factory: () => IMPORTS_STORE }
   );

@@ -1,6 +1,6 @@
 import type { ComponentRef } from '@angular/core';
 import { filter, mergeMap, pairwise, startWith, takeUntil } from 'rxjs';
-import { ImportsOrchestratorQueueItem } from '../../import.service';
+import { ImportsOrchestratorQueueItem } from '../../service';
 import { ComponentIO } from '../../host-directive';
 
 export function bindComponentInputs(

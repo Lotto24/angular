@@ -4,7 +4,7 @@ import {
   ImportsOrchestratorFeatureKind,
   ImportsOrchestratorLogger,
 } from './internal';
-import { IMPORTS_ORCHESTRATOR_FEATURE_LOGGER } from '../token';
+import { IMPORTS_ORCHESTRATOR_FEATURE_LOGGER } from '../internal';
 
 export function withLogger(
   logger: Console,

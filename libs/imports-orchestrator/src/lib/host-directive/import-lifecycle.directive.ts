@@ -1,5 +1,5 @@
 import { ComponentRef, Directive, EventEmitter, Output } from '@angular/core';
-import { ImportLifecycle } from '../import.interface';
+import { ImportLifecycle } from '../interface';
 
 @Directive({
   selector: '[importLifecycle]',

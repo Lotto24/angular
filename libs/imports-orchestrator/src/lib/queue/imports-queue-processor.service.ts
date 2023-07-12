@@ -6,7 +6,7 @@ import {
   IMPORTS_ORCHESTRATOR_FEATURE_LOGGER,
   IMPORTS_ORCHESTRATOR_FEATURE_QUEUE,
   IMPORTS_ORCHESTRATOR_FEATURE_ROUTING,
-} from '../token';
+} from '../internal';
 import { filter, firstValueFrom, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
