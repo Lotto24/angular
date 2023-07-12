@@ -23,6 +23,9 @@ export const IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION =
   new InjectionToken<ImportsOrchestration>(
     'IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION'
   );
+
+export const IMPORTS_STORE: ImportsStore = {};
+
 export const IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE = new InjectionToken<
   ImportsStore[]
 >('IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE');
@@ -30,5 +33,5 @@ export const IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE = new InjectionToken<
 export const IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE_GLOBAL =
   new InjectionToken<ImportsStore>(
     'IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE_GLOBAL',
-    { providedIn: 'platform', factory: () => ({} as ImportsStore) }
+    { providedIn: 'platform', factory: () => IMPORTS_STORE }
   );

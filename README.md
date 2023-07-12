@@ -1,10 +1,14 @@
-# Angular Import Orchestrator
+# @lotto24-angular
 
-The import-directive provided by this project can be used to orchestrate the lazy-loading of components in Angular applications.
+## imports-orchestrator
 
-Currently working with
-* standalone components
-* NgModule bootstrapped legacy components
+This library provides tools to orchestrate dynamic imports of Angular components and modules.
+
+* Standalone components
+* NgModules (with or without bootstrapped components),
+* Arbitrary promises (eg. fetch)
+
+
 
 Please see `apps/imports-orchestrator-example/src/app/app.component.ts` and `apps/imports-orchestrator-example/src/app/home/home.component.ts` on how to use.
 

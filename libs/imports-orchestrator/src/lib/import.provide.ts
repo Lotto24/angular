@@ -1,9 +1,5 @@
-import {
-  EnvironmentProviders,
-  makeEnvironmentProviders,
-  Provider,
-} from '@angular/core';
-import { ImportResolveFn } from './resolve';
+import {EnvironmentProviders, makeEnvironmentProviders, Provider,} from '@angular/core';
+import {ImportResolveFn} from './resolve';
 import {
   ImportsOrchestration,
   ImportsOrchestratorConcurrency,
@@ -12,19 +8,15 @@ import {
   ImportsOrchestratorTimeout,
   ImportsStore,
 } from './features/internal';
-import {
-  withConcurrencyStatic,
-  withLogger,
-  withoutRouting,
-  withTimeout,
-} from './features';
-import { Queue } from './queue/queue';
-import { ImportsOrchestratorQueueItem } from './import.service';
-import { withQueue } from './features/queue';
-import { withOrchestration } from './features/orchestration';
+import {withConcurrencyStatic, withLogger, withoutRouting, withTimeout,} from './features';
+import {Queue} from './queue/queue';
+import {ImportsOrchestratorQueueItem} from './import.service';
+import {withQueue} from './features/queue';
+import {withOrchestration} from './features/orchestration';
 import {
   IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE,
   IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE_GLOBAL,
+  IMPORTS_STORE,
 } from './token';
 
 /**
@@ -41,14 +33,20 @@ export const provideImports = <T extends ImportsOrchestration>(
     [key in keyof T]: keyof T | ImportResolveFn;
   }>
 ): Provider[] => {
+  const store = IMPORTS_STORE;
+  Object.entries(imports).forEach(([key, value]) => {
+    store[key] = value as ImportResolveFn;
+  });
+
   return [
     {
       provide: IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE,
       useFactory: (globalImports: ImportsStore) => {
-        Object.entries(imports).forEach(([key, value]) => {
-          globalImports[key] = value as ImportResolveFn;
-        });
-        return globalImports;
+        return store;
+        // Object.entries(imports).forEach(([key, value]) => {
+        //   globalImports[key] = value as ImportResolveFn;
+        // });
+        // return globalImports;
       },
       multi: true,
       deps: [IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE_GLOBAL],
