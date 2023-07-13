@@ -6,6 +6,7 @@ import {
   Output,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { interval, startWith } from 'rxjs';
 
 @Component({
   selector: 'imports-orchestrator-examples-static-component-io-input',
@@ -45,6 +46,8 @@ export class ImportsOrchestratorExamplesStaticIoInputComponent
   public testChange = new EventEmitter<string>();
 
   public ngAfterViewInit(): void {
-    this.testChange.emit('is working!');
+    interval(3000)
+      .pipe(startWith(-1))
+      .subscribe((value) => this.testChange.emit(`output value=${value}`));
   }
 }

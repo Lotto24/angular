@@ -11,7 +11,7 @@ import {
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
 import { interval, Subscription } from 'rxjs';
-import {AppImportsOrchestration} from "../app.config";
+import { AppImportsOrchestration } from '../app.config';
 
 @Component({
   selector: 'example-io',
@@ -46,14 +46,12 @@ export class IOComponent implements OnDestroy {
   public outputText: string = '';
 
   constructor(cdr: ChangeDetectorRef) {
-    const sub = interval(500)
-      .pipe()
-      .subscribe((value) => {
-        this.changing = value;
-        this.test = 'test'; // always emit the same value
-        console.log('this.inputs', this.changing);
-        cdr.markForCheck();
-      });
+    const sub = interval(500).subscribe((value) => {
+      this.changing = value;
+      this.test = 'test'; // always emit the same value
+      console.log('this.inputs', this.changing);
+      cdr.markForCheck();
+    });
 
     this.subscriptions.add(sub);
   }
