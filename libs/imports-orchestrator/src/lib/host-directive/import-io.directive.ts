@@ -1,5 +1,5 @@
 import { Directive, Input } from '@angular/core';
-import { ReplaySubject, Subject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { ImportObservableComponentIO } from '../interface';
 
 export type ComponentIO = { [index: string]: unknown };
@@ -12,7 +12,7 @@ export class ImportsOrchestratorIODirective
   implements ImportObservableComponentIO
 {
   public readonly inputs$ = new ReplaySubject<ComponentIO>(1);
-  public readonly outputs$ = new Subject<ComponentIO>();
+  public readonly outputs$ = new ReplaySubject<ComponentIO>(1);
 
   @Input()
   public set inputs(value: ComponentIO | null) {
