@@ -5,6 +5,7 @@ import {
   ImportsOrchestratorDirective,
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
+import {AppImportsOrchestration} from "../app.config";
 
 @Component({
   selector: 'example-tab',
@@ -44,7 +45,7 @@ import {
     </div>
   `,
 })
-@Imports({
+@Imports<AppImportsOrchestration>({
   tab0: importNgModule(
     () => import('@lotto24-angular/imports-orchestrator-examples/tab0')
   ),

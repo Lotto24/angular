@@ -7,6 +7,7 @@ import {
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
 import { BehaviorSubject } from 'rxjs';
+import {AppImportsOrchestration} from "../app.config";
 
 @Component({
   selector: 'example-home',
@@ -30,7 +31,7 @@ import { BehaviorSubject } from 'rxjs';
   `,
   imports: [ImportsOrchestratorDirective, ImportsOrchestratorComponent],
 })
-@Imports({
+@Imports<AppImportsOrchestration>({
   // just add an import to the ES-Module exporting a standalone component
   home0: importStandalone(
     () => import('@lotto24-angular/imports-orchestrator-examples/home0')

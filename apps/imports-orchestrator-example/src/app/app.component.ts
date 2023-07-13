@@ -5,6 +5,7 @@ import {
   ImportsOrchestratorDirective,
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
+import { AppImportsOrchestration } from './app.config';
 
 @Component({
   standalone: true,
@@ -13,7 +14,7 @@ import {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-@Imports({
+@Imports<AppImportsOrchestration>({
   footer0: importStandalone(
     () => import('@lotto24-angular/imports-orchestrator-examples/footer0')
   ),

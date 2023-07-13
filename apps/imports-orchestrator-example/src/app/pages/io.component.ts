@@ -11,6 +11,7 @@ import {
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
 import { interval, Subscription } from 'rxjs';
+import {AppImportsOrchestration} from "../app.config";
 
 @Component({
   selector: 'example-io',
@@ -30,7 +31,7 @@ import { interval, Subscription } from 'rxjs';
     </div>
   `,
 })
-@Imports({
+@Imports<AppImportsOrchestration>({
   input: importStandalone(
     () => import('@lotto24-angular/imports-orchestrator-examples-static/io')
   ),

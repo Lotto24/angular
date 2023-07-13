@@ -5,6 +5,7 @@ import {
   ImportsOrchestratorDirective,
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
+import { AppImportsOrchestration } from '../app.config';
 
 @Component({
   selector: 'example-home',
@@ -34,7 +35,7 @@ import {
     </div>
   `,
 })
-@Imports({
+@Imports<AppImportsOrchestration>({
   fruit0: importStandalone(
     () => import('@lotto24-angular/imports-orchestrator-examples/fruit0')
   ),

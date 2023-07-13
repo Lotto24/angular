@@ -16,6 +16,7 @@ import {
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
 import { NEVER, Subject, takeUntil } from 'rxjs';
+import {AppImportsOrchestration} from "../app.config";
 
 @Component({
   selector: 'example-service',
@@ -27,7 +28,7 @@ import { NEVER, Subject, takeUntil } from 'rxjs';
   `,
   imports: [ImportsOrchestratorDirective],
 })
-@Imports({
+@Imports<AppImportsOrchestration>({
   serviceComponent: importStandalone(
     () => import('@lotto24-angular/imports-orchestrator-examples/fruit2')
   ),
