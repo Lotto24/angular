@@ -3,10 +3,7 @@ import { findFn, findImportPriority } from './host-directive/util';
 import { ImportsQueueProcessor } from './queue/imports-queue-processor.service';
 import { Observable } from 'rxjs';
 import { ImportResolveFn } from './resolve';
-import {
-  ImportLifecycle,
-  ImportObservableComponentIO,
-} from './interface';
+import { ImportLifecycle, ImportObservableComponentIO } from './interface';
 
 import {
   IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE,

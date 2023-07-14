@@ -11,5 +11,7 @@ export const Imports = <T extends ImportsOrchestration>(
     IMPORTS_STORE[key] = value as ImportResolveFn | string;
   });
 
-  return function (target: unknown) {};
+  return function (target: unknown) {
+    // noop
+  };
 };

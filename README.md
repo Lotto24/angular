@@ -2,13 +2,102 @@
 
 ## imports-orchestrator
 
-This library provides tools to orchestrate dynamic imports of Angular components and modules.
+This library provides the imports-orchestrator library to control the order in which Angular components and modules are loaded. This can be useful when optimizing page performance in an Application.
 
-* Standalone components
-* NgModules (with or without bootstrapped components),
-* Arbitrary promises (eg. fetch)
+### Setup
 
+```typescript
+const APP_IMPORTS_ORCHESTRATION = {
+  'first': 1,
+  'second': 2,
+  'third': 3,
+};
 
+export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;
+
+export const appConfig = {
+  providers: [
+    // ...
+    provideImportsOrchestration(
+      // specify the priority of your imports (queue works from low to high)
+      APP_IMPORTS_ORCHESTRATION,
+      // routes should be resolved as quickly as possible:
+      withSuspendWhileRouting(),
+      // automatically adjusts the number of concurrent imports depending on the client's connection:
+      withConcurrencyRelativeToDownlinkSpeed(4, 1)
+    ),
+  ],
+};
+```
+
+### Usage:
+
+```typescript
+import {AppImportsOrchestration} from "./app.config";
+
+@Component({
+  selector: 'example',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ImportsOrchestratorDirective],
+  template: `
+    <ng-container
+      import="second"
+      [inputs]="{ text: headline }"
+      [outputs]="{ click: onClick }"
+    ></ng-container>
+    <import 
+      identifier="first"
+      [inputs]="{ text: description }"
+      [outputs]="{ click: onClick }"
+    ></import>
+  `,
+})
+// Your dynamic imports can be added with this decorator
+@Imports<AppImportsOrchestration>({
+  'first': importStandalone(
+    () => import('@some/thing')
+  ),
+  'second': importNgModule(
+    () => import('@other/fancy-lib')
+  ),
+  'third': importPromise(() =>
+    fetch('/assets/example.json').then((res) => res.json())
+  ),
+})
+export class ExampleComponent {
+  @Input() headline = 'Some catchy title';
+  @Input() description = 'Elaborate description';
+
+  private readonly importService = inject(ImportService);
+
+  constructor() {
+    this.fetchExample();
+  }
+
+  public async fetchExample(): Promise<void> {
+    const item = this.importService.createQueueItem('third', NEVER);
+
+    // you can await the item here, but you don't have to
+    try {
+      const result = await this.importService.addItemToQueue(item);
+      console.log('result', result);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+```
+
+#### Features
+
+### Resolve
+
+- Standalone components
+- NgModules (with or without bootstrapped components),
+- Arbitrary promises (eg. fetch)
+
+###
 
 Please see `apps/imports-orchestrator-example/src/app/app.component.ts` and `apps/imports-orchestrator-example/src/app/home/home.component.ts` on how to use.
 
