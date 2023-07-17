@@ -1,5 +1,5 @@
-import { Directive, Input } from '@angular/core';
-import { ReplaySubject } from 'rxjs';
+import { Directive, Input, OnDestroy } from '@angular/core';
+import { ReplaySubject, share, Subject, takeUntil } from 'rxjs';
 import { ImportObservableComponentIO } from '../interface';
 
 export type ComponentIO = { [index: string]: unknown };
@@ -9,18 +9,32 @@ export type ComponentIO = { [index: string]: unknown };
   standalone: true,
 })
 export class ImportsOrchestratorIODirective
-  implements ImportObservableComponentIO
+  implements ImportObservableComponentIO, OnDestroy
 {
-  public readonly inputs$ = new ReplaySubject<ComponentIO>(1);
-  public readonly outputs$ = new ReplaySubject<ComponentIO>(1);
+  private readonly destroy$ = new Subject<void>();
+  public readonly _inputs = new ReplaySubject<ComponentIO>(1);
+  public readonly inputs$ = this._inputs.pipe(
+    takeUntil(this.destroy$),
+    share()
+  );
+  public readonly _outputs = new ReplaySubject<ComponentIO>(1);
+  public readonly outputs$ = this._outputs.pipe(
+    takeUntil(this.destroy$),
+    share()
+  );
 
   @Input()
   public set inputs(value: ComponentIO | null) {
-    this.inputs$.next(value ?? {});
+    this._inputs.next(value ?? {});
   }
 
   @Input()
   public set outputs(value: ComponentIO | null) {
-    this.outputs$.next(value ?? {});
+    this._outputs.next(value ?? {});
+  }
+
+  public ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
