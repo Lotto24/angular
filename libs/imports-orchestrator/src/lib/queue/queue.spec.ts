@@ -20,6 +20,16 @@ describe('Queue', () => {
     expect(queue.take()).toBe('5.0');
     expect(queue.peek()).toBe('7.0');
     expect(queue.take()).toBe('7.0');
-    expect(queue.take()).toBeUndefined();
+    expect(queue.take()).toBeNull();
   });
+
+  it('should take the specified payload', () => {
+    expect(queue.length).toBe(5);
+    expect(queue.take('5.0')).toBe('5.0');
+    expect(queue.take()).toBe('1.0');
+    expect(queue.take()).toBe('3.0');
+    expect(queue.take()).toBe('3.1');
+    expect(queue.take()).toBe('7.0');
+    expect(queue.take()).toBeNull();
+  })
 });
