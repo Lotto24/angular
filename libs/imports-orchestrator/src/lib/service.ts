@@ -92,12 +92,22 @@ export class ImportService {
     item.lifecycle?.importQueued?.emit();
 
     this.logger.debug(
-      `queue insert @priority=${item.priority}, @import=${item.identifier}`
+      `queue insert ${item.toString()}`
     );
 
     this.queueProcessor.process();
 
     return promise;
+  }
+
+  public async bypassQueue(
+    item: ImportsOrchestratorQueueItem
+  ): Promise<unknown> {
+    this.logger.debug(
+      `bypass queue ${item.toString()}`
+    );
+
+    return item.resolveFn(item);
   }
 
   public removeItemFromQueue(

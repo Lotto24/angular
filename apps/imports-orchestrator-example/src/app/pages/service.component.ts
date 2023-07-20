@@ -16,7 +16,7 @@ import {
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
 import { NEVER, Subject, takeUntil } from 'rxjs';
-import {AppImportsOrchestration} from "../app.config";
+import { AppImportsOrchestration } from '../app.config';
 
 @Component({
   selector: 'example-service',
@@ -28,13 +28,14 @@ import {AppImportsOrchestration} from "../app.config";
   `,
   imports: [ImportsOrchestratorDirective],
 })
-@Imports<AppImportsOrchestration>({
+@Imports<AppImportsOrchestration & { servicePromiseBypassingQueue: -1 }>({
   serviceComponent: importStandalone(
     () => import('@lotto24-angular/imports-orchestrator-examples/fruit2')
   ),
-  servicePromise: importPromise(() =>
+  servicePromiseQueued: importPromise(() =>
     fetch('/assets/example.json').then((res) => res.json())
   ),
+  servicePromiseBypassingQueue: 'servicePromiseQueued',
 })
 export class ServiceComponent implements AfterViewInit, OnDestroy {
   private readonly importService = inject(ImportService);
@@ -52,24 +53,20 @@ export class ServiceComponent implements AfterViewInit, OnDestroy {
 
     this.destroy$.subscribe(() => console.log('service example destroyed'));
 
-    this.importPromise();
-  }
-
-  private async importPromise(): Promise<void> {
-    const item = this.importService.createQueueItem('servicePromise', NEVER, {
-      lifecycle: { importFinished: this.importFinished },
-    });
-
-    // you can await the item here, but you don't have to
-    try {
-      const result = await this.importService.addItemToQueue(item);
-      console.log('result', result);
-    } catch (e) {
-      console.error(e);
-    }
+    this.importServicePromiseQueued();
+    this.importServicePromiseBypassingQueue();
   }
 
   public ngAfterViewInit(): void {
+    this.importComponentQueued();
+  }
+
+  public ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private importComponentQueued(): void {
     const injector = this.container.injector;
     const item = this.importService.createQueueItem(
       'serviceComponent',
@@ -82,8 +79,38 @@ export class ServiceComponent implements AfterViewInit, OnDestroy {
     this.importService.addItemToQueue(item);
   }
 
-  public ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  private async importServicePromiseQueued(): Promise<void> {
+    const item = this.importService.createQueueItem(
+      'servicePromiseQueued',
+      NEVER,
+      {
+        lifecycle: { importFinished: this.importFinished },
+      }
+    );
+
+    // you can await the item here, but you don't have to
+    try {
+      const result = await this.importService.addItemToQueue(item);
+      console.log('result for servicePromiseQueued', result);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  private async importServicePromiseBypassingQueue(): Promise<any> {
+    try {
+      const item = this.importService.createQueueItem(
+        'servicePromiseBypassingQueue',
+        NEVER,
+        {
+          lifecycle: { importFinished: this.importFinished },
+        }
+      );
+      const result = await this.importService.bypassQueue(item);
+      console.log('result for servicePromiseBypassingQueue', result);
+      return result;
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

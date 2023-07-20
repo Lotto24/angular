@@ -89,15 +89,32 @@ export class ExampleComponent {
 }
 ```
 
-#### Features
-
 ### Resolve
 
-- Standalone components
-- NgModules (with or without bootstrapped components),
-- Arbitrary promises (eg. fetch)
+- Standalone components with `importStandalone(() => import('path/to/esm')`
+- NgModules (with or without bootstrapped components), using`importNgModule(() => import('path/to/esm').then(m => m.SomeNgModule)`
+- Arbitrary promises (eg. fetch) via `importPromise(() => fetch('http://some.url/json').then(result => result.json)`
 
-###
+### Configurable features
+
+#### Concurrency
+- `withConcurrencyStatic(value: number)` (default)
+- `withConcurrencyRelativeToDownlinkSpeed(max: number = 4, min: number = 1)`
+
+#### Routing
+- `withoutRouting()` (default, as some apps do not use routing), 
+- `withSuspendWhileRouting(suspendForInitialNavigation = true)`, routes should be resolved as fast as possible, so this will cause the queue to suspend processing until routing is finished
+
+#### Logging 
+- `withLogger(logger: Console, prefix: string = '[ImportsOrchestrator]')`
+by default `Console` is used
+ 
+#### Timeout
+- `withTimeout(timeout: number = 10000)`
+Timeout applies to each item on the queue individually 
+by default, 10000ms are applied
+
+### Example application
 
 Please see `apps/imports-orchestrator-example/src/app/app.component.ts` and `apps/imports-orchestrator-example/src/app/home/home.component.ts` on how to use.
 

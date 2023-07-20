@@ -42,7 +42,7 @@ const APP_IMPORTS_ORCHESTRATION = {
 
   input: 501,
 
-  servicePromise: 600,
+  servicePromiseQueued: 600,
   serviceComponent: 601,
 };
 
