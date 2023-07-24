@@ -22,7 +22,28 @@ export function withConcurrencyRelativeToDownlinkSpeed(
   );
 }
 
-export function withConcurrencyStatic(value: number): ImportsOrchestratorConcurrency {
+/**
+ * @param onUpdateConcurrencyFn called when queue processor updates concurrency;
+ */
+export function withConcurrencyUpdateFn(
+  onUpdateConcurrencyFn: () => number
+): ImportsOrchestratorConcurrency {
+  const providers: Provider[] = [
+    {
+      provide: IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY,
+      useValue: onUpdateConcurrencyFn,
+    },
+  ];
+
+  return importsOrchestratorFeature(
+    ImportsOrchestratorFeatureKind.Concurrency,
+    providers
+  );
+}
+
+export function withConcurrencyStatic(
+  value: number
+): ImportsOrchestratorConcurrency {
   const providers: Provider[] = [
     {
       provide: IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY,
