@@ -1,17 +1,14 @@
 name: Deploy Angular Imports Orchestrator Example to Github Pages
 
 on:
-  push:
-    branches: ["main"]
   workflow_dispatch:
     inputs:
       release:
         type: choice
         description: Make a choice
         options:
-          - major
-          - minor
           - patch
+          - minor
 
 env:
   NX_CACHE_DIRECTORY: '.nx-cache'

@@ -22,12 +22,10 @@ export default async function runExecutor(options: PublishExecutorSchema) {
 }
 
 function version(options: PublishExecutorSchema): void {
-  const { path, release } = options;
+  const { path } = options;
 
   // read version from package.json
-  const globalVersion = JSON.parse(
-    readFileSync('package.json').toString()
-  ).version;
+  const { version, name } = JSON.parse(readFileSync('package.json').toString());
 
   // write version to distributable's package.json
   const pathToDistributablePackage = joinPathFragments(path, 'package.json');
@@ -35,11 +33,23 @@ function version(options: PublishExecutorSchema): void {
     readFileSync(pathToDistributablePackage).toString()
   );
 
-  distributablePackage.version = globalVersion;
-  const namespace = '@dbg-tickets'
-  distributablePackage.devDependencies = versionDependencies(distributablePackage.devDependencies, namespace, globalVersion)
-  distributablePackage.peerDependencies = versionDependencies(distributablePackage.peerDependencies, namespace, globalVersion)
-  distributablePackage.dependencies = versionDependencies(distributablePackage.dependencies, namespace, globalVersion)
+  const namespace = `@${name}`;
+  distributablePackage.version = version;
+  distributablePackage.devDependencies = versionDependencies(
+    distributablePackage.devDependencies,
+    namespace,
+    version
+  );
+  distributablePackage.peerDependencies = versionDependencies(
+    distributablePackage.peerDependencies,
+    namespace,
+    version
+  );
+  distributablePackage.dependencies = versionDependencies(
+    distributablePackage.dependencies,
+    namespace,
+    version
+  );
 
   writeFileSync(
     pathToDistributablePackage,
@@ -60,10 +70,10 @@ function publish(options: PublishExecutorSchema): void {
 function versionDependencies(
   deps: Record<string, string> | undefined,
   namespace: string,
-  version: string,
+  version: string
 ): Record<string, string> | undefined {
   if (!deps) {
-    return undefined
+    return undefined;
   }
 
   return Object.entries(deps).reduce((r, [key, value]) => {
@@ -71,8 +81,8 @@ function versionDependencies(
       r = {
         ...r,
         [key]: version,
-      }
+      };
     }
-    return r
-  }, {})
+    return r;
+  }, {});
 }

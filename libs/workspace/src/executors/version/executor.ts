@@ -1,5 +1,4 @@
 import { VersionExecutorSchema } from './schema';
-import { execute } from '../util/execute';
 
 export default async function runExecutor(options: VersionExecutorSchema) {
   console.log('Executor ran for version', options);
