@@ -1,6 +1,6 @@
 {
   "name": "@lotto24-angular/workspace",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "type": "commonjs",
   "executors": "./executors.json",
   "generators": "./generators.json"

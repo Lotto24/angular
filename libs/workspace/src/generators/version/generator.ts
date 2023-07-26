@@ -10,19 +10,11 @@ export default async function (tree: Tree, options: VersionGeneratorSchema) {
     version(tree, options);
   } catch (x) {
     console.error(x);
-    return {
-      success: false,
-    };
   }
-
-  return {
-    success: true,
-  };
 }
 
 function version(tree: Tree, options: VersionGeneratorSchema): void {
   const { release } = options;
-  console.log(release);
 
   // update version workspace package.json
   execute(`npm version ${release}`);
@@ -30,6 +22,7 @@ function version(tree: Tree, options: VersionGeneratorSchema): void {
   const globalVersion = readJson(tree, 'package.json').version;
   console.log('globalVersion', globalVersion);
 
+  // write version to all package.json files
   visitAllFiles(tree, 'libs', (file) => {
     if (/\/package\.json$/gi.test(file)) {
       console.log(file);
@@ -38,5 +31,4 @@ function version(tree: Tree, options: VersionGeneratorSchema): void {
       writeJsonFile(file, distributablePackage);
     }
   });
-  // write version to all package.json files
 }
