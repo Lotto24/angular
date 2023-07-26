@@ -1,5 +1,10 @@
 {
   "generators": {
+    "version": {
+      "factory": "./src/generators/version/generator",
+      "schema": "./src/generators/version/schema.json",
+      "description": "update version"
+    },
     "scaffold-examples": {
       "factory": "./src/generators/scaffold-examples/generator",
       "schema": "./src/generators/scaffold-examples/schema.json",
