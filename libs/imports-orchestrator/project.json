@@ -46,16 +46,6 @@
         ]
       }
     },
-    "publish_outdated": {
-      "executor": "nx:run-commands",
-      "outputs": [],
-      "dependsOn": ["build"],
-      "options": {
-        "cwd": "",
-        "command": "pnpm publish dist/libs/imports-orchestrator --access=public --no-git-checks --dry-run",
-        "parallel": false
-      }
-    },
     "publish": {
       "executor": "@lotto24-angular/workspace:publish",
       "outputs": [],

@@ -5,10 +5,10 @@ import {
   isNgModuleDef,
   mountComponent,
   resolveConstructorsFromESModule,
-  resolvePromiseWithRetries,
 } from './util';
 import { ImportsOrchestratorQueueItem } from '../service';
 import { ImportResolveFn } from './import-resolve-fn.interface';
+import {resolvePromiseWithRetries} from "@lotto24-angular/util";
 
 export function importNgModule(
   promise: () => Promise<unknown>

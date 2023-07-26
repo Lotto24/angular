@@ -1,1 +1,3 @@
-export * from './lib/with-component-ref';
+export * from './lib/assert';
+export * from './lib/async';
+export * from './lib/component';
