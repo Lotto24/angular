@@ -1,4 +1,3 @@
-import { Router } from '@angular/router';
 import { inject, Injectable } from '@angular/core';
 import { processQueueItem } from './process-queue-item';
 import {
@@ -21,7 +20,6 @@ export class ImportsQueueProcessor {
   private readonly concurrency = inject(
     IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY
   );
-  private router = inject(Router);
 
   private running = 0;
 

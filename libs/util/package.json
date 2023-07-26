@@ -1,0 +1,31 @@
+{
+  "name": "@lotto24-angular/util",
+  "description": "Collection of Angular utilities",
+  "version": "0.0.0",
+  "keywords": [
+    "Angular",
+    "Utilities",
+    "Utils",
+    "TypeScript"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lotto24/angular",
+    "directory": "libs/util"
+  },
+  "bugs": {
+    "url": "https://github.com/Lotto24/angular/issues"
+  },
+  "peerDependencies": {
+    "@angular/common": "~15.2.0",
+    "@angular/core": "~15.2.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "volta": {
+    "node": "18.16.1",
+    "yarn": "1.22.19"
+  }
+}
