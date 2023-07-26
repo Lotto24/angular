@@ -1,0 +1,44 @@
+{
+  "name": "util",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/util/src",
+  "prefix": "lotto24-angular",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/util/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/util/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/util/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/util/**/*.ts", "libs/util/**/*.html"]
+      }
+    },
+    "publish": {
+      "executor": "@lotto24-angular/workspace:publish",
+      "outputs": [],
+      "dependsOn": ["build"],
+      "options": {
+        "path": "dist/libs/util",
+        "access": "public",
+        "tag": "prerelease",
+        "registry": "https://registry.npmjs.org/"
+      }
+    }
+  }
+}

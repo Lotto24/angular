@@ -1,14 +1,16 @@
 import {
-  assertStandalone,
   Constructor,
   ESModule,
   mountComponent,
   resolveConstructorsFromESModule,
-  resolvePromiseWithRetries,
 } from './util';
 import { ImportsOrchestratorQueueItem } from '../service';
 import { ViewContainerRef } from '@angular/core';
-import {ImportResolveFn} from "./import-resolve-fn.interface";
+import { ImportResolveFn } from './import-resolve-fn.interface';
+import {
+  assertStandalone,
+  resolvePromiseWithRetries,
+} from '@lotto24-angular/util';
 
 export function importStandalone(
   promise: () => Promise<unknown>

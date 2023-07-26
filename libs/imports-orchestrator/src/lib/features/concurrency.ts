@@ -58,6 +58,7 @@ export function withConcurrencyStatic(
 
 function downlinkToConcurrencyFn(max: number, min: number = 1): () => number {
   return () => {
+
     const downlink = (navigator as any).connection?.downlink ?? 10;
 
     if (downlink < 1) {

@@ -1,5 +1,5 @@
 import { PublishExecutorSchema } from './schema';
-import { execute } from './util/execute';
+import { execute } from '../util/execute';
 import { readFileSync, writeFileSync } from 'fs';
 import { joinPathFragments } from '@nrwl/devkit';
 
@@ -22,15 +22,10 @@ export default async function runExecutor(options: PublishExecutorSchema) {
 }
 
 function version(options: PublishExecutorSchema): void {
-  const { path, release } = options;
-
-  // update version workspace package.json
-  execute(`npm version ${release}`);
+  const { path } = options;
 
   // read version from package.json
-  const globalVersion = JSON.parse(
-    readFileSync('package.json').toString()
-  ).version;
+  const { version, name } = JSON.parse(readFileSync('package.json').toString());
 
   // write version to distributable's package.json
   const pathToDistributablePackage = joinPathFragments(path, 'package.json');
@@ -38,7 +33,23 @@ function version(options: PublishExecutorSchema): void {
     readFileSync(pathToDistributablePackage).toString()
   );
 
-  distributablePackage.version = globalVersion;
+  const namespace = `@${name}`;
+  distributablePackage.version = version;
+  distributablePackage.devDependencies = versionDependencies(
+    distributablePackage.devDependencies,
+    namespace,
+    version
+  );
+  distributablePackage.peerDependencies = versionDependencies(
+    distributablePackage.peerDependencies,
+    namespace,
+    version
+  );
+  distributablePackage.dependencies = versionDependencies(
+    distributablePackage.dependencies,
+    namespace,
+    version
+  );
 
   writeFileSync(
     pathToDistributablePackage,
@@ -54,4 +65,24 @@ function publish(options: PublishExecutorSchema): void {
     access,
     dryRun,
   });
+}
+
+function versionDependencies(
+  deps: Record<string, string> | undefined,
+  namespace: string,
+  version: string
+): Record<string, string> | undefined {
+  if (!deps) {
+    return undefined;
+  }
+
+  return Object.entries(deps).reduce((r, [key, value]) => {
+    if (key.startsWith(namespace)) {
+      r = {
+        ...r,
+        [key]: version,
+      };
+    }
+    return r;
+  }, {});
 }
