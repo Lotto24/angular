@@ -1,5 +1,10 @@
 {
   "executors": {
+    "version": {
+      "implementation": "./src/executors/version/executor",
+      "schema": "./src/executors/version/schema.json",
+      "description": "version executor"
+    },
     "publish": {
       "implementation": "./src/executors/publish/executor",
       "schema": "./src/executors/publish/schema.json",

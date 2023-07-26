@@ -64,4 +64,6 @@ jobs:
     steps:
       - name: Publish to NPM
         id: publish
-        run: npx nx run-many publish --dry-run --release=${{inputs.release}}
+        run: |
+          npx nx run workspace:version --release=${{inputs.release}}
+          npx nx run-many --target=publish --dry-run

@@ -1,5 +1,5 @@
 import { PublishExecutorSchema } from './schema';
-import { execute } from './util/execute';
+import { execute } from '../util/execute';
 import { readFileSync, writeFileSync } from 'fs';
 import { joinPathFragments } from '@nrwl/devkit';
 
@@ -24,9 +24,6 @@ export default async function runExecutor(options: PublishExecutorSchema) {
 function version(options: PublishExecutorSchema): void {
   const { path, release } = options;
 
-  // update version workspace package.json
-  execute(`npm version ${release}`);
-
   // read version from package.json
   const globalVersion = JSON.parse(
     readFileSync('package.json').toString()
@@ -39,6 +36,10 @@ function version(options: PublishExecutorSchema): void {
   );
 
   distributablePackage.version = globalVersion;
+  const namespace = '@dbg-tickets'
+  distributablePackage.devDependencies = versionDependencies(distributablePackage.devDependencies, namespace, globalVersion)
+  distributablePackage.peerDependencies = versionDependencies(distributablePackage.peerDependencies, namespace, globalVersion)
+  distributablePackage.dependencies = versionDependencies(distributablePackage.dependencies, namespace, globalVersion)
 
   writeFileSync(
     pathToDistributablePackage,
@@ -54,4 +55,24 @@ function publish(options: PublishExecutorSchema): void {
     access,
     dryRun,
   });
+}
+
+function versionDependencies(
+  deps: Record<string, string> | undefined,
+  namespace: string,
+  version: string,
+): Record<string, string> | undefined {
+  if (!deps) {
+    return undefined
+  }
+
+  return Object.entries(deps).reduce((r, [key, value]) => {
+    if (key.startsWith(namespace)) {
+      r = {
+        ...r,
+        [key]: version,
+      }
+    }
+    return r
+  }, {})
 }
