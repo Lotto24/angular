@@ -1,5 +1,5 @@
 import { PublishExecutorSchema } from './schema';
-import { execute } from './util/execute';
+import { execute } from '../../generators/util/execute';
 import { readFileSync, writeFileSync } from 'fs';
 import { joinPathFragments } from '@nrwl/devkit';
 

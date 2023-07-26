@@ -1,7 +1,7 @@
 {
   "name": "@lotto24-angular/util",
   "description": "Collection of Angular utilities",
-  "version": "0.0.0",
+  "version": "0.0.45",
   "keywords": [
     "Angular",
     "Utilities",

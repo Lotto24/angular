@@ -3,5 +3,6 @@
   "dest": "../../dist/libs/imports-orchestrator",
   "lib": {
     "entryFile": "src/index.ts"
-  }
+  },
+  "version": "0.0.45"
 }
