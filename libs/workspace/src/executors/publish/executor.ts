@@ -1,7 +1,5 @@
 import { PublishExecutorSchema } from './schema';
 import { execute } from '../../generators/util/execute';
-import { readFileSync, writeFileSync } from 'fs';
-import { joinPathFragments } from '@nrwl/devkit';
 
 export default async function runExecutor(options: PublishExecutorSchema) {
   console.log('Executor ran for Publish', options);

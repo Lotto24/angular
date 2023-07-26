@@ -61,6 +61,15 @@
           "codeCoverage": true
         }
       }
+    },
+    "version": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "commands": [
+          "nx g @lotto24-angular/workspace:version"
+        ]
+      }
     }
   },
   "tags": []

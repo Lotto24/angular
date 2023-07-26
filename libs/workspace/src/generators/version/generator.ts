@@ -16,8 +16,7 @@ export default async function (tree: Tree, options: VersionGeneratorSchema) {
 function version(tree: Tree, options: VersionGeneratorSchema): void {
   const { release } = options;
 
-  // update version workspace package.json
-  execute(`npm version --no-git-tag-version ${release}`);
+  execute(`npm version ${release}`);
 
   const globalVersion = readJson(tree, 'package.json').version;
   console.log('globalVersion', globalVersion);
