@@ -17,7 +17,7 @@ function version(tree: Tree, options: VersionGeneratorSchema): void {
   const { release } = options;
 
   // update version workspace package.json
-  execute(`npm version ${release}`);
+  execute(`npm version --no-git-tag-version ${release}`);
 
   const globalVersion = readJson(tree, 'package.json').version;
   console.log('globalVersion', globalVersion);
