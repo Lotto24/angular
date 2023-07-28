@@ -64,7 +64,3 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           npx nx run-many --target=publish --tag=latest --dry-run
-
-      - name: Push Tags
-        run: |
-          git push origin main --tags
