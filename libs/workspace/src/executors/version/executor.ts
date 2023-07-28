@@ -1,4 +1,5 @@
 import { VersionExecutorSchema } from './schema';
+import { execute } from '../util/execute';
 
 export default async function runExecutor(options: VersionExecutorSchema) {
   console.log('Executor ran for version', options);
@@ -19,8 +20,7 @@ export default async function runExecutor(options: VersionExecutorSchema) {
 
 function version(options: VersionExecutorSchema): void {
   const { release } = options;
-
   console.log('release', release);
   // update version workspace package.json
-  // execute(`npm version ${release}`);
+  execute(`npm version ${release}`);
 }

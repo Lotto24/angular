@@ -5,19 +5,13 @@ on:
     inputs:
       release:
         type: choice
-        description: Make a choice
+        description: Release type
         options:
           - patch
           - minor
 
 env:
   NX_CACHE_DIRECTORY: '.nx-cache'
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -26,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
 
     strategy:
@@ -40,6 +34,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: "https://registry.npmjs.org"
 
       - name: Restore cache
         uses: actions/cache@v3
@@ -55,7 +50,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Publish to NPM
+      - name: setup git config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+
+      - name: NPM Version
         run: |
           npx nx run workspace:version --release=${{inputs.release}}
-          npx nx run-many --target=publish --dry-run
+
+      - name: Publish to NPM
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          npx nx run-many --target=publish --tag=latest --dry-run
+
+      - name: Push Tags
+        run: |
+          git push origin main --tags
