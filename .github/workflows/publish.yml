@@ -55,16 +55,16 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
 
-      - name: NPM Version
+      - name: Update version
         run: |
           npx nx run workspace:version --release=${{inputs.release}}
 
-      - name: Publish to NPM
+      - name: Publish to NPMJS.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          npx nx run-many --target=publish --tag=latest --dry-run
+          npx nx run-many --target=publish --tag=latest
 
-      - name: Push Tags
+      - name: Push tags
         run: |
           git push origin main --tags
