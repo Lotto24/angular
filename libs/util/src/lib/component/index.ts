@@ -1,1 +1,1 @@
-export * from './with-component-ref';
+export * from './component-ref';
