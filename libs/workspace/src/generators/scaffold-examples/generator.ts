@@ -108,7 +108,6 @@ function addComponentToNgModuleBootstrap(
         'NgModule'
       );
 
-      console.log('decorator', decorator);
       const objLiteral = decorator?.getFirstDescendantByKind(
         ts.SyntaxKind.ObjectLiteralExpression
       );

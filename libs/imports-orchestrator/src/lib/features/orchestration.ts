@@ -6,6 +6,7 @@ import {
 } from './internal';
 import { Provider } from '@angular/core';
 import {IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION, IMPORTS_ORCHESTRATOR_FEATURE_LOGGER} from "../internal";
+import {ConsoleLike} from "./logger";
 
 export function withOrchestration(
   orchestration: ImportsOrchestration
@@ -13,7 +14,7 @@ export function withOrchestration(
   const providers: Provider[] = [
     {
       provide: IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION,
-      useFactory: (logger: Console) =>
+      useFactory: (logger: ConsoleLike) =>
         validateOrchestration(orchestration, logger),
       deps: [IMPORTS_ORCHESTRATOR_FEATURE_LOGGER],
     },
@@ -26,7 +27,7 @@ export function withOrchestration(
 
 function validateOrchestration(
   orchestration: ImportsOrchestration,
-  logger: Console
+  logger: ConsoleLike
 ) {
   const conflicts = findConflictingPriorities(orchestration).map(
     ([priority, imports]) =>

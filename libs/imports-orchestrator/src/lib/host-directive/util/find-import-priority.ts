@@ -1,8 +1,10 @@
+import {ConsoleLike} from "../../features";
+
 export const IMPORT_PRIORITY_LOWEST = 9999999999;
 export function findImportPriority(
   priorities: { [p: string]: number },
   importId: string,
-  logger: Console
+  logger: ConsoleLike
 ): number {
   if (typeof priorities[importId] === 'number') {
     return priorities[importId];

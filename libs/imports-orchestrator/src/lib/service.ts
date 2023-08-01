@@ -13,6 +13,7 @@ import {
   IMPORTS_ORCHESTRATOR_FEATURE_TIMEOUT,
 } from './internal';
 import { ImportsStore } from './features/internal';
+import { ConsoleLike } from './features';
 
 export interface ImportServiceOptions {
   lifecycle?: Partial<ImportLifecycle>;
@@ -25,7 +26,7 @@ export interface ImportsOrchestratorQueueItem extends ImportServiceOptions {
   identifier: string;
   resolveFn: ImportResolveFn;
   priority: number;
-  logger: Console;
+  logger: ConsoleLike;
   destroy$: Observable<void>;
   callback?: (result: unknown, err: unknown) => void;
   toString: () => string;

@@ -1,12 +1,13 @@
 import {ImportsOrchestratorQueueItem} from '../service';
 import {Queue} from './queue';
+import {ConsoleLike} from "../features";
 
 /**
  * recursive loading of queued features
  */
 export async function processQueueItem(
   queue: Queue<ImportsOrchestratorQueueItem>,
-  logger: Console,
+  logger: ConsoleLike,
 ): Promise<void> {
   // let's take the next item off the queue
   const item = queue.take();

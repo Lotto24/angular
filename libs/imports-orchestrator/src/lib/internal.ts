@@ -13,9 +13,9 @@ export const IMPORTS_ORCHESTRATOR_FEATURE_ROUTING = new InjectionToken<
 export const IMPORTS_ORCHESTRATOR_FEATURE_TIMEOUT = new InjectionToken<number>(
   'IMPORTS_ORCHESTRATOR_FEAUTURE_TIMEOUT'
 );
-export const IMPORTS_ORCHESTRATOR_FEATURE_LOGGER = new InjectionToken<Console>(
-  'IMPORTS_ORCHESTRATOR_FEAUTURE_LOGGER'
-);
+export const IMPORTS_ORCHESTRATOR_FEATURE_LOGGER = new InjectionToken<
+  Pick<Console, 'info' | 'warn' | 'error' | 'debug'>
+>('IMPORTS_ORCHESTRATOR_FEAUTURE_LOGGER');
 export const IMPORTS_ORCHESTRATOR_FEATURE_QUEUE = new InjectionToken<
   Queue<ImportsOrchestratorQueueItem>
 >('IMPORTS_ORCHESTRATOR_FEATURE_QUEUE');
