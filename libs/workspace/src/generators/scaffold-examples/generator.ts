@@ -1,17 +1,25 @@
-import {formatFiles, Tree,} from '@nrwl/devkit';
-import {ScaffoldExamplesGeneratorSchema} from './schema';
-import {componentGenerator, libraryGenerator, UnitTestRunner} from "@nrwl/angular/generators";
-import {Schema as NxAngularLibrarySchema} from "@nrwl/angular/src/generators/library/schema";
-import {Schema as NxAngularComponentSchema} from "@nrwl/angular/src/generators/component/schema";
-import {FileUpdates, ModuleGeneratorUtil, updateSourceFiles} from "../util/ts-morph.util";
-import {ts} from "ts-morph";
+import { formatFiles, Tree } from '@nrwl/devkit';
+import { ScaffoldExamplesGeneratorSchema } from './schema';
+import {
+  componentGenerator,
+  libraryGenerator,
+  UnitTestRunner,
+} from '@nx/angular/generators';
+import { Schema as NxAngularLibrarySchema } from '@nx/angular/src/generators/library/schema';
+import { Schema as NxAngularComponentSchema } from '@nx/angular/src/generators/component/schema';
+import {
+  FileUpdates,
+  ModuleGeneratorUtil,
+  updateSourceFiles,
+} from '../util/ts-morph.util';
+import { ts } from 'ts-morph';
 import { Blob } from 'buffer';
-import * as fs from "fs";
+import * as fs from 'fs';
 
 interface ExamplesScaffolderLibrary {
   name: string;
   bloatSizeKb: number;
-  type: 'standalone' | 'ng-module-bootstrap'
+  type: 'standalone' | 'ng-module-bootstrap';
 }
 
 export default async function (
@@ -21,8 +29,8 @@ export default async function (
   let file: Buffer;
   try {
     file = fs.readFileSync(options.path);
-  } catch(x) {
-    throw new Error(`could not read template file at path ${options.path}`)
+  } catch (x) {
+    throw new Error(`could not read template file at path ${options.path}`);
   }
 
   const structure: ExamplesScaffolderLibrary[] = JSON.parse(file.toString());
@@ -33,7 +41,11 @@ export default async function (
   await formatFiles(tree);
 }
 
-async function createLibrary(tree: Tree, namespace: string, library: ExamplesScaffolderLibrary): Promise<void> {
+async function createLibrary(
+  tree: Tree,
+  namespace: string,
+  library: ExamplesScaffolderLibrary
+): Promise<void> {
   const schema: NxAngularLibrarySchema = {
     name: library.name,
     flat: true,
@@ -43,9 +55,9 @@ async function createLibrary(tree: Tree, namespace: string, library: ExamplesSca
     prefix: namespace,
     unitTestRunner: UnitTestRunner.None,
     skipModule: library.type !== 'ng-module-bootstrap',
-  }
+  };
 
-  await libraryGenerator(tree, schema)
+  await libraryGenerator(tree, schema);
 
   const componentSchema: NxAngularComponentSchema = {
     name: `${namespace}-${library.name}`,
@@ -60,7 +72,7 @@ async function createLibrary(tree: Tree, namespace: string, library: ExamplesSca
     inlineStyle: true,
 
     standalone: library.type === 'standalone',
-  }
+  };
   await componentGenerator(tree, componentSchema);
   await bloatTemplates(tree, library, namespace);
 
@@ -69,27 +81,47 @@ async function createLibrary(tree: Tree, namespace: string, library: ExamplesSca
   }
 }
 
-async function bloatTemplates(tree: Tree, library: ExamplesScaffolderLibrary, namespace: string): Promise<void> {
-  const templatePath = `libs/${namespace}/${library.name}/src/lib/${namespace}-${library.name}.component.html`
+async function bloatTemplates(
+  tree: Tree,
+  library: ExamplesScaffolderLibrary,
+  namespace: string
+): Promise<void> {
+  const templatePath = `libs/${namespace}/${library.name}/src/lib/${namespace}-${library.name}.component.html`;
   const bloat = await createBlob(library.bloatSizeKb * 1024).text();
-  tree.write(templatePath, `<div data-bloat="${bloat}">${library.name} (bs=${library.bloatSizeKb}kB)</div>`)
+  tree.write(
+    templatePath,
+    `<div data-bloat="${bloat}">${library.name} (bs=${library.bloatSizeKb}kB)</div>`
+  );
 }
 
-function addComponentToNgModuleBootstrap(tree: Tree, library: ExamplesScaffolderLibrary, namespace: string): Tree {
+function addComponentToNgModuleBootstrap(
+  tree: Tree,
+  library: ExamplesScaffolderLibrary,
+  namespace: string
+): Tree {
   const ngModulePath = `libs/${namespace}/${library.name}/src/lib/${namespace}-${library.name}.module.ts`;
-
+  console.log('ngModulePath', ngModulePath);
   const updates: FileUpdates = {
-    [ngModulePath]: sourceFile => {
-      const decorator = ModuleGeneratorUtil.findModuleClass(sourceFile, 'NgModule');
-      const objLiteral = decorator?.getFirstDescendantByKind(ts.SyntaxKind.ObjectLiteralExpression);
+    [ngModulePath]: (sourceFile) => {
+      const decorator = ModuleGeneratorUtil.findModuleClass(
+        sourceFile,
+        'NgModule'
+      );
+
+      console.log('decorator', decorator);
+      const objLiteral = decorator?.getFirstDescendantByKind(
+        ts.SyntaxKind.ObjectLiteralExpression
+      );
 
       if (!objLiteral) {
+        console.log('NgModule configuration not found');
         return;
       }
 
       const value = objLiteral.getPropertyOrThrow('exports');
-      objLiteral.addProperty(writer => writer.write(value.getFullText().replace(/exports/, 'bootstrap')));
-
+      objLiteral.addProperty((writer) =>
+        writer.write(value.getFullText().replace(/exports/, 'bootstrap'))
+      );
     },
   };
 
@@ -100,5 +132,5 @@ function addComponentToNgModuleBootstrap(tree: Tree, library: ExamplesScaffolder
 
 function createBlob(size: number): Blob {
   const buffer = Buffer.alloc(size, 'abc');
-  return new Blob([buffer], {type: 'application/octet-stream'});
+  return new Blob([buffer], { type: 'application/octet-stream' });
 }

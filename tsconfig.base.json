@@ -27,6 +27,63 @@
       "@lotto24-angular/imports-orchestrator-examples-static/observable-input-home": [
         "libs/imports-orchestrator-examples-static/observable-input/src/index.ts"
       ],
+      "@lotto24-angular/imports-orchestrator-examples/footer0": [
+        "libs/imports-orchestrator-examples/footer0/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/footer1": [
+        "libs/imports-orchestrator-examples/footer1/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/footer2": [
+        "libs/imports-orchestrator-examples/footer2/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/fruit0": [
+        "libs/imports-orchestrator-examples/fruit0/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/fruit1": [
+        "libs/imports-orchestrator-examples/fruit1/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/fruit2": [
+        "libs/imports-orchestrator-examples/fruit2/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/fruit3": [
+        "libs/imports-orchestrator-examples/fruit3/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/fruit4": [
+        "libs/imports-orchestrator-examples/fruit4/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/fruit5": [
+        "libs/imports-orchestrator-examples/fruit5/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/fruit6": [
+        "libs/imports-orchestrator-examples/fruit6/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/fruit7": [
+        "libs/imports-orchestrator-examples/fruit7/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/home0": [
+        "libs/imports-orchestrator-examples/home0/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/home1": [
+        "libs/imports-orchestrator-examples/home1/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/home2": [
+        "libs/imports-orchestrator-examples/home2/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/home3": [
+        "libs/imports-orchestrator-examples/home3/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/tab-keep": [
+        "libs/imports-orchestrator-examples/tab-keep/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/tab0": [
+        "libs/imports-orchestrator-examples/tab0/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/tab1": [
+        "libs/imports-orchestrator-examples/tab1/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/tab2": [
+        "libs/imports-orchestrator-examples/tab2/src/index.ts"
+      ],
       "@lotto24-angular/util": ["libs/util/src/index.ts"],
       "@lotto24-angular/workspace": ["libs/workspace/src/index.ts"]
     }
