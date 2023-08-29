@@ -1,16 +1,21 @@
 import { ImportedComponentReady } from '../imported-component-ready.interface';
 import {
   catchError,
+  filter,
   from,
+  map,
   Observable,
   of,
   race,
+  take,
   timeout,
   TimeoutError,
 } from 'rxjs';
-import { ChangeDetectorRef, ComponentRef } from '@angular/core';
+import { ChangeDetectorRef, ComponentRef, Signal } from '@angular/core';
 
 import { ImportsOrchestratorQueueItem } from '../../service';
+import { assertPromise, assertSignal } from '@lotto24-angular/util';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 export function deferUntilComponentReady$<T>(
   componentRef: ComponentRef<any>,
@@ -26,8 +31,7 @@ export function deferUntilComponentReady$<T>(
   );
   componentRef.injector.get(ChangeDetectorRef).markForCheck(); // ensure Lifecycle hooks are called
 
-  const ready$ = from(instance.importedComponentReady.call(instance));
-  return race(ready$, item.destroy$).pipe(
+  return race(resolveReady(instance), item.destroy$).pipe(
     timeout(item.timeout),
     catchError((err) => {
       if (err instanceof TimeoutError) {
@@ -48,4 +52,21 @@ export function assertImportedComponentReadyEmitter(
   type: any
 ): type is ImportedComponentReady {
   return (type as ImportedComponentReady).importedComponentReady !== undefined;
+}
+
+function resolveReady(instance: ImportedComponentReady): Observable<void> {
+  const callback = instance.importedComponentReady.call(instance);
+  if (assertPromise(callback)) {
+    return from(callback);
+  }
+
+  return (
+    assertSignal(callback)
+      ? toObservable(callback as unknown as Signal<boolean>)
+      : (callback as unknown as Observable<boolean>)
+  ).pipe(
+    filter((value) => value),
+    map(() => undefined),
+    take(1)
+  );
 }
