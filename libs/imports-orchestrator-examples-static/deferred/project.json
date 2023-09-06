@@ -1,7 +1,7 @@
 {
-  "name": "imports-orchestrator-examples--static-after-view-init",
+  "name": "imports-orchestrator-examples-static-deferred",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/imports-orchestrator-examples/-static-after-view-init/src",
+  "sourceRoot": "libs/imports-orchestrator-examples-static/deferred/src",
   "prefix": "imports-orchestrator-examples",
   "tags": [],
   "projectType": "library",
@@ -11,8 +11,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/imports-orchestrator-examples/-static-after-view-init/**/*.ts",
-          "libs/imports-orchestrator-examples/home1/**/*.html"
+          "libs/imports-orchestrator-examples-static/deferred/**/*.ts",
+          "libs/imports-orchestrator-examples-static/deferred/**/*.html"
         ]
       }
     }

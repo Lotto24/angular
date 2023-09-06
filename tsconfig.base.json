@@ -18,8 +18,8 @@
       "@lotto24-angular/imports-orchestrator": [
         "libs/imports-orchestrator/src/index.ts"
       ],
-      "@lotto24-angular/imports-orchestrator-examples-static/after-view-init-home": [
-        "libs/imports-orchestrator-examples-static/after-view-init/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples-static/deferred": [
+        "libs/imports-orchestrator-examples-static/deferred/src/index.ts"
       ],
       "@lotto24-angular/imports-orchestrator-examples-static/io": [
         "libs/imports-orchestrator-examples-static/io/src/index.ts"

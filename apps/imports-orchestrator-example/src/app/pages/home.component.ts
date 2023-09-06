@@ -7,7 +7,7 @@ import {
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
 import { BehaviorSubject } from 'rxjs';
-import {AppImportsOrchestration} from "../app.config";
+import { AppImportsOrchestration } from '../app.config';
 
 @Component({
   selector: 'example-home',
@@ -22,12 +22,17 @@ import {AppImportsOrchestration} from "../app.config";
       [inputs]="{testInput$}"
       ]
     ></ng-container>
-    <ng-container import="afterViewInit0"></ng-container>
-    <ng-container import="afterViewInit1"></ng-container>
-    <ng-container import="afterViewInit2"></ng-container>
-    <ng-container import="afterViewInit3"></ng-container>
+    <ng-container import="deferredPromise"></ng-container>
+    <ng-container import="deferredObservable"></ng-container>
+    <ng-container import="deferredSignal"></ng-container>
     <ng-container import="home2"></ng-container>
     <ng-container import="home3"></ng-container>
+    <div>
+      <h3>aliased</h3>
+      <ng-container import="alias0"></ng-container>
+      <ng-container import="alias1"></ng-container>
+    </div>
+
   `,
   imports: [ImportsOrchestratorDirective, ImportsOrchestratorComponent],
 })
@@ -52,23 +57,29 @@ import {AppImportsOrchestration} from "../app.config";
   home3: importNgModule(
     () => import('@lotto24-angular/imports-orchestrator-examples/home3')
   ),
-
-  afterViewInit0: importStandalone(
-    () =>
-      import(
-        '@lotto24-angular/imports-orchestrator-examples-static/after-view-init-home'
-      )
+  deferredPromise: importStandalone(() =>
+    import(
+      '@lotto24-angular/imports-orchestrator-examples-static/deferred'
+    ).then((esm) => esm.DeferredPromiseComponent)
   ),
-
+  deferredObservable: importStandalone(() =>
+    import(
+      '@lotto24-angular/imports-orchestrator-examples-static/deferred'
+    ).then((esm) => esm.DeferredObservableComponent)
+  ),
+  deferredSignal: importStandalone(() =>
+    import(
+      '@lotto24-angular/imports-orchestrator-examples-static/deferred'
+    ).then((esm) => esm.DeferredSignalComponent)
+  ),
   observableInput: importStandalone(
     () =>
       import(
         '@lotto24-angular/imports-orchestrator-examples-static/observable-input-home'
       )
   ),
-  afterViewInit1: 'afterViewInit0',
-  afterViewInit2: 'afterViewInit0',
-  afterViewInit3: 'afterViewInit0',
+  alias0: 'home0',
+  alias1: 'home1',
   /**
    * Type-safety ensures you stay on top of your priorities:
    *
