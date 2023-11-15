@@ -2,7 +2,7 @@ name: Deploy Angular Imports Orchestrator Example to Github Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: [$default-branch]
   workflow_dispatch:
 
 env:
@@ -35,6 +35,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v3
