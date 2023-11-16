@@ -59,23 +59,23 @@ import { AppImportsOrchestration } from '../app.config';
   ),
   deferredPromise: importStandalone(() =>
     import(
-      '@lotto24-angular/imports-orchestrator-examples-static/deferred'
+      '@lotto24-angular/imports-orchestrator-examples/deferred'
     ).then((esm) => esm.DeferredPromiseComponent)
   ),
   deferredObservable: importStandalone(() =>
     import(
-      '@lotto24-angular/imports-orchestrator-examples-static/deferred'
+      '@lotto24-angular/imports-orchestrator-examples/deferred'
     ).then((esm) => esm.DeferredObservableComponent)
   ),
   deferredSignal: importStandalone(() =>
     import(
-      '@lotto24-angular/imports-orchestrator-examples-static/deferred'
+      '@lotto24-angular/imports-orchestrator-examples/deferred'
     ).then((esm) => esm.DeferredSignalComponent)
   ),
   observableInput: importStandalone(
     () =>
       import(
-        '@lotto24-angular/imports-orchestrator-examples-static/observable-input-home'
+        '@lotto24-angular/imports-orchestrator-examples/observable-input-home'
       )
   ),
   alias0: 'home0',

@@ -33,7 +33,7 @@ import { AppImportsOrchestration } from '../app.config';
 })
 @Imports<AppImportsOrchestration>({
   input: importStandalone(
-    () => import('@lotto24-angular/imports-orchestrator-examples-static/io')
+    () => import('@lotto24-angular/imports-orchestrator-examples/io')
   ),
 })
 export class IOComponent implements OnDestroy {

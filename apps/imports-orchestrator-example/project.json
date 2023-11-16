@@ -71,15 +71,6 @@
         }
       ]
     },
-    "prepare": {
-      "executor": "nx:run-commands",
-      "outputs": ["{workspaceRoot}/libs/examples"],
-      "options": {
-        "commands": [
-          "nx g @lotto24-angular/workspace:cleanup-examples imports-orchestrator-examples && nx g @lotto24-angular/workspace:scaffold-examples apps/imports-orchestrator-example/scaffold-examples.json imports-orchestrator-examples"
-        ]
-      }
-    },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
       "options": {

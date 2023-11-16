@@ -1,0 +1,20 @@
+{
+  "name": "imports-orchestrator-examples-tab-keep",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/imports-orchestrator-examples/tab-keep/src",
+  "prefix": "imports-orchestrator-examples",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/imports-orchestrator-examples/tab-keep/**/*.ts",
+          "libs/imports-orchestrator-examples/tab-keep/**/*.html"
+        ]
+      }
+    }
+  }
+}

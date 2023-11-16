@@ -18,14 +18,14 @@
       "@lotto24-angular/imports-orchestrator": [
         "libs/imports-orchestrator/src/index.ts"
       ],
-      "@lotto24-angular/imports-orchestrator-examples-static/deferred": [
-        "libs/imports-orchestrator-examples-static/deferred/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/deferred": [
+        "libs/imports-orchestrator-examples/deferred/src/index.ts"
       ],
-      "@lotto24-angular/imports-orchestrator-examples-static/io": [
-        "libs/imports-orchestrator-examples-static/io/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/io": [
+        "libs/imports-orchestrator-examples/io/src/index.ts"
       ],
-      "@lotto24-angular/imports-orchestrator-examples-static/observable-input-home": [
-        "libs/imports-orchestrator-examples-static/observable-input/src/index.ts"
+      "@lotto24-angular/imports-orchestrator-examples/observable-input-home": [
+        "libs/imports-orchestrator-examples/observable-input/src/index.ts"
       ],
       "@lotto24-angular/imports-orchestrator-examples/footer0": [
         "libs/imports-orchestrator-examples/footer0/src/index.ts"
