@@ -16,7 +16,7 @@ export const ES_MODULE = getClosureSafeProperty({
 });
 
 export function isESModule(type: any): type is ESModule {
-  return type[ES_MODULE];
+  return type[Symbol.toStringTag] === 'Module' || type[ES_MODULE];
 }
 
 export function isNgModuleDef<T>(
