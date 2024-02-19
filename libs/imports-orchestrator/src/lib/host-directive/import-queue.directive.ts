@@ -1,14 +1,13 @@
-import type {
-  OnChanges,
-  OnDestroy,
-  SimpleChanges,
-  StaticProvider,
-} from '@angular/core';
 import {
   Directive,
   inject,
   Injector,
   Input,
+  NgModuleRef,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+  StaticProvider,
   ViewContainerRef,
 } from '@angular/core';
 import { Subject } from 'rxjs';
@@ -44,6 +43,8 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
   public readonly destroyComponents$ = new Subject<void>();
   public viewContainerRef = inject(ViewContainerRef);
 
+  private readonly moduleRef = inject(NgModuleRef);
+
   private readonly importService = inject(ImportService);
 
   private item: ImportsOrchestratorQueueItem | null = null;
@@ -63,8 +64,11 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
     this.destroyComponents$.next(); // destroy a previously mounted component(s)
 
     const injector = Injector.create({
-      providers: this.providers ?? [],
-      parent: this.viewContainerRef.injector,
+      providers: [
+        ...(this.providers ?? []),
+        { provide: ViewContainerRef, useValue: this.viewContainerRef },
+      ],
+      parent: this.moduleRef.injector,
     });
 
     this.item = this.importService.createQueueItem(

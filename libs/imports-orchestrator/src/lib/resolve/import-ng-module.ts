@@ -1,4 +1,4 @@
-import { createNgModule, Type, ViewContainerRef } from '@angular/core';
+import {createEnvironmentInjector, createNgModule, Type, ViewContainerRef} from '@angular/core';
 import {
   Constructor,
   ESModule,
@@ -8,7 +8,7 @@ import {
 } from './util';
 import { ImportsOrchestratorQueueItem } from '../service';
 import { ImportResolveFn } from './import-resolve-fn.interface';
-import {resolvePromiseWithRetries} from "@lotto24-angular/util";
+import { resolvePromiseWithRetries } from '@lotto24-angular/util';
 
 export function importNgModule(
   promise: () => Promise<unknown>
@@ -33,6 +33,8 @@ export function importNgModule(
       throw new Error('no ngModuleRef constructor found');
     }
 
+
+
     const ngModuleRef = createNgModule(ngModuleConstructor, item.injector);
 
     const componentConstructors = (
@@ -47,7 +49,7 @@ export function importNgModule(
       return;
     }
 
-    const viewContainerRef = item.injector.get(ViewContainerRef);
+    const viewContainerRef = ngModuleRef.injector.get(ViewContainerRef);
 
     const mountComponentPromises = componentConstructors.map(
       (componentConstructor) => {
