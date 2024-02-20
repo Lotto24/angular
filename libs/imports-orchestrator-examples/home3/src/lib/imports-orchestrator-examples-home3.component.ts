@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 
 @Component({
   selector: 'imports-orchestrator-examples-home3-component',
@@ -6,4 +6,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ImportsOrchestratorExamplesHome3Component {}
+export class ImportsOrchestratorExamplesHome3Component {
+  // @ts-ignore
+  foo = inject('foo');
+}
