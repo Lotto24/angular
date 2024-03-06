@@ -63,14 +63,12 @@ export class ImportsOrchestratorQueueDirective implements OnChanges, OnDestroy {
     this.removeItemFromQueue();
     this.destroyComponents$.next(); // destroy a previously mounted component(s)
 
-    const parentInjector = Injector.create({
-      providers: this.providers ?? [],
-      parent: this.moduleRef.injector,
-    });
-
     const injector = Injector.create({
-      providers: [{ provide: ViewContainerRef, useValue: this.viewContainerRef }],
-      parent: parentInjector,
+      providers: [
+        ...(this.providers ?? []),
+        { provide: ViewContainerRef, useValue: this.viewContainerRef },
+      ],
+      parent: this.moduleRef.injector,
     });
 
     this.item = this.importService.createQueueItem(

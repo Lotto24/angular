@@ -71,6 +71,12 @@
       "@lotto24-angular/imports-orchestrator-examples/home2": [
         "libs/imports-orchestrator-examples/home2/src/index.ts"
       ],
+      "@lotto24-angular/imports-orchestrator-examples/home2-child0": [
+        "libs/imports-orchestrator-examples/home2-child0/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/home2-child1": [
+        "libs/imports-orchestrator-examples/home2-child1/src/index.ts"
+      ],
       "@lotto24-angular/imports-orchestrator-examples/home3": [
         "libs/imports-orchestrator-examples/home3/src/index.ts"
       ],
