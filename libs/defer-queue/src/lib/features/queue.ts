@@ -5,9 +5,10 @@ import {
   DeferQueueFeatureQueue,
 } from './internal';
 import { Queue } from '../queue/queue';
-import { DEFER_QUEUE_FEATURE_QUEUE, QueueItem } from '../token';
+import { DEFER_QUEUE_FEATURE_QUEUE } from '../token';
+import { DeferQueueItem } from '../service';
 
-export function withQueue<T extends QueueItem>(
+export function withQueue<T extends DeferQueueItem>(
   queue: Queue<T>
 ): DeferQueueFeatureQueue {
   const providers: Provider[] = [

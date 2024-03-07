@@ -1,18 +1,13 @@
 import { InjectionToken } from '@angular/core';
 import { Queue } from './queue/queue';
 import { DeferQueueOrchestration } from './features/internal';
-
-export interface QueueItem {
-  identifier: string;
-}
-
-export type ConsoleLike = Pick<Console, 'info' | 'warn' | 'error' | 'debug'>;
+import { DeferQueueItem } from './service';
 
 export const DEFER_QUEUE_FEATURE_CONCURRENCY = new InjectionToken<
   number | (() => number)
 >('DEFER_QUEUE_FEAUTURE_CONCURRENCY');
 
-export const DEFER_QUEUE_FEATURE_QUEUE = new InjectionToken<Queue<QueueItem>>(
+export const DEFER_QUEUE_FEATURE_QUEUE = new InjectionToken<Queue<DeferQueueItem>>(
   'DEFER_QUEUE_FEATURE_QUEUE'
 );
 

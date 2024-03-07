@@ -6,10 +6,10 @@ import {
   DeferQueueOrchestration,
 } from './internal';
 import {
-  ConsoleLike,
   DEFER_QUEUE_FEATURE_LOGGER,
   DEFER_QUEUE_FEATURE_ORCHESTRATION,
 } from '../token';
+import {ConsoleLike} from "../interface";
 
 export function withOrchestration(
   orchestration: DeferQueueOrchestration

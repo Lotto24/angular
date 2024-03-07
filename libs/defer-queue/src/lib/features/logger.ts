@@ -4,7 +4,8 @@ import {
   DeferQueueFeatureKind,
   DeferQueueFeatureLogger,
 } from './internal';
-import { ConsoleLike, DEFER_QUEUE_FEATURE_LOGGER } from '../token';
+import { DEFER_QUEUE_FEATURE_LOGGER } from '../token';
+import {ConsoleLike} from "../interface";
 
 export function withLogger(logger: ConsoleLike): DeferQueueFeatureLogger {
   const providers: Provider[] = [

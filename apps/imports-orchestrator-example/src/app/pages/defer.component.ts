@@ -24,8 +24,7 @@ import { DeferrableViewsOrchestratorDirective } from 'defer-queue';
     <imports-orchestrator-examples-home0-component
       deferQueueId="home0"
       (resolved)="next()"
-    />
-    } @defer (when queued('home1')) {
+    />∏ } @defer (when queued('home1')) {
     <imports-orchestrator-examples-home1-component
       deferQueueId="home1"
       (resolved)="next()"

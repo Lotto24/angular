@@ -1,12 +1,13 @@
-import {Queue} from './queue';
-import {ConsoleLike, QueueItem} from "../token";
+import { Queue } from './queue';
+import { ConsoleLike } from '../interface';
+import { DeferQueueItem } from '../service';
 
 /**
  * recursive loading of queued features
  */
 export async function processQueueItem(
-  queue: Queue<QueueItem>,
-  logger: ConsoleLike,
+  queue: Queue<DeferQueueItem>,
+  logger: ConsoleLike
 ): Promise<void> {
   // let's take the next item off the queue
   const item = queue.take();

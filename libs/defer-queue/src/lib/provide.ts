@@ -6,7 +6,6 @@ import {
   withQueue,
 } from './features';
 import { Queue } from './queue/queue';
-import { QueueItem } from './token';
 import {
   DeferQueueFeatureConcurrency,
   DeferQueueFeatureLogger,
@@ -15,6 +14,7 @@ import {
   DeferQueueFeatureTimeout,
 } from './features/internal';
 import { withTimeout } from './features/timeout';
+import { DeferQueueItem } from './service';
 
 export type DeferQueueFeatures = (
   | DeferQueueFeatureConcurrency
@@ -34,7 +34,7 @@ export const provideDeferQueue = <O>(
     ...[
       withConcurrencyStatic(1),
       withLogger(console),
-      withQueue(new Queue<QueueItem>()),
+      withQueue(new Queue<DeferQueueItem>()),
       withTimeout(),
     ].map((feature) => feature.providers),
     ...(features ?? []).map((feature) => feature.providers),
