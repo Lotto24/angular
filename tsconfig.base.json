@@ -92,7 +92,7 @@
       ],
       "@lotto24-angular/util": ["libs/util/src/index.ts"],
       "@lotto24-angular/workspace": ["libs/workspace/src/index.ts"],
-      "deferrable-orchestrator": ["libs/deferrable-orchestrator/src/index.ts"]
+      "defer-queue": ["libs/defer-queue/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

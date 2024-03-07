@@ -1,7 +1,7 @@
 {
-  "name": "deferrable-orchestrator",
+  "name": "defer-queue",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/deferrable-orchestrator/src",
+  "sourceRoot": "libs/defer-queue/src",
   "prefix": "lib",
   "tags": [],
   "projectType": "library",
@@ -11,8 +11,8 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/deferrable-orchestrator/**/*.ts",
-          "libs/deferrable-orchestrator/**/*.html"
+          "libs/defer-queue/**/*.ts",
+          "libs/defer-queue/**/*.html"
         ]
       }
     }
