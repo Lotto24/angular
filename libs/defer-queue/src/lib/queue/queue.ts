@@ -7,7 +7,7 @@ export class Queue<T> {
   protected data: Item<T>[] = [];
 
   public insert(priority: number, payload: T): void {
-    this.data = [...this.data, { priority, payload }].sort(comparePriority);
+    this.data = [...this.data, { priority, payload }].sort(comparePriorityHighToLow);
   }
 
   public take(payload: T | null = null): T | null {
@@ -44,6 +44,6 @@ export class Queue<T> {
   }
 }
 
-function comparePriority<T>(a: Item<T>, b: Item<T>) {
-  return a.priority - b.priority;
+function comparePriorityHighToLow<T>(a: Item<T>, b: Item<T>) {
+  return b.priority - a.priority;
 }

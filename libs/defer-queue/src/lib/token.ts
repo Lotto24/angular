@@ -1,6 +1,5 @@
 import { InjectionToken } from '@angular/core';
 import { Queue } from './queue/queue';
-import { DeferQueueOrchestration } from './features/internal';
 import { DeferQueueItem } from './service';
 
 export const DEFER_QUEUE_FEATURE_CONCURRENCY = new InjectionToken<
@@ -17,8 +16,3 @@ export const DEFER_QUEUE_FEATURE_TIMEOUT = new InjectionToken<number>(
 export const DEFER_QUEUE_FEATURE_LOGGER = new InjectionToken<
   Pick<Console, 'info' | 'warn' | 'error' | 'debug'>
 >('DEFER_QUEUE_FEAUTURE_LOGGER');
-
-export const DEFER_QUEUE_FEATURE_ORCHESTRATION =
-  new InjectionToken<DeferQueueOrchestration>(
-    'DEFER_QUEUE_FEATURE_ORCHESTRATION'
-  );

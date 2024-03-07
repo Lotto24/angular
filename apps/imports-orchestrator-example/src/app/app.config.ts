@@ -49,7 +49,6 @@ const APP_IMPORTS_ORCHESTRATION = {
 };
 
 export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;
-
 export const appConfig = {
   providers: [
     provideRouter(
@@ -58,7 +57,7 @@ export const appConfig = {
       withHashLocation(),
       withPreloading(NoPreloading)
     ),
-    provideDeferQueue(APP_IMPORTS_ORCHESTRATION),
+    provideDeferQueue(),
     provideImportsOrchestration(
       APP_IMPORTS_ORCHESTRATION,
       withSuspendWhileRouting(),

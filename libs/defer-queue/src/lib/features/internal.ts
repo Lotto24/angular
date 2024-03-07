@@ -1,23 +1,25 @@
-import {Provider} from "@angular/core";
+import { Provider } from '@angular/core';
 
-export type DeferQueueFeatureConcurrency = DeferQueueFeature<DeferQueueFeatureKind.Concurrency>;
-export type DeferQueueFeatureLogger = DeferQueueFeature<DeferQueueFeatureKind.Logger>;
-export type DeferQueueFeatureOrchestration = DeferQueueFeature<DeferQueueFeatureKind.Orchestration>;
-export type DeferQueueFeatureQueue = DeferQueueFeature<DeferQueueFeatureKind.Queue>;
-export type DeferQueueFeatureTimeout = DeferQueueFeature<DeferQueueFeatureKind.Timeout>;
+export type DeferQueueFeatureConcurrency =
+  DeferQueueFeature<DeferQueueFeatureKind.Concurrency>;
+export type DeferQueueFeatureLogger =
+  DeferQueueFeature<DeferQueueFeatureKind.Logger>;
+export type DeferQueueFeatureQueue =
+  DeferQueueFeature<DeferQueueFeatureKind.Queue>;
+export type DeferQueueFeatureTimeout =
+  DeferQueueFeature<DeferQueueFeatureKind.Timeout>;
 
 export enum DeferQueueFeatureKind {
   Logger = 0,
   Queue = 1,
-  Orchestration = 2,
-  Concurrency = 3,
-  Timeout = 4,
+  Concurrency = 2,
+  Timeout = 3,
 }
 
 export type DeferQueueFeature<T extends DeferQueueFeatureKind> = {
   kind: T;
   providers: Provider[];
-}
+};
 
 export function deferQueueFeature<T extends DeferQueueFeatureKind>(
   kind: T,
@@ -25,7 +27,3 @@ export function deferQueueFeature<T extends DeferQueueFeatureKind>(
 ): DeferQueueFeature<T> {
   return { kind, providers };
 }
-
-export type DeferQueueOrchestration = {
-  [index: string]: number;
-};
