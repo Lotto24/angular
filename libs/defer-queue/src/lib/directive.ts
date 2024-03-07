@@ -1,12 +1,5 @@
-import {
-  Directive,
-  EventEmitter,
-  inject,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
-import { DeferQueueProcessor } from './queue/defer-queue-processor.service';
+import { Directive, inject, Input, OnInit } from '@angular/core';
+import { DeferQueueService } from './service';
 
 @Directive({
   selector: '[deferQueueId]',
@@ -14,14 +7,11 @@ import { DeferQueueProcessor } from './queue/defer-queue-processor.service';
 })
 export class DeferrableViewsOrchestratorDirective implements OnInit {
   @Input() public deferQueueId!: string;
-  @Output() public resolved = new EventEmitter<string>();
 
-  private readonly processor = inject(DeferQueueProcessor);
+  private readonly deferQueue = inject(DeferQueueService);
 
   ngOnInit(): void {
     console.log('foooo yields', this.deferQueueId);
-    // this.processor.process();
-
-    this.resolved.next(this.deferQueueId);
+    this.deferQueue.queued(this.deferQueueId).resolveFn();
   }
 }

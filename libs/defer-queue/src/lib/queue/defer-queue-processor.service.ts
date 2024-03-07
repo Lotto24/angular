@@ -4,7 +4,8 @@ import {
   DEFER_QUEUE_FEATURE_LOGGER,
   DEFER_QUEUE_FEATURE_QUEUE,
 } from '../token';
-import {processQueueItem} from "./process-queue-item";
+import { processQueueItem } from './process-queue-item';
+import { wait } from '../util/wait';
 
 @Injectable({ providedIn: 'root' })
 export class DeferQueueProcessor {
@@ -36,6 +37,7 @@ export class DeferQueueProcessor {
 
   private async processQueue(): Promise<void> {
     // await this.suspendForNavigation();
+    await wait(); // wait for next tick, so we collect a bunch of items and sort them (synchronously) before processing
 
     const concurrency = this.updateConcurrency();
     const concurrentBatch = [];

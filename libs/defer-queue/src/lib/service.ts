@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import {
   DEFER_QUEUE_FEATURE_LOGGER,
   DEFER_QUEUE_FEATURE_ORCHESTRATION,
@@ -8,6 +8,7 @@ import {
 import { DeferQueueProcessor } from './queue/defer-queue-processor.service';
 import { ConsoleLike } from './interface';
 import { findPriority } from './util';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export interface DeferQueueServiceOptions {
   timeout: number;
@@ -16,8 +17,10 @@ export interface DeferQueueServiceOptions {
 export interface DeferQueueItem extends DeferQueueServiceOptions {
   identifier: string;
   priority: number;
+  triggered: Subject<boolean>;
+  resolveFn: (err?: Error) => void;
+  resolved: () => Promise<void>;
   logger: ConsoleLike;
-  callback?: (result: unknown, err: unknown) => void;
   toString: () => string;
 }
 
@@ -30,6 +33,20 @@ export class DeferQueueService {
   private readonly logger = inject(DEFER_QUEUE_FEATURE_LOGGER);
   private readonly queue = inject(DEFER_QUEUE_FEATURE_QUEUE);
   private readonly orchestration = inject(DEFER_QUEUE_FEATURE_ORCHESTRATION);
+  private readonly injector = inject(Injector);
+  private readonly cache: { [identfier: string]: DeferQueueItem } = {};
+
+  public queued(
+    identifier: string
+  ): Pick<DeferQueueItem, 'triggered' | 'resolveFn'> {
+    if (!this.cache[identifier]) {
+      const item = this.createQueueItem(identifier);
+      this.cache[identifier] = item;
+      this.addItemToQueue(item);
+    }
+
+    return this.cache[identifier];
+  }
 
   public createQueueItem(
     identifier: string,
@@ -41,34 +58,34 @@ export class DeferQueueService {
     };
 
     const priority = findPriority(this.orchestration, identifier, this.logger);
-
-    return {
+    const item = {
       ...opts,
       priority,
       identifier,
+      triggered: new BehaviorSubject(false),
       logger: this.logger,
       toString: () => `@identifier="${identifier}", @priority=${priority}`,
-    };
+    } as any;
+
+    item.resolved = () =>
+      new Promise<void>((resolve, reject) => {
+        item.resolveFn = (err?: unknown) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        };
+        item.triggered.next(true);
+      });
+    return item;
   }
 
-  public async addItemToQueue(item: DeferQueueItem): Promise<unknown> {
-    const promise = new Promise((resolve, reject) => {
-      item.callback = (result, err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      };
-    });
-
+  public addItemToQueue(item: DeferQueueItem): void {
     this.queue.insert(item.priority, item);
-
+    console.log('length=', this.queue.length);
     this.logger.debug(`queue insert ${item.toString()}`);
-
     this.queueProcessor.process();
-
-    return promise;
   }
 
   public removeItemFromQueue(item: Readonly<DeferQueueItem>): boolean {
