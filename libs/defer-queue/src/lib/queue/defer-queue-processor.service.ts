@@ -37,7 +37,12 @@ export class DeferQueueProcessor {
 
   private async processQueue(): Promise<void> {
     // await this.suspendForNavigation();
-    await wait(); // wait for next tick, so we collect a bunch of items and sort them (synchronously) before processing
+
+    // DO NOT REMOVE
+    // this is vital. otherwise the first deferrable view will be added to queue, read the signal, and synchronously write to the signal, causing an exception
+    // also, we need to wait a tick so that all deferrables can be added to the queue and sorted by priority (synchronously)
+    await wait();
+    // ^^
 
     const concurrency = this.updateConcurrency();
     const concurrentBatch = [];
