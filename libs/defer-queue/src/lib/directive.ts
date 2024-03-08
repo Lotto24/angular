@@ -10,9 +10,6 @@ export class DeferrableViewsOrchestratorDirective implements OnInit {
 
   private readonly deferQueue = inject(DeferQueueService);
 
-  constructor() {
-  }
-
   ngOnInit(): void {
     this.deferQueue.item(this.deferQueueResolve).resolve();
   }

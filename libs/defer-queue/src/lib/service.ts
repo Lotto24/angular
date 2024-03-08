@@ -51,7 +51,6 @@ export class DeferQueueService {
   private readonly timeout = inject(DEFER_QUEUE_FEATURE_TIMEOUT);
   private readonly logger = inject(DEFER_QUEUE_FEATURE_LOGGER);
   private readonly queue = inject(DEFER_QUEUE_FEATURE_QUEUE);
-  // private readonly orchestration = inject(DEFER_QUEUE_FEATURE_ORCHESTRATION);
   private readonly cache: { [identfier: string]: DeferQueueItem } = {};
 
   public item(

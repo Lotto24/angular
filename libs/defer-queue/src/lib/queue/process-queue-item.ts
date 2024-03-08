@@ -21,7 +21,6 @@ export async function processQueueItem(
   logger.debug(`queue item resolve (${item})`);
 
   try {
-    // const result = await item.resolveFn(item);
     await item.resolved();
     logger.debug(`queue item resolved (${item})`);
   } catch (x) {
