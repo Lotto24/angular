@@ -1,5 +1,10 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
-import { withConcurrencyStatic, withLogger, withQueue } from './features';
+import {
+  withConcurrencyStatic,
+  withLogger,
+  withQueue,
+  withTimeout,
+} from './features';
 import { Queue } from './queue/queue';
 import {
   DeferQueueFeatureConcurrency,
@@ -7,7 +12,6 @@ import {
   DeferQueueFeatureQueue,
   DeferQueueFeatureTimeout,
 } from './features/internal';
-import { withTimeout } from './features/timeout';
 import { DeferQueueItem } from './service';
 
 export type DeferQueueFeatures = (

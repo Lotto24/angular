@@ -1,0 +1,40 @@
+{
+  "name": "@lotto24-angular/defer-queue",
+  "description": "Orchestrate deferred components in Angular applications",
+  "version": "0.0.0",
+  "keywords": [
+    "Angular",
+    "defer",
+    "deferrable",
+    "views",
+    "directive",
+    "components",
+    "loader",
+    "lazy",
+    "load",
+    "loading",
+    "queue",
+    "orchestrate",
+    "orchestration"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lotto24/angular",
+    "directory": "libs/defer-queue"
+  },
+  "bugs": {
+    "url": "https://github.com/Lotto24/angular/issues"
+  },
+  "peerDependencies": {
+    "@angular/common": "~17.0.7",
+    "@angular/core": "~17.0.7"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "volta": {
+    "node": "18.19.0",
+    "yarn": "1.22.21"
+  }
+}
