@@ -1,4 +1,11 @@
-import { inject, Injectable, signal, WritableSignal } from '@angular/core';
+import {
+  inject,
+  Injectable,
+  Injector,
+  signal,
+  Type,
+  WritableSignal,
+} from '@angular/core';
 import {
   DEFER_QUEUE_FEATURE_LOGGER,
   DEFER_QUEUE_FEATURE_QUEUE,
@@ -6,6 +13,7 @@ import {
 } from './token';
 import { DeferQueueProcessor } from './queue/defer-queue-processor.service';
 import { ConsoleLike } from './interface';
+import { defer, Observable } from 'rxjs';
 
 export interface DeferQueueServiceOptions {
   timeout: number;
@@ -33,12 +41,15 @@ function fromDeferQueueItemPriority(priority: DeferQueueItemPriority): number {
   );
 }
 
+export interface DeferQueueWhennable {
+  triggered: WritableSignal<boolean>;
+  resolve: (err?: Error) => void;
+}
+
 export interface DeferQueueItem extends DeferQueueServiceOptions {
   identifier: string;
   priority: DeferQueueItemPriority;
-  triggered: WritableSignal<boolean>;
-  resolve: (err?: Error) => void;
-  resolved: () => Promise<void>;
+  resolved: () => Promise<unknown>;
   logger: ConsoleLike;
   toString: () => string;
 }
@@ -51,25 +62,88 @@ export class DeferQueueService {
   private readonly timeout = inject(DEFER_QUEUE_FEATURE_TIMEOUT);
   private readonly logger = inject(DEFER_QUEUE_FEATURE_LOGGER);
   private readonly queue = inject(DEFER_QUEUE_FEATURE_QUEUE);
-  private readonly cache: { [identfier: string]: DeferQueueItem } = {};
+  private readonly whennablesStore = new Map<string, DeferQueueWhennable>();
+
+  public when(
+    identifier: string,
+    priority: DeferQueueItemPriority = 'default'
+  ): boolean {
+    return this.item(identifier, priority).triggered();
+  }
 
   public item(
     identifier: string,
     priority: DeferQueueItemPriority = 'default'
-  ): Pick<DeferQueueItem, 'triggered' | 'resolve'> {
-    if (!this.cache[identifier]) {
-      const item = this.createQueueItem(identifier, priority);
-      this.cache[identifier] = item;
-      this.addItemToQueue(item);
+  ): DeferQueueWhennable {
+    if (!this.whennablesStore.has(identifier)) {
+      const whennable: DeferQueueWhennable = {
+        triggered: signal(false),
+        resolve: () => {},
+      };
+
+      const resolved = () =>
+        new Promise<void>((resolve, reject) => {
+          whennable.resolve = (err?: unknown) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          };
+          whennable.triggered.set(true);
+        });
+
+      const item = this.createQueueItem(identifier, priority, resolved);
+      this.whennablesStore.set(identifier, whennable);
+      this.queue.insert(fromDeferQueueItemPriority(priority), item);
+      this.logger.debug(`queue insert ${item.toString()}`);
       this.queueProcessor.process();
     }
 
-    return this.cache[identifier];
+    return this.whennablesStore.get(identifier) as DeferQueueWhennable;
   }
+
+  public service<T>(
+    identifier: string,
+    priority: DeferQueueItemPriority = 'default',
+    dynamicImport: () => Promise<Type<T>>
+  ): Observable<T> {
+    const injector = inject(Injector);
+
+    return defer(() => {
+      let fn: (value: T | undefined, err: unknown) => void;
+      const promise = new Promise<T>((resolve, reject) => {
+        fn = (value: T | undefined, err: unknown) => {
+          if (err || !value) {
+            reject(err);
+          } else {
+            resolve(value);
+          }
+        };
+      });
+
+      const resolved = () =>
+        dynamicImport()
+          .then((service) => injector.get(service))
+          .then((instance) => fn(instance, null))
+          .catch((err) => fn(undefined, err));
+
+      const item = this.createQueueItem(identifier, priority, resolved);
+      this.queue.insert(fromDeferQueueItemPriority(priority), item);
+      this.logger.debug(`queue insert ${item.toString()}`);
+      this.queueProcessor.process();
+
+      return promise;
+    });
+  }
+
+
+
 
   private createQueueItem(
     identifier: string,
     priority: DeferQueueItemPriority,
+    resolved: () => Promise<unknown>,
     options: Partial<DeferQueueServiceOptions> = {}
   ): Readonly<DeferQueueItem> {
     const opts: DeferQueueServiceOptions = {
@@ -81,35 +155,12 @@ export class DeferQueueService {
       ...opts,
       identifier,
       priority,
-      triggered: signal(false),
+      resolved,
       logger: this.logger,
-      resolve: () => {},
-      resolved: () =>
-        new Promise<void>((resolve, reject) => {
-          item.resolve = (err?: unknown) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve();
-            }
-          };
-          item.triggered.set(true);
-        }),
       toString: () =>
-        `@identifier="${item.identifier}", @priority=${
-          item.priority
-        }, triggered=${item.triggered()}`,
+        `@identifier="${item.identifier}", @priority=${item.priority}`,
     };
 
     return item;
-  }
-
-  private addItemToQueue(item: DeferQueueItem): void {
-    this.queue.insert(fromDeferQueueItemPriority(item.priority), item);
-    this.logger.debug(`queue insert ${item.toString()}`);
-  }
-
-  public removeItemFromQueue(item: Readonly<DeferQueueItem>): boolean {
-    return this.queue.take(item) !== undefined;
   }
 }

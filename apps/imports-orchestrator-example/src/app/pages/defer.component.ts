@@ -23,8 +23,18 @@ import { ImportsOrchestratorExamplesFruit4Component } from '@lotto24-angular/imp
     ImportsOrchestratorExamplesFruit3Module,
     ImportsOrchestratorExamplesFruit4Component,
   ],
-  templateUrl: './defer.component.html'
+  templateUrl: './defer.component.html',
 })
 export class DeferComponent {
   protected readonly deferQueue = inject(DeferQueueService);
+
+  constructor() {
+    this.deferQueue
+      .service('service0', 'lowest', () =>
+        import('@lotto24-angular/imports-orchestrator-examples/service0').then(
+          (esm) => esm.Service0
+        )
+      )
+      .subscribe((instance) => console.log('Service0 instance? ', instance));
+  }
 }

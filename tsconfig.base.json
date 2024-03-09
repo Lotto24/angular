@@ -78,6 +78,9 @@
       "@lotto24-angular/imports-orchestrator-examples/observable-input-home": [
         "libs/imports-orchestrator-examples/observable-input/src/index.ts"
       ],
+      "@lotto24-angular/imports-orchestrator-examples/service0": [
+        "libs/imports-orchestrator-examples/service0/src/index.ts"
+      ],
       "@lotto24-angular/imports-orchestrator-examples/tab-keep": [
         "libs/imports-orchestrator-examples/tab-keep/src/index.ts"
       ],

@@ -1,23 +1,23 @@
-@defer (when deferQueue.item('fruit0', 'lowest').triggered()) {
+@defer (when deferQueue.when('fruit0', 'lowest')) {
 <imports-orchestrator-examples-fruit0-component deferQueueResolve="fruit0" />
 }
 <br />
 
-@defer (when deferQueue.item('fruit1').triggered()) {
+@defer (when deferQueue.when('fruit1')) {
 <imports-orchestrator-examples-fruit1-component deferQueueResolve="fruit1" />
 }
 
 <br />
-@defer (when deferQueue.item('fruit2', 'highest').triggered()) {
+@defer (when deferQueue.when('fruit2', 'highest')) {
 <imports-orchestrator-examples-fruit2-component deferQueueResolve="fruit2" />
 }
 
 <br />
-@defer (when deferQueue.item('fruit3', 'low').triggered()) {
+@defer (when deferQueue.when('fruit3', 'low')) {
 <imports-orchestrator-examples-fruit3-component deferQueueResolve="fruit3" />
 }
 
 <br />
-@defer (when deferQueue.item('fruit4', 329576235).triggered()) {
+@defer (when deferQueue.when('fruit4', 329576235)) {
 <imports-orchestrator-examples-fruit4-component deferQueueResolve="fruit4" />
 }
