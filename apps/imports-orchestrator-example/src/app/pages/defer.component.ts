@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  Injector,
+  OnInit,
+} from '@angular/core';
 import {
   DeferQueueService,
   DeferrableViewsOrchestratorDirective,
@@ -25,16 +31,31 @@ import { ImportsOrchestratorExamplesFruit4Component } from '@lotto24-angular/imp
   ],
   templateUrl: './defer.component.html',
 })
-export class DeferComponent {
+export class DeferComponent implements OnInit {
   protected readonly deferQueue = inject(DeferQueueService);
+  private readonly injector = inject(Injector);
 
-  constructor() {
-    this.deferQueue
-      .service('service0', 'lowest', () =>
+  private service0 = this.deferQueue
+    .service$(
+      'service0',
+      () =>
         import('@lotto24-angular/imports-orchestrator-examples/service0').then(
           (esm) => esm.Service0
-        )
-      )
-      .subscribe((instance) => console.log('Service0 instance? ', instance));
+        ),
+      'lowest'
+    )
+    .subscribe((instance) => console.log('service0.foo? ', instance.foo()));
+
+  async ngOnInit(): Promise<void> {
+    const service = await this.deferQueue.service(
+      'service0',
+      () =>
+        import('@lotto24-angular/imports-orchestrator-examples/service0').then(
+          (esm) => esm.Service0
+        ),
+      'lowest',
+      this.injector
+    );
+    console.log('service0.foo? ', service.foo());
   }
 }

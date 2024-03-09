@@ -13,7 +13,7 @@ import {
 } from './token';
 import { DeferQueueProcessor } from './queue/defer-queue-processor.service';
 import { ConsoleLike } from './interface';
-import { defer, Observable } from 'rxjs';
+import { defer } from 'rxjs';
 
 export interface DeferQueueServiceOptions {
   timeout: number;
@@ -67,14 +67,14 @@ export class DeferQueueService {
   public when(
     identifier: string,
     priority: DeferQueueItemPriority = 'default'
-  ): boolean {
+  ) {
     return this.item(identifier, priority).triggered();
   }
 
   public item(
     identifier: string,
     priority: DeferQueueItemPriority = 'default'
-  ): DeferQueueWhennable {
+  ) {
     if (!this.whennablesStore.has(identifier)) {
       const whennable: DeferQueueWhennable = {
         triggered: signal(false),
@@ -103,14 +103,33 @@ export class DeferQueueService {
     return this.whennablesStore.get(identifier) as DeferQueueWhennable;
   }
 
-  public service<T>(
+  public service$<T>(
     identifier: string,
+    dynamicImport: () => Promise<Type<T>>,
     priority: DeferQueueItemPriority = 'default',
-    dynamicImport: () => Promise<Type<T>>
-  ): Observable<T> {
-    const injector = inject(Injector);
+    injector = inject(Injector)
+  ) {
+    return defer(
+      this.serviceItem(identifier, dynamicImport, priority, injector)
+    );
+  }
 
-    return defer(() => {
+  public async service<T>(
+    identifier: string,
+    dynamicImport: () => Promise<Type<T>>,
+    priority: DeferQueueItemPriority = 'default',
+    injector = inject(Injector)
+  ) {
+    return this.serviceItem(identifier, dynamicImport, priority, injector)();
+  }
+
+  private serviceItem<T>(
+    identifier: string,
+    dynamicImport: () => Promise<Type<T>>,
+    priority: DeferQueueItemPriority = 'default',
+    injector: Injector
+  ) {
+    return () => {
       let fn: (value: T | undefined, err: unknown) => void;
       const promise = new Promise<T>((resolve, reject) => {
         fn = (value: T | undefined, err: unknown) => {
@@ -134,11 +153,8 @@ export class DeferQueueService {
       this.queueProcessor.process();
 
       return promise;
-    });
+    };
   }
-
-
-
 
   private createQueueItem(
     identifier: string,
