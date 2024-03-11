@@ -37,7 +37,6 @@ export class DeferComponent implements OnInit {
 
   private service0 = this.deferQueue
     .service$(
-      'service0',
       () =>
         import('@lotto24-angular/imports-orchestrator-examples/service0').then(
           (esm) => esm.Service0
@@ -48,7 +47,6 @@ export class DeferComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     const service = await this.deferQueue.service(
-      'service0',
       () =>
         import('@lotto24-angular/imports-orchestrator-examples/service0').then(
           (esm) => esm.Service0

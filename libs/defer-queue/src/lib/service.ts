@@ -41,17 +41,15 @@ function fromDeferQueueItemPriority(priority: DeferQueueItemPriority): number {
   );
 }
 
-export interface DeferQueueWhennable {
+export interface DeferQueueDeferrable {
   triggered: WritableSignal<boolean>;
   resolve: (err?: Error) => void;
 }
 
 export interface DeferQueueItem extends DeferQueueServiceOptions {
-  identifier: string;
   priority: DeferQueueItemPriority;
   resolved: () => Promise<unknown>;
   logger: ConsoleLike;
-  toString: () => string;
 }
 
 @Injectable({
@@ -62,69 +60,76 @@ export class DeferQueueService {
   private readonly timeout = inject(DEFER_QUEUE_FEATURE_TIMEOUT);
   private readonly logger = inject(DEFER_QUEUE_FEATURE_LOGGER);
   private readonly queue = inject(DEFER_QUEUE_FEATURE_QUEUE);
-  private readonly whennablesStore = new Map<string, DeferQueueWhennable>();
+  private readonly deferrables = new Map<string, DeferQueueDeferrable>();
 
+  /**
+   * @param identifier is required to connect the resolved item to the defer-trigger
+   * @param priority higher priority will resolve the deferrable earlier
+   */
   public when(
     identifier: string,
     priority: DeferQueueItemPriority = 'default'
   ) {
-    return this.item(identifier, priority).triggered();
+    return this.deferrable(identifier, priority).triggered();
   }
 
-  public item(
+  /**
+   * Creates a new deferrable queue item, and adds it to the queue. if an item with this identifier already exists, the existing item will be returned.
+   * @param identifier is used to connect the resolved item to the defer-trigger
+   * @param priority higher priority will resolve the deferrable earlier
+   */
+  public deferrable(
     identifier: string,
     priority: DeferQueueItemPriority = 'default'
   ) {
-    if (!this.whennablesStore.has(identifier)) {
-      const whennable: DeferQueueWhennable = {
+    if (!this.deferrables.has(identifier)) {
+      const deferrable: DeferQueueDeferrable = {
         triggered: signal(false),
         resolve: () => {},
       };
 
       const resolved = () =>
         new Promise<void>((resolve, reject) => {
-          whennable.resolve = (err?: unknown) => {
+          deferrable.resolve = (err?: unknown) => {
             if (err) {
               reject(err);
             } else {
+              this.logger.info(
+                `queue resolved deferrable w/ identifier=${identifier}, priority=${priority}`
+              );
               resolve();
             }
           };
-          whennable.triggered.set(true);
+          deferrable.triggered.set(true);
         });
 
-      const item = this.createQueueItem(identifier, priority, resolved);
-      this.whennablesStore.set(identifier, whennable);
+      const item = this.createQueueItem(priority, resolved);
+      this.deferrables.set(identifier, deferrable);
       this.queue.insert(fromDeferQueueItemPriority(priority), item);
       this.logger.debug(`queue insert ${item.toString()}`);
       this.queueProcessor.process();
     }
 
-    return this.whennablesStore.get(identifier) as DeferQueueWhennable;
+    return this.deferrables.get(identifier) as DeferQueueDeferrable;
   }
 
   public service$<T>(
-    identifier: string,
     dynamicImport: () => Promise<Type<T>>,
     priority: DeferQueueItemPriority = 'default',
     injector = inject(Injector)
   ) {
-    return defer(
-      this.serviceItem(identifier, dynamicImport, priority, injector)
-    );
+    return defer(this.serviceItem(dynamicImport, priority, injector));
   }
 
   public async service<T>(
-    identifier: string,
     dynamicImport: () => Promise<Type<T>>,
     priority: DeferQueueItemPriority = 'default',
     injector = inject(Injector)
   ) {
-    return this.serviceItem(identifier, dynamicImport, priority, injector)();
+    return this.serviceItem(dynamicImport, priority, injector)();
   }
 
   private serviceItem<T>(
-    identifier: string,
     dynamicImport: () => Promise<Type<T>>,
     priority: DeferQueueItemPriority = 'default',
     injector: Injector
@@ -143,11 +148,15 @@ export class DeferQueueService {
 
       const resolved = () =>
         dynamicImport()
+          .then((service) => {
+            this.logger.info(`queue resolved service w/ name=${service.name}, priority=${priority}`);
+            return service;
+          })
           .then((service) => injector.get(service))
           .then((instance) => fn(instance, null))
           .catch((err) => fn(undefined, err));
 
-      const item = this.createQueueItem(identifier, priority, resolved);
+      const item = this.createQueueItem(priority, resolved);
       this.queue.insert(fromDeferQueueItemPriority(priority), item);
       this.logger.debug(`queue insert ${item.toString()}`);
       this.queueProcessor.process();
@@ -157,7 +166,6 @@ export class DeferQueueService {
   }
 
   private createQueueItem(
-    identifier: string,
     priority: DeferQueueItemPriority,
     resolved: () => Promise<unknown>,
     options: Partial<DeferQueueServiceOptions> = {}
@@ -167,16 +175,11 @@ export class DeferQueueService {
       timeout: options.timeout ?? this.timeout,
     };
 
-    const item: DeferQueueItem = {
+    return {
       ...opts,
-      identifier,
       priority,
       resolved,
       logger: this.logger,
-      toString: () =>
-        `@identifier="${item.identifier}", @priority=${item.priority}`,
     };
-
-    return item;
   }
 }
