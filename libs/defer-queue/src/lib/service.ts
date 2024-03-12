@@ -22,11 +22,11 @@ export interface DeferQueueServiceOptions {
 }
 
 const DEFER_QUEUE_ITEM_PRIORITIES = {
-  highest: 999_999_999,
+  higher: 999_999_999,
   high: 999_999,
   default: 100_000,
   low: 10_000,
-  lowest: 1_000,
+  lower: 1_000,
 } as const;
 
 export type DeferQueueItemPriority =
@@ -78,7 +78,7 @@ export class DeferQueueService {
    */
   public when(
     identifier: string,
-    priority: DeferQueueItemPriority = 'default'
+    priority: DeferQueueItemPriority = 'default',
   ) {
     return this.deferrable(identifier, priority).triggered();
   }
@@ -121,7 +121,7 @@ export class DeferQueueService {
       const item = this.createQueueItem(priority, resolved);
       this.deferrables.set(identifier, deferrable);
       this.queue.insert(fromDeferQueueItemPriority(priority), item);
-      this.logger.debug(`queue insert ${item.toString()}`);
+      this.logger.debug(`insert deferrable w/ identifier=${identifier}, ${priority}`);
       this.queueProcessor.process();
     }
 
@@ -208,7 +208,7 @@ export class DeferQueueService {
         dynamicImport()
           .then((service) => {
             this.logger.info(
-              `queue resolved service w/ name=${service.name}, priority=${priority}`
+              `resolved service w/ name=${service.name}, priority=${priority}`
             );
             return service;
           })
@@ -218,7 +218,7 @@ export class DeferQueueService {
 
       const item = this.createQueueItem(priority, resolved);
       this.queue.insert(fromDeferQueueItemPriority(priority), item);
-      this.logger.debug(`queue insert ${item.toString()}`);
+      this.logger.debug(`insert ${item.toString()}`);
       this.queueProcessor.process();
 
       return promise;

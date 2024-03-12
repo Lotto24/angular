@@ -58,10 +58,10 @@ export const appConfig = {
       withPreloading(NoPreloading)
     ),
     provideDeferQueue(),
-    provideImportsOrchestration(
-      APP_IMPORTS_ORCHESTRATION,
-      withSuspendWhileRouting(),
-      withConcurrencyRelativeToDownlinkSpeed(2, 1)
-    ),
+    // provideImportsOrchestration(
+    //   APP_IMPORTS_ORCHESTRATION,
+    //   withSuspendWhileRouting(),
+    //   withConcurrencyRelativeToDownlinkSpeed(2, 1)
+    // ),
   ],
 };

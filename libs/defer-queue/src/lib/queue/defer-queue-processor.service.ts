@@ -4,7 +4,6 @@ import {
   DEFER_QUEUE_FEATURE_LOGGER,
   DEFER_QUEUE_FEATURE_QUEUE,
 } from '../token';
-import { processQueueItem } from './process-queue-item';
 import { wait } from '../util/wait';
 
 @Injectable({ providedIn: 'root' })
@@ -57,7 +56,21 @@ export class DeferQueueProcessor {
   }
 
   private async processItem(): Promise<void> {
-    await processQueueItem(this.queue, this.logger);
+    // let's take the next item off the queue
+    const item = this.queue.take();
+
+    // let's stop if there are no items in the queue
+    if (!item) {
+      this.logger.debug('queue is drained');
+      return;
+    }
+
+    try {
+      await item.resolved();
+    } catch (x) {
+      this.logger.error(`error resolving queue item (${item})`, x);
+    }
+
     this.running--;
     if (!this.queue.empty) {
       await this.processQueue();
