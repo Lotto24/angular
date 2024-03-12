@@ -1,5 +1,5 @@
 import {
-  computed,
+  effect,
   inject,
   Injectable,
   Injector,
@@ -54,7 +54,7 @@ export interface DeferQueueItem extends DeferQueueServiceOptions {
   logger: ConsoleLike;
 }
 
-export interface DeferrableState<V> {
+export interface SignalState<V> {
   value: Signal<V>;
 }
 
@@ -89,7 +89,8 @@ export class DeferQueueService {
    * @param priority higher priority will resolve the deferrable earlier
    *
    * TODO:
-   *  * add error when resolving an identifier that did not exist previously.
+   // *  * add error when resolving an identifier that did not exist previously.
+   *  * add error when resolving an identifier that has not been triggered.
    *  *
    */
   public deferrable(
@@ -127,18 +128,19 @@ export class DeferQueueService {
     return this.deferrables.get(identifier) as DeferQueueDeferrable;
   }
 
-  public state<V, T extends DeferrableState<V>>(
+  public state<V, T extends SignalState<V>>(
     initialValue: V,
     dynamicImport: () => Promise<Type<T>>,
     priority: DeferQueueItemPriority = 'default',
     injector = inject(Injector)
   ): Signal<V> {
     const value = signal(initialValue);
-    this.serviceAsync(dynamicImport, priority, injector).then((service) => {
-      computed(() => {
-        value.set(service.value());
-      });
-    });
+    this.serviceAsync(dynamicImport, priority, injector).then((service) =>
+      effect(() => value.set(service.value()), {
+        allowSignalWrites: true,
+        injector,
+      })
+    );
 
     return value.asReadonly();
   }

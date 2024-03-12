@@ -1,5 +1,7 @@
-@defer (when deferQueue.when('fruit0', 'lowest')) {
+@defer (on viewport; when deferQueue.when('fruit0', 'lowest')) {
 <imports-orchestrator-examples-fruit0-component deferQueueResolve="fruit0" />
+} @placeholder {
+  <div>fruit0 will be placed here</div>
 }
 <br />
 
@@ -21,3 +23,9 @@
 @defer (when deferQueue.when('fruit4', 329576235)) {
 <imports-orchestrator-examples-fruit4-component deferQueueResolve="fruit4" />
 }
+
+<br />
+Reactive state from lazy-loaded signal-based service {{ state$ | async }}
+
+<br />
+Reactive state from lazy-loaded signal-based service {{ state() }}

@@ -3,7 +3,6 @@ import {
   Component,
   inject,
   Injector,
-  OnInit,
 } from '@angular/core';
 import {
   DeferQueueService,
@@ -31,29 +30,27 @@ import { ImportsOrchestratorExamplesFruit4Component } from '@lotto24-angular/imp
   ],
   templateUrl: './defer.component.html',
 })
-export class DeferComponent implements OnInit {
+export class DeferComponent {
   protected readonly deferQueue = inject(DeferQueueService);
   private readonly injector = inject(Injector);
 
-  private service0 = this.deferQueue
-    .service$(
+  public state = this.deferQueue.state(
+    0,
+    () =>
+      import('@lotto24-angular/imports-orchestrator-examples/service1').then(
+        (esm) => esm.Service1
+      ),
+    'lowest',
+    this.injector
+  );
+
+  public state$ = this.deferQueue
+    .state$(
+      0,
       () =>
         import('@lotto24-angular/imports-orchestrator-examples/service0').then(
           (esm) => esm.Service0
         ),
       'lowest'
     )
-    .subscribe((instance) => console.log('service0.foo? ', instance.foo()));
-
-  async ngOnInit(): Promise<void> {
-    const service = await this.deferQueue.serviceAsync(
-      () =>
-        import('@lotto24-angular/imports-orchestrator-examples/service0').then(
-          (esm) => esm.Service0
-        ),
-      'lowest',
-      this.injector
-    );
-    console.log('service0.foo? ', service.foo());
-  }
 }

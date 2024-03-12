@@ -81,6 +81,9 @@
       "@lotto24-angular/imports-orchestrator-examples/service0": [
         "libs/imports-orchestrator-examples/service0/src/index.ts"
       ],
+      "@lotto24-angular/imports-orchestrator-examples/service1": [
+        "libs/imports-orchestrator-examples/service1/src/index.ts"
+      ],
       "@lotto24-angular/imports-orchestrator-examples/tab-keep": [
         "libs/imports-orchestrator-examples/tab-keep/src/index.ts"
       ],
