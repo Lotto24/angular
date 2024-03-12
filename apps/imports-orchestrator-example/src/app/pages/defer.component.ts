@@ -46,7 +46,7 @@ export class DeferComponent implements OnInit {
     .subscribe((instance) => console.log('service0.foo? ', instance.foo()));
 
   async ngOnInit(): Promise<void> {
-    const service = await this.deferQueue.service(
+    const service = await this.deferQueue.serviceAsync(
       () =>
         import('@lotto24-angular/imports-orchestrator-examples/service0').then(
           (esm) => esm.Service0

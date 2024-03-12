@@ -1,7 +1,9 @@
 import {
+  computed,
   inject,
   Injectable,
   Injector,
+  Signal,
   signal,
   Type,
   WritableSignal,
@@ -13,7 +15,7 @@ import {
 } from './token';
 import { DeferQueueProcessor } from './queue/defer-queue-processor.service';
 import { ConsoleLike } from './interface';
-import { defer } from 'rxjs';
+import { defer, Observable, shareReplay, startWith, switchMap } from 'rxjs';
 
 export interface DeferQueueServiceOptions {
   timeout: number;
@@ -52,6 +54,14 @@ export interface DeferQueueItem extends DeferQueueServiceOptions {
   logger: ConsoleLike;
 }
 
+export interface DeferrableState<V> {
+  value: Signal<V>;
+}
+
+export interface ObservableState<V> {
+  value$: Observable<V>;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -77,6 +87,10 @@ export class DeferQueueService {
    * Creates a new deferrable queue item, and adds it to the queue. if an item with this identifier already exists, the existing item will be returned.
    * @param identifier is used to connect the resolved item to the defer-trigger
    * @param priority higher priority will resolve the deferrable earlier
+   *
+   * TODO:
+   *  * add error when resolving an identifier that did not exist previously.
+   *  *
    */
   public deferrable(
     identifier: string,
@@ -113,6 +127,35 @@ export class DeferQueueService {
     return this.deferrables.get(identifier) as DeferQueueDeferrable;
   }
 
+  public state<V, T extends DeferrableState<V>>(
+    initialValue: V,
+    dynamicImport: () => Promise<Type<T>>,
+    priority: DeferQueueItemPriority = 'default',
+    injector = inject(Injector)
+  ): Signal<V> {
+    const value = signal(initialValue);
+    this.serviceAsync(dynamicImport, priority, injector).then((service) => {
+      computed(() => {
+        value.set(service.value());
+      });
+    });
+
+    return value.asReadonly();
+  }
+
+  public state$<V, T extends ObservableState<V>>(
+    initialValue: V,
+    dynamicImport: () => Promise<Type<T>>,
+    priority: DeferQueueItemPriority = 'default',
+    injector = inject(Injector)
+  ): Observable<V> {
+    return this.service$(dynamicImport, priority, injector).pipe(
+      switchMap((service) => service.value$),
+      startWith(initialValue),
+      shareReplay(1)
+    );
+  }
+
   public service$<T>(
     dynamicImport: () => Promise<Type<T>>,
     priority: DeferQueueItemPriority = 'default',
@@ -121,12 +164,25 @@ export class DeferQueueService {
     return defer(this.serviceItem(dynamicImport, priority, injector));
   }
 
-  public async service<T>(
+  public async serviceAsync<T>(
     dynamicImport: () => Promise<Type<T>>,
     priority: DeferQueueItemPriority = 'default',
     injector = inject(Injector)
   ) {
     return this.serviceItem(dynamicImport, priority, injector)();
+  }
+
+  public service<T>(
+    dynamicImport: () => Promise<Type<T>>,
+    priority: DeferQueueItemPriority = 'default',
+    injector = inject(Injector)
+  ): Signal<T | null> {
+    const s = signal<T | null>(null);
+    this.serviceAsync(dynamicImport, priority, injector).then((service) =>
+      s.set(service)
+    );
+
+    return s;
   }
 
   private serviceItem<T>(
@@ -149,7 +205,9 @@ export class DeferQueueService {
       const resolved = () =>
         dynamicImport()
           .then((service) => {
-            this.logger.info(`queue resolved service w/ name=${service.name}, priority=${priority}`);
+            this.logger.info(
+              `queue resolved service w/ name=${service.name}, priority=${priority}`
+            );
             return service;
           })
           .then((service) => injector.get(service))
