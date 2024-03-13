@@ -20,29 +20,30 @@ import { ImportsOrchestratorExamplesHome2Component } from '@lotto24-angular/impo
     ImportsOrchestratorExamplesHome2Component,
   ],
   template: `
-    @defer (when deferQueue.when('home0', 'lower')) {
-    <imports-orchestrator-examples-home0-component />
+    @defer (when deferrables.when('home0', 'lower')) {
+    <imports-orchestrator-examples-home0-component deferrablesResolve="home0" />
     } @placeholder {
-      <div deferQueueResolve="home0">placeholder:home0</div>
+    <div>placeholder:home0</div>
     }
 
     <br />
 
-    @defer (when deferQueue.when('home1')) {
-    <imports-orchestrator-examples-home1-component />
+    @defer (when deferrables.when('home1')) {
+    <imports-orchestrator-examples-home1-component deferQueueResolve="home1" />
     } @placeholder {
-      <div deferQueueResolve="home1">placeholder:home1</div>
+    <div>placeholder:home1</div>
     }
 
     <br />
 
-<!--    @defer (when deferQueue.when('home2', 'higher')) {-->
-<!--    <imports-orchestrator-examples-home2-component />-->
-<!--    } @placeholder {-->
-<!--      <div deferQueueResolve="home2">placeholder:home2</div>-->
-<!--    }-->
+    <!--    @defer (when deferQueue.when('home2', 'higher')) {-->
+    <!--    <imports-orchestrator-examples-home2-component />-->
+    <!--    } @placeholder {-->
+    <!--      <div deferQueueResolve="home2">placeholder:home2</div>-->
+    <!--    }-->
   `,
 })
 export class Defer2Component {
   protected readonly deferQueue = inject(DeferQueueService);
+  protected readonly deferrables = this.deferQueue.deferrables();
 }

@@ -1,4 +1,5 @@
 import {
+  DestroyRef,
   effect,
   inject,
   Injectable,
@@ -16,31 +17,10 @@ import {
 import { DeferQueueProcessor } from './queue/defer-queue-processor.service';
 import { ConsoleLike } from './interface';
 import { defer, Observable, shareReplay, startWith, switchMap } from 'rxjs';
+import { DeferQueueItemPriority, fromDeferQueueItemPriority } from './util';
 
 export interface DeferQueueServiceOptions {
   timeout: number;
-}
-
-const DEFER_QUEUE_ITEM_PRIORITIES = {
-  higher: 999_999_999,
-  high: 999_999,
-  default: 100_000,
-  low: 10_000,
-  lower: 1_000,
-} as const;
-
-export type DeferQueueItemPriority =
-  | keyof typeof DEFER_QUEUE_ITEM_PRIORITIES
-  | number;
-
-function fromDeferQueueItemPriority(priority: DeferQueueItemPriority): number {
-  if (typeof priority === 'number') {
-    return priority;
-  }
-
-  return (
-    DEFER_QUEUE_ITEM_PRIORITIES[priority] ?? DEFER_QUEUE_ITEM_PRIORITIES.default
-  );
 }
 
 export interface DeferQueueDeferrable {
@@ -70,15 +50,37 @@ export class DeferQueueService {
   private readonly timeout = inject(DEFER_QUEUE_FEATURE_TIMEOUT);
   private readonly logger = inject(DEFER_QUEUE_FEATURE_LOGGER);
   private readonly queue = inject(DEFER_QUEUE_FEATURE_QUEUE);
-  private readonly deferrables = new Map<string, DeferQueueDeferrable>();
+  private readonly deferrableStore = new Map<string, DeferQueueDeferrable>();
+
+  public deferrables() {
+    const injector = inject(Injector);
+    const destroyRef = injector.get(DestroyRef);
+
+    destroyRef.onDestroy(() => this.logger.info('onDestroy'));
+
+    return {
+      when: (
+        identfier: string,
+        priority: DeferQueueItemPriority = 'default'
+      ) => {
+        const deferrable = this.deferrable(identfier, priority);
+        destroyRef.onDestroy(() => deferrable.resolve());
+        return deferrable;
+      },
+    };
+  }
+
+  public services() {
+
+  }
 
   /**
    * @param identifier is required to connect the resolved item to the defer-trigger
    * @param priority higher priority will resolve the deferrable earlier
    */
-  public when(
+  private when(
     identifier: string,
-    priority: DeferQueueItemPriority = 'default',
+    priority: DeferQueueItemPriority = 'default'
   ) {
     return this.deferrable(identifier, priority).triggered();
   }
@@ -97,10 +99,15 @@ export class DeferQueueService {
     identifier: string,
     priority: DeferQueueItemPriority = 'default'
   ) {
-    if (!this.deferrables.has(identifier)) {
+    if (!this.deferrableStore.has(identifier)) {
       const deferrable: DeferQueueDeferrable = {
         triggered: signal(false),
-        resolve: () => {},
+        resolve: () => {
+          const taken = this.queue.take(item);
+          this.logger.info(
+            `resolved deferrable w/ identifier=${identifier}, priority=${priority}`
+          );
+        },
       };
 
       const resolved = () =>
@@ -110,7 +117,7 @@ export class DeferQueueService {
               reject(err);
             } else {
               this.logger.info(
-                `queue resolved deferrable w/ identifier=${identifier}, priority=${priority}`
+                `resolved deferrable w/ identifier=${identifier}, priority=${priority}`
               );
               resolve();
             }
@@ -119,13 +126,16 @@ export class DeferQueueService {
         });
 
       const item = this.createQueueItem(priority, resolved);
-      this.deferrables.set(identifier, deferrable);
+      this.deferrableStore.set(identifier, deferrable);
       this.queue.insert(fromDeferQueueItemPriority(priority), item);
-      this.logger.debug(`insert deferrable w/ identifier=${identifier}, ${priority}`);
+      this.logger.debug(
+        `insert deferrable w/ identifier=${identifier}, ${priority}`
+      );
+      this.logger.info('queue.length', this.queue.length);
       this.queueProcessor.process();
     }
 
-    return this.deferrables.get(identifier) as DeferQueueDeferrable;
+    return this.deferrableStore.get(identifier) as DeferQueueDeferrable;
   }
 
   public state<V, T extends SignalState<V>>(
@@ -218,7 +228,7 @@ export class DeferQueueService {
 
       const item = this.createQueueItem(priority, resolved);
       this.queue.insert(fromDeferQueueItemPriority(priority), item);
-      this.logger.debug(`insert ${item.toString()}`);
+      this.logger.debug(`insert service`);
       this.queueProcessor.process();
 
       return promise;
