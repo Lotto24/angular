@@ -45,7 +45,7 @@ export interface ObservableState<V> {
 @Injectable({
   providedIn: 'root',
 })
-export class DeferQueueService {
+export class DeferQueue {
   private readonly queueProcessor = inject(DeferQueueProcessor);
   private readonly timeout = inject(DEFER_QUEUE_FEATURE_TIMEOUT);
   private readonly logger = inject(DEFER_QUEUE_FEATURE_LOGGER);
@@ -63,20 +63,24 @@ export class DeferQueueService {
     }
 
     return {
-      when: (
-        identifier: string,
-        priority: DeferQueueItemPriority = 'default'
-      ) => {
-        const deferrable = this.deferrable(identifier, priority);
-        destroyRef.onDestroy(() => {
-          this.logger.debug(
-            `resolving deferrable w/ identifier=${identifier} because injection context was destroyed`
-          );
-          deferrable.resolve();
-        });
-        return deferrable;
-      },
+      when: this.when(destroyRef).bind(this),
       resolve: this.resolve.bind(this),
+    };
+  }
+
+  private when(destroyRef: DestroyRef) {
+    return (
+      identifier: string,
+      priority: DeferQueueItemPriority = 'default'
+    ) => {
+      const deferrable = this.deferrable(identifier, priority);
+      destroyRef.onDestroy(() => {
+        this.logger.debug(
+          `resolving deferrable w/ identifier=${identifier} because injection context was destroyed`
+        );
+        deferrable.resolve();
+      });
+      return deferrable.triggered();
     };
   }
 

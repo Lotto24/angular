@@ -1,8 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import {
-  DeferQueueService,
-  DeferrableViewsOrchestratorDirective,
-} from 'defer-queue';
+import { DeferQueue, DeferQueueResolveDirective } from 'defer-queue';
 import { AsyncPipe } from '@angular/common';
 import { ImportsOrchestratorExamplesHome0Component } from '@lotto24-angular/imports-orchestrator-examples/home0';
 import { ImportsOrchestratorExamplesHome1Component } from '@lotto24-angular/imports-orchestrator-examples/home1';
@@ -13,7 +10,7 @@ import { ImportsOrchestratorExamplesHome2Component } from '@lotto24-angular/impo
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    DeferrableViewsOrchestratorDirective,
+    DeferQueueResolveDirective,
     AsyncPipe,
     ImportsOrchestratorExamplesHome0Component,
     ImportsOrchestratorExamplesHome1Component,
@@ -44,5 +41,5 @@ import { ImportsOrchestratorExamplesHome2Component } from '@lotto24-angular/impo
   `,
 })
 export class Defer2Component {
-  protected readonly defer = inject(DeferQueueService).view;
+  protected readonly defer = inject(DeferQueue).view;
 }

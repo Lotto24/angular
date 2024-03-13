@@ -1,16 +1,17 @@
-import { Directive, inject, Input, OnInit } from '@angular/core';
-import { DeferQueueService } from './service';
+import { Directive, effect, inject, input } from '@angular/core';
+import { DeferQueue } from './service';
 
 @Directive({
   selector: '[deferQueueResolve]',
   standalone: true,
 })
-export class DeferrableViewsOrchestratorDirective implements OnInit {
-  @Input() public deferQueueResolve!: string;
+export class DeferQueueResolveDirective {
+  public deferQueueResolve = input.required<string>();
+  private readonly view = inject(DeferQueue).view;
 
-  private readonly deferrables = inject(DeferQueueService).view;
-
-  ngOnInit(): void {
-    this.deferrables.resolve(this.deferQueueResolve);
+  constructor() {
+    effect(() => {
+      this.view.resolve(this.deferQueueResolve());
+    });
   }
 }
