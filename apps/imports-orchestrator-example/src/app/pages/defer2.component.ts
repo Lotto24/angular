@@ -20,7 +20,7 @@ import { ImportsOrchestratorExamplesHome2Component } from '@lotto24-angular/impo
     ImportsOrchestratorExamplesHome2Component,
   ],
   template: `
-    @defer (when deferrables.when('home0', 'lower')) {
+    @defer (when defer.when('home0', 'lower')) {
     <imports-orchestrator-examples-home0-component deferrablesResolve="home0" />
     } @placeholder {
     <div>placeholder:home0</div>
@@ -28,7 +28,7 @@ import { ImportsOrchestratorExamplesHome2Component } from '@lotto24-angular/impo
 
     <br />
 
-    @defer (when deferrables.when('home1')) {
+    @defer (when defer.when('home1')) {
     <imports-orchestrator-examples-home1-component deferQueueResolve="home1" />
     } @placeholder {
     <div>placeholder:home1</div>
@@ -44,6 +44,5 @@ import { ImportsOrchestratorExamplesHome2Component } from '@lotto24-angular/impo
   `,
 })
 export class Defer2Component {
-  protected readonly deferQueue = inject(DeferQueueService);
-  protected readonly deferrables = this.deferQueue.deferrables();
+  protected readonly defer = inject(DeferQueueService).view;
 }

@@ -52,37 +52,41 @@ export class DeferQueueService {
   private readonly queue = inject(DEFER_QUEUE_FEATURE_QUEUE);
   private readonly deferrableStore = new Map<string, DeferQueueDeferrable>();
 
-  public deferrables() {
-    const injector = inject(Injector);
-    const destroyRef = injector.get(DestroyRef);
-
-    destroyRef.onDestroy(() => this.logger.info('onDestroy'));
+  public get view() {
+    let destroyRef: DestroyRef;
+    try {
+      destroyRef = inject(Injector).get(DestroyRef);
+    } catch (x) {
+      throw new Error(
+        `injector context required: please do not reference this property directly from a template, but expose it on your component, eg. "protected readonly view = inject(DeferQueueService).view", ${x}`
+      );
+    }
 
     return {
       when: (
-        identfier: string,
+        identifier: string,
         priority: DeferQueueItemPriority = 'default'
       ) => {
-        const deferrable = this.deferrable(identfier, priority);
-        destroyRef.onDestroy(() => deferrable.resolve());
+        const deferrable = this.deferrable(identifier, priority);
+        destroyRef.onDestroy(() => {
+          this.logger.debug(
+            `resolving deferrable w/ identifier=${identifier} because injection context was destroyed`
+          );
+          deferrable.resolve();
+        });
         return deferrable;
       },
+      resolve: this.resolve.bind(this),
     };
   }
 
-  public services() {
-
-  }
-
-  /**
-   * @param identifier is required to connect the resolved item to the defer-trigger
-   * @param priority higher priority will resolve the deferrable earlier
-   */
-  private when(
-    identifier: string,
-    priority: DeferQueueItemPriority = 'default'
-  ) {
-    return this.deferrable(identifier, priority).triggered();
+  private resolve(identifier: string, err?: Error | undefined): void {
+    const deferrable = this.deferrableStore.get(identifier);
+    if (deferrable) {
+      deferrable.resolve(err);
+    } else {
+      this.logger.error(`could not resolve identifier=${identifier}`);
+    }
   }
 
   /**
@@ -90,12 +94,8 @@ export class DeferQueueService {
    * @param identifier is used to connect the resolved item to the defer-trigger
    * @param priority higher priority will resolve the deferrable earlier
    *
-   * TODO:
-   // *  * add error when resolving an identifier that did not exist previously.
-   *  * add error when resolving an identifier that has not been triggered.
-   *  *
    */
-  public deferrable(
+  private deferrable(
     identifier: string,
     priority: DeferQueueItemPriority = 'default'
   ) {
@@ -105,7 +105,7 @@ export class DeferQueueService {
         resolve: () => {
           const taken = this.queue.take(item);
           this.logger.info(
-            `resolved deferrable w/ identifier=${identifier}, priority=${priority}`
+            `removed deferrable (taken? ${!!taken} w/ identifier=${identifier}, priority=${priority}`
           );
         },
       };
@@ -116,10 +116,10 @@ export class DeferQueueService {
             if (err) {
               reject(err);
             } else {
+              resolve();
               this.logger.info(
                 `resolved deferrable w/ identifier=${identifier}, priority=${priority}`
               );
-              resolve();
             }
           };
           deferrable.triggered.set(true);
@@ -127,11 +127,10 @@ export class DeferQueueService {
 
       const item = this.createQueueItem(priority, resolved);
       this.deferrableStore.set(identifier, deferrable);
-      this.queue.insert(fromDeferQueueItemPriority(priority), item);
       this.logger.debug(
         `insert deferrable w/ identifier=${identifier}, ${priority}`
       );
-      this.logger.info('queue.length', this.queue.length);
+      this.queue.insert(fromDeferQueueItemPriority(priority), item);
       this.queueProcessor.process();
     }
 

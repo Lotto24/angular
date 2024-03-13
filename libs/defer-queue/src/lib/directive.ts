@@ -8,9 +8,9 @@ import { DeferQueueService } from './service';
 export class DeferrableViewsOrchestratorDirective implements OnInit {
   @Input() public deferQueueResolve!: string;
 
-  private readonly deferQueue = inject(DeferQueueService);
+  private readonly deferrables = inject(DeferQueueService).view;
 
   ngOnInit(): void {
-    this.deferQueue.deferrable(this.deferQueueResolve).resolve();
+    this.deferrables.resolve(this.deferQueueResolve);
   }
 }
