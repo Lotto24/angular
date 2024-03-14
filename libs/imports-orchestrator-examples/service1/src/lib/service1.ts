@@ -2,16 +2,15 @@ import { Injectable, signal } from '@angular/core';
 import { SignalState } from 'defer-queue';
 
 @Injectable({ providedIn: 'root' })
-export class Service1 implements SignalState<number> {
+export class Service1 extends SignalState<number> {
+  public readonly state = signal<number>(this.initialValue);
   constructor() {
-    console.info('Service1 constructor');
-    let n = 500;
+    super();
+    console.log('Service1, initial value=', this.state());
     setInterval(() => {
-      const v = ++n;
+      const v = this.state() + 1;
       console.log('Service1, value=', v);
-      this.value.set(v);
+      this.state.set(v);
     }, 1000);
   }
-
-  public value = signal(100);
 }

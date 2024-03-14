@@ -34,12 +34,22 @@ export interface DeferQueueItem extends DeferQueueServiceOptions {
   logger: ConsoleLike;
 }
 
-export interface SignalState<V> {
-  value: Signal<V>;
+const INITIAL_VALUE_TOKEN = 'DEFER_QUEUE_SERVICE_INITIAL_VALUE';
+
+export class WithInitialValue<V> {
+  protected get initialValue() {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    return this[INITIAL_VALUE_TOKEN] as V; // the initial value is automatically added to the prototype of the service during lazy-initialization
+  }
 }
 
-export interface ObservableState<V> {
-  value$: Observable<V>;
+export abstract class SignalState<V> extends WithInitialValue<V> {
+  public abstract readonly state: WritableSignal<V>;
+}
+
+export abstract class ObservableState<V> extends WithInitialValue<V> {
+  public abstract readonly state$: Observable<V>;
 }
 
 @Injectable({
@@ -148,11 +158,12 @@ export class DeferQueue {
     injector = inject(Injector)
   ): Signal<V> {
     const value = signal(initialValue);
-    this.serviceAsync(dynamicImport, priority, injector).then((service) =>
-      effect(() => value.set(service.value()), {
-        allowSignalWrites: true,
-        injector,
-      })
+    this.serviceItem(dynamicImport, priority, injector, initialValue)().then(
+      (service) =>
+        effect(() => value.set(service.state()), {
+          allowSignalWrites: true,
+          injector,
+        })
     );
 
     return value.asReadonly();
@@ -164,8 +175,13 @@ export class DeferQueue {
     priority: DeferQueueItemPriority = 'default',
     injector = inject(Injector)
   ): Observable<V> {
-    return this.service$(dynamicImport, priority, injector).pipe(
-      switchMap((service) => service.value$),
+    return this.serviceItem$(
+      dynamicImport,
+      priority,
+      injector,
+      initialValue
+    ).pipe(
+      switchMap((service) => service.state$),
       startWith(initialValue),
       shareReplay(1)
     );
@@ -200,10 +216,22 @@ export class DeferQueue {
     return s;
   }
 
-  private serviceItem<T>(
+  private serviceItem$<T, V>(
     dynamicImport: () => Promise<Type<T>>,
     priority: DeferQueueItemPriority = 'default',
-    injector: Injector
+    injector = inject(Injector),
+    initialValue: V | null = null
+  ) {
+    return defer(
+      this.serviceItem(dynamicImport, priority, injector, initialValue)
+    );
+  }
+
+  private serviceItem<T, V>(
+    dynamicImport: () => Promise<Type<T>>,
+    priority: DeferQueueItemPriority = 'default',
+    injector: Injector,
+    initialValue: V | null = null
   ) {
     return () => {
       let fn: (value: T | undefined, err: unknown) => void;
@@ -225,7 +253,10 @@ export class DeferQueue {
             );
             return service;
           })
-          .then((service) => injector.get(service))
+          .then((service) => {
+            service.prototype[INITIAL_VALUE_TOKEN] = initialValue;
+            return injector.get(service);
+          })
           .then((instance) => fn(instance, null))
           .catch((err) => fn(undefined, err));
 

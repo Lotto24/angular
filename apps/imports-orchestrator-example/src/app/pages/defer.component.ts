@@ -75,7 +75,7 @@ export class DeferComponent {
   protected readonly queueView = this.queue.view;
 
   public state = this.queue.state(
-    0,
+    420,
     () =>
       import('@lotto24-angular/imports-orchestrator-examples/service1').then(
         (esm) => esm.Service1
@@ -84,7 +84,7 @@ export class DeferComponent {
   );
 
   public state$ = this.queue.state$(
-    0,
+    123,
     () =>
       import('@lotto24-angular/imports-orchestrator-examples/service0').then(
         (esm) => esm.Service0
