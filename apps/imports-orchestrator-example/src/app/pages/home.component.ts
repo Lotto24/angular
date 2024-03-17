@@ -25,8 +25,8 @@ import { AppImportsOrchestration } from '../app.config';
     <ng-container import="deferredPromise"></ng-container>
     <ng-container import="deferredObservable"></ng-container>
     <ng-container import="deferredSignal"></ng-container>
-    <ng-container import="home2"></ng-container>
-    <ng-container import="home3"></ng-container>
+    <ng-container import="home2" [providers]="providers"></ng-container>
+    <ng-container import="home3" [providers]="providers"></ng-container>
     <div>
       <h3>aliased</h3>
       <ng-container import="alias0"></ng-container>
@@ -95,4 +95,6 @@ import { AppImportsOrchestration } from '../app.config';
 })
 export class HomeComponent {
   public testInput$ = new BehaviorSubject('Working!');
+  public providers = [{ provide: 'foo', useValue: 'bar'}]
+
 }

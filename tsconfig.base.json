@@ -21,14 +21,6 @@
       "@lotto24-angular/imports-orchestrator-examples/deferred": [
         "libs/imports-orchestrator-examples/deferred/src/index.ts"
       ],
-      "@lotto24-angular/imports-orchestrator-examples/io": [
-        "libs/imports-orchestrator-examples/io/src/index.ts"
-      ],
-      "@lotto24-angular/imports-orchestrator-examples/observable-input-home": [
-        "libs/imports-orchestrator-examples/observable-input/src/index.ts"
-      ],
-      "@lotto24-angular/util": ["libs/util/src/index.ts"],
-      "@lotto24-angular/workspace": ["libs/workspace/src/index.ts"],
       "@lotto24-angular/imports-orchestrator-examples/footer0": [
         "libs/imports-orchestrator-examples/footer0/src/index.ts"
       ],
@@ -71,8 +63,26 @@
       "@lotto24-angular/imports-orchestrator-examples/home2": [
         "libs/imports-orchestrator-examples/home2/src/index.ts"
       ],
+      "@lotto24-angular/imports-orchestrator-examples/home2-child0": [
+        "libs/imports-orchestrator-examples/home2-child0/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/home2-child1": [
+        "libs/imports-orchestrator-examples/home2-child1/src/index.ts"
+      ],
       "@lotto24-angular/imports-orchestrator-examples/home3": [
         "libs/imports-orchestrator-examples/home3/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/io": [
+        "libs/imports-orchestrator-examples/io/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/observable-input-home": [
+        "libs/imports-orchestrator-examples/observable-input/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/service0": [
+        "libs/imports-orchestrator-examples/service0/src/index.ts"
+      ],
+      "@lotto24-angular/imports-orchestrator-examples/service1": [
+        "libs/imports-orchestrator-examples/service1/src/index.ts"
       ],
       "@lotto24-angular/imports-orchestrator-examples/tab-keep": [
         "libs/imports-orchestrator-examples/tab-keep/src/index.ts"
@@ -85,7 +95,10 @@
       ],
       "@lotto24-angular/imports-orchestrator-examples/tab2": [
         "libs/imports-orchestrator-examples/tab2/src/index.ts"
-      ]
+      ],
+      "@lotto24-angular/util": ["libs/util/src/index.ts"],
+      "@lotto24-angular/workspace": ["libs/workspace/src/index.ts"],
+      "defer-queue": ["libs/defer-queue/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

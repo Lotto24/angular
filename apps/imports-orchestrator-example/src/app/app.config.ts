@@ -5,6 +5,7 @@ import {
   withPreloading,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
+import { provideDeferQueue } from 'defer-queue';
 import {
   provideImportsOrchestration,
   withConcurrencyRelativeToDownlinkSpeed,
@@ -12,16 +13,16 @@ import {
 } from '@lotto24-angular/imports-orchestrator';
 
 const APP_IMPORTS_ORCHESTRATION = {
-  home0: 1,
-  home1: 2,
+  home0: 162,
+  home1: 161,
   observableInput: 3,
   deferredPromise: 2,
   deferredObservable: 6,
-  deferredSignal: 6,
+  deferredSignal: 22,
   alias0: 7,
   alias1: 5,
-  home2: 3,
-  home3: 4,
+  home2: 27,
+  home3: 28,
 
   fruit0: 19,
   fruit1: 12,
@@ -48,7 +49,6 @@ const APP_IMPORTS_ORCHESTRATION = {
 };
 
 export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;
-
 export const appConfig = {
   providers: [
     provideRouter(
@@ -57,10 +57,11 @@ export const appConfig = {
       withHashLocation(),
       withPreloading(NoPreloading)
     ),
-    provideImportsOrchestration(
-      APP_IMPORTS_ORCHESTRATION,
-      withSuspendWhileRouting(),
-      withConcurrencyRelativeToDownlinkSpeed(2, 1)
-    ),
+    provideDeferQueue(),
+    // provideImportsOrchestration(
+    //   APP_IMPORTS_ORCHESTRATION,
+    //   withSuspendWhileRouting(),
+    //   withConcurrencyRelativeToDownlinkSpeed(2, 1)
+    // ),
   ],
 };

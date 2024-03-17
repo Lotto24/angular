@@ -1,0 +1,56 @@
+{
+  "name": "defer-queue",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/defer-queue/src",
+  "prefix": "defer-queue",
+  "tags": [],
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/defer-queue/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/defer-queue/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/defer-queue/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/defer-queue/jest.config.ts"
+      }
+    },
+    "lint": {
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "lintFilePatterns": [
+            "libs/defer-queue/**/*.ts",
+            "libs/defer-queue/**/*.html"
+          ]
+        }
+      }
+    },
+    "publish": {
+      "executor": "@lotto24-angular/workspace:publish",
+      "outputs": [],
+      "dependsOn": ["build"],
+      "options": {
+        "path": "dist/libs/defer-queue",
+        "access": "public",
+        "tag": "prerelease",
+        "registry": "https://registry.npmjs.org/"
+      }
+    }
+  }
+}
