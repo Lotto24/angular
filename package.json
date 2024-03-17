@@ -13,7 +13,7 @@
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "0.14.2",
-    "@angular-devkit/build-angular": "17.2.3",
+    "@angular-devkit/build-angular": "17.3.0",
     "@angular-devkit/core": "17.2.3",
     "@angular-devkit/schematics": "17.2.3",
     "@angular-eslint/eslint-plugin": "17.1.1",
