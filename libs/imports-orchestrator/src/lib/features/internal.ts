@@ -4,6 +4,9 @@ import { ImportResolveFn } from '../resolve';
 export type ImportsOrchestratorConcurrency =
   ImportsOrchestratorFeature<ImportsOrchestratorFeatureKind.Concurrency>;
 
+export type ImportsOrchestratorInterceptor =
+  ImportsOrchestratorFeature<ImportsOrchestratorFeatureKind.Interceptor>;
+
 export type ImportsOrchestratorRouting =
   ImportsOrchestratorFeature<ImportsOrchestratorFeatureKind.Routing>;
 
@@ -24,6 +27,7 @@ export enum ImportsOrchestratorFeatureKind {
   Timeout,
   Routing,
   Concurrency,
+  Interceptor,
   // internal
   Orchestration,
   Queue,

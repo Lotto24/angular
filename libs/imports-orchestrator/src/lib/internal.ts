@@ -3,10 +3,12 @@ import { Queue } from './queue/queue';
 import { ImportsOrchestratorQueueItem } from './service';
 import { ImportsOrchestration, ImportsStore } from './features/internal';
 import { Observable } from 'rxjs';
+import { ImportsInterceptor } from '@lotto24-angular/imports-orchestrator';
 
 export const IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY = new InjectionToken<
   number | (() => number)
 >('IMPORTS_ORCHESTRATOR_FEAUTURE_CONCURRENCY');
+export const IMPORTS_ORCHESTRATOR_FEATURE_INTERCEPTOR = new InjectionToken<ImportsInterceptor>('IMPORTS_ORCHESTRATOR_FEAUTURE_INTERCEPTOR');
 export const IMPORTS_ORCHESTRATOR_FEATURE_ROUTING = new InjectionToken<
   Observable<boolean>
 >('IMPORTS_ORCHESTRATOR_FEAUTURE_DEFER_UNTIL_FIRST_NAVIGATION');

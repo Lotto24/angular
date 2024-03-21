@@ -1,4 +1,10 @@
-import { inject, Injectable, Injector } from '@angular/core';
+import {
+  EventEmitter,
+  inject,
+  Injectable,
+  Injector,
+  runInInjectionContext,
+} from '@angular/core';
 import { findFn, findImportPriority } from './host-directive/util';
 import { ImportsQueueProcessor } from './queue/imports-queue-processor.service';
 import { Observable } from 'rxjs';
@@ -7,6 +13,7 @@ import { ImportLifecycle, ImportObservableComponentIO } from './interface';
 
 import {
   IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE,
+  IMPORTS_ORCHESTRATOR_FEATURE_INTERCEPTOR,
   IMPORTS_ORCHESTRATOR_FEATURE_LOGGER,
   IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION,
   IMPORTS_ORCHESTRATOR_FEATURE_QUEUE,
@@ -29,6 +36,7 @@ export interface ImportsOrchestratorQueueItem extends ImportServiceOptions {
   logger: ConsoleLike;
   destroy$: Observable<void>;
   callback?: (result: unknown, err: unknown) => void;
+  lifecycle: ImportLifecycle;
   toString: () => string;
 }
 
@@ -42,6 +50,10 @@ export class ImportService {
   private readonly queue = inject(IMPORTS_ORCHESTRATOR_FEATURE_QUEUE);
   private readonly orchestration = inject(
     IMPORTS_ORCHESTRATOR_FEATURE_ORCHESTRATION
+  );
+  private readonly interceptor = inject(
+    IMPORTS_ORCHESTRATOR_FEATURE_INTERCEPTOR,
+    { optional: true }
   );
   private readonly injector = inject(Injector);
 
@@ -65,12 +77,21 @@ export class ImportService {
       this.logger
     );
 
+    const lifecycle = createLifecycle(options.lifecycle);
+
+    runInInjectionContext(this.injector, () => {
+      if (this.interceptor) {
+        this.interceptor(identifier, lifecycle);
+      }
+    });
+
     return {
       ...opts,
       priority,
       identifier,
       resolveFn,
       destroy$,
+      lifecycle,
       logger: this.logger,
       toString: () => `@identifier="${identifier}", @priority=${priority}`,
     };
@@ -92,9 +113,7 @@ export class ImportService {
     this.queue.insert(item.priority, item);
     item.lifecycle?.importQueued?.emit();
 
-    this.logger.debug(
-      `queue insert ${item.toString()}`
-    );
+    this.logger.debug(`queue insert ${item.toString()}`);
 
     this.queueProcessor.process();
 
@@ -104,9 +123,7 @@ export class ImportService {
   public async bypassQueue(
     item: ImportsOrchestratorQueueItem
   ): Promise<unknown> {
-    this.logger.debug(
-      `bypass queue ${item.toString()}`
-    );
+    this.logger.debug(`bypass queue ${item.toString()}`);
 
     return item.resolveFn(item);
   }
@@ -140,4 +157,16 @@ export class ImportService {
         ${x}`);
     }
   }
+}
+
+function createLifecycle(
+  lifecycle?: Partial<ImportLifecycle>
+): ImportLifecycle {
+  return {
+    importQueued: lifecycle?.importQueued ?? new EventEmitter<void>(),
+    importStarted: lifecycle?.importStarted ?? new EventEmitter<void>(),
+    importFinished: lifecycle?.importFinished ?? new EventEmitter<unknown>(),
+    importErrored: lifecycle?.importErrored ?? new EventEmitter<unknown>(),
+    importComponent: lifecycle?.importComponent,
+  };
 }

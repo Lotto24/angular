@@ -1,7 +1,7 @@
 import { EnvironmentProviders, makeEnvironmentProviders } from '@angular/core';
 import {
   ImportsOrchestration,
-  ImportsOrchestratorConcurrency,
+  ImportsOrchestratorConcurrency, ImportsOrchestratorInterceptor,
   ImportsOrchestratorLogger,
   ImportsOrchestratorRouting,
   ImportsOrchestratorTimeout,
@@ -20,6 +20,7 @@ import { withOrchestration } from './features/orchestration';
 export type ImportsOrchestratorFeatures =
   | ImportsOrchestratorRouting
   | ImportsOrchestratorConcurrency
+  | ImportsOrchestratorInterceptor
   | ImportsOrchestratorTimeout
   | ImportsOrchestratorLogger;
 

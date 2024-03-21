@@ -30,10 +30,15 @@ export interface ImportLifecycle {
    * Plus, as the [import]-@Input may change, this may emit multiple times for the same component.
    *
    */
-  importComponent: EventEmitter<ComponentRef<unknown>>;
+  importComponent?: EventEmitter<ComponentRef<unknown>>;
 }
 
 export interface ImportObservableComponentIO {
   readonly inputs$: Observable<ComponentIO>;
   readonly outputs$: Observable<ComponentIO>;
 }
+
+export type ImportsInterceptor = (
+  identifier: string,
+  lifecycle: ImportLifecycle
+) => void;
