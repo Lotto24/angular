@@ -5,7 +5,7 @@ import {
   withPreloading,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideDeferQueue, withSuspendWhileRouting } from 'defer-queue';
+import {provideDeferQueue, withConcurrencyStatic, withSuspendWhileRouting, withTimeout} from 'defer-queue';
 import {
   provideImportsOrchestration,
   withConcurrencyRelativeToDownlinkSpeed,
@@ -57,7 +57,11 @@ export const appConfig = {
       withHashLocation(),
       withPreloading(NoPreloading)
     ),
-    provideDeferQueue(withSuspendWhileRouting()),
+    provideDeferQueue(
+      withConcurrencyStatic(1),
+      withSuspendWhileRouting(),
+      withTimeout(2000),
+    ),
     provideImportsOrchestration(
       APP_IMPORTS_ORCHESTRATION,
       withInterceptor((identifier, lifecycle) => {

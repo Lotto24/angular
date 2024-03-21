@@ -116,11 +116,17 @@ export class DeferQueue {
 
       const resolved = () =>
         new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            this.logger.error(`timeout after ${this.timeout}ms for deferrable w/ identifier=${identifier}, priority=${priority}`);
+            deferrable.resolve();
+          }, this.timeout);
+
           deferrable.resolve = (err?: unknown) => {
             if (err) {
               reject(err);
             } else {
               resolve();
+              clearTimeout(timeout);
               this.logger.info(
                 `resolved deferrable w/ identifier=${identifier}, priority=${priority}`
               );

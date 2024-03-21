@@ -42,9 +42,7 @@ import { ImportsOrchestratorExamplesFruit4Component } from '@lotto24-angular/imp
     <br />
     <!-- this item has higher priority, it will be prioritized -->
     @defer (when queueView.when('fruit2', 'higher')) {
-    <imports-orchestrator-examples-fruit2-component
-      deferQueueResolve="fruit2"
-    />
+    <imports-orchestrator-examples-fruit2-component />
     }
 
     <br />
