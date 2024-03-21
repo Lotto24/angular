@@ -6,10 +6,21 @@ import {
   importStandalone,
 } from '@lotto24-angular/imports-orchestrator';
 import { AppImportsOrchestration } from './app.config';
+import {DeferQueue, DeferQueueResolveDirective} from "defer-queue";
+import {ImportsOrchestratorExamplesFooter0Component} from "@lotto24-angular/imports-orchestrator-examples/footer0";
+import {ImportsOrchestratorExamplesFooter1Component} from "@lotto24-angular/imports-orchestrator-examples/footer1";
+import {ImportsOrchestratorExamplesFooter2Component} from "@lotto24-angular/imports-orchestrator-examples/footer2";
 
 @Component({
   standalone: true,
-  imports: [RouterModule, ImportsOrchestratorDirective],
+  imports: [
+    RouterModule,
+    ImportsOrchestratorDirective,
+    ImportsOrchestratorExamplesFooter0Component,
+    DeferQueueResolveDirective,
+    ImportsOrchestratorExamplesFooter1Component,
+    ImportsOrchestratorExamplesFooter2Component,
+  ],
   selector: 'example-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -27,6 +38,8 @@ import { AppImportsOrchestration } from './app.config';
 })
 export class AppComponent {
   title = 'example';
+
+  protected readonly deferQueueView = inject(DeferQueue).view;
 
   private router = inject(Router);
 

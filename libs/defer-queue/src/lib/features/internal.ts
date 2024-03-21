@@ -6,14 +6,17 @@ export type DeferQueueFeatureLogger =
   DeferQueueFeature<DeferQueueFeatureKind.Logger>;
 export type DeferQueueFeatureQueue =
   DeferQueueFeature<DeferQueueFeatureKind.Queue>;
+export type DeferQueueFeatureRouting =
+  DeferQueueFeature<DeferQueueFeatureKind.Routing>;
 export type DeferQueueFeatureTimeout =
   DeferQueueFeature<DeferQueueFeatureKind.Timeout>;
 
 export enum DeferQueueFeatureKind {
-  Logger = 0,
-  Queue = 1,
-  Concurrency = 2,
-  Timeout = 3,
+  Logger,
+  Queue,
+  Routing,
+  Concurrency,
+  Timeout,
 }
 
 export type DeferQueueFeature<T extends DeferQueueFeatureKind> = {

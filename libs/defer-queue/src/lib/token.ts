@@ -1,6 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { Queue } from './queue/queue';
 import { DeferQueueItem } from './service';
+import {Observable} from "rxjs";
 
 export const DEFER_QUEUE_FEATURE_CONCURRENCY = new InjectionToken<
   number | (() => number)
@@ -8,6 +9,10 @@ export const DEFER_QUEUE_FEATURE_CONCURRENCY = new InjectionToken<
 
 export const DEFER_QUEUE_FEATURE_QUEUE = new InjectionToken<Queue<DeferQueueItem>>(
   'DEFER_QUEUE_FEATURE_QUEUE'
+);
+
+export const DEFER_QUEUE_FEATURE_ROUTING = new InjectionToken<Observable<boolean>>(
+  'DEFER_QUEUE_FEATURE_ROUTING'
 );
 
 export const DEFER_QUEUE_FEATURE_TIMEOUT = new InjectionToken<number>(

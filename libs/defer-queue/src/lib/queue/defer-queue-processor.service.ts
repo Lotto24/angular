@@ -2,9 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import {
   DEFER_QUEUE_FEATURE_CONCURRENCY,
   DEFER_QUEUE_FEATURE_LOGGER,
-  DEFER_QUEUE_FEATURE_QUEUE,
+  DEFER_QUEUE_FEATURE_QUEUE, DEFER_QUEUE_FEATURE_ROUTING,
 } from '../token';
 import { wait } from '../util/wait';
+import {filter, firstValueFrom, tap} from "rxjs";
 
 @Injectable({ providedIn: 'root' })
 export class DeferQueueProcessor {
@@ -12,6 +13,7 @@ export class DeferQueueProcessor {
 
   private readonly logger = inject(DEFER_QUEUE_FEATURE_LOGGER);
   private readonly queue = inject(DEFER_QUEUE_FEATURE_QUEUE);
+  private readonly isRoutingActive$ = inject(DEFER_QUEUE_FEATURE_ROUTING);
   private readonly concurrency = inject(DEFER_QUEUE_FEATURE_CONCURRENCY);
 
   private running = 0;
@@ -35,13 +37,17 @@ export class DeferQueueProcessor {
   }
 
   private async processQueue(): Promise<void> {
-    // await this.suspendForNavigation();
+    // DO NOT REMOVE, and DO NOT move past wait() statement below
+    // this will suspend queue processing while routing is active
+    // this is needed to prioritize lazy routes initialization, and items with higher priority resolved when routing
+    await this.suspendForNavigation();
 
     // DO NOT REMOVE
     // this is vital. otherwise the first deferrable view will be added to queue, read the signal, and synchronously write to the signal, causing an exception
     // also, we need to wait a tick so that all deferrables can be added to the queue and sorted by priority (synchronously)
     await wait();
     // ^^
+
 
     const concurrency = this.updateConcurrency();
     const concurrentBatch = [];
@@ -88,5 +94,20 @@ export class DeferQueueProcessor {
     }
 
     return value;
+  }
+
+
+  private async suspendForNavigation(): Promise<unknown> {
+    // suspend processing while routing, as navigation takes precedence
+    return firstValueFrom(
+      this.isRoutingActive$.pipe(
+        tap((active) => {
+          if (active) {
+            this.logger.debug('queue processing suspended for navigation');
+          }
+        }),
+        filter((active) => !active)
+      )
+    );
   }
 }

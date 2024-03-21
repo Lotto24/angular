@@ -5,12 +5,7 @@ import {
   withPreloading,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideDeferQueue } from 'defer-queue';
-import {
-  provideImportsOrchestration,
-  withConcurrencyRelativeToDownlinkSpeed,
-  withSuspendWhileRouting,
-} from '@lotto24-angular/imports-orchestrator';
+import { provideDeferQueue, withSuspendWhileRouting } from 'defer-queue';
 
 const APP_IMPORTS_ORCHESTRATION = {
   home0: 162,
@@ -57,10 +52,10 @@ export const appConfig = {
       withHashLocation(),
       withPreloading(NoPreloading)
     ),
-    provideDeferQueue(),
+    provideDeferQueue(withSuspendWhileRouting()),
     // provideImportsOrchestration(
     //   APP_IMPORTS_ORCHESTRATION,
-    //   withSuspendWhileRouting(),
+    //   withSuspendWhileRoutingImportsOrchestrator(),
     //   withConcurrencyRelativeToDownlinkSpeed(2, 1)
     // ),
   ],

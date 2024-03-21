@@ -13,16 +13,31 @@
   </nav>
 </header>
 <router-outlet></router-outlet>
-<!--<footer>-->
-<!--  <ul>-->
-<!--    <li class="footer-item">-->
-<!--      <ng-container import="footer0" cssClass="footer0"></ng-container>-->
-<!--    </li>-->
-<!--    <li class="footer-item">-->
-<!--      <ng-container import="footer1" cssClass="footer1"></ng-container>-->
-<!--    </li>-->
-<!--    <li class="footer-item">-->
-<!--      <ng-container import="footer2" cssClass="footer2"></ng-container>-->
-<!--    </li>-->
-<!--  </ul>-->
-<!--</footer>-->
+<footer>
+  <ul>
+    <li class="footer-item">
+      @defer (when deferQueueView.when('footer0', 'lower')) {
+      <imports-orchestrator-examples-footer0-component
+        class="footer0"
+        deferQueueResolve="footer0"
+      />
+      }
+    </li>
+    <li class="footer-item">
+      @defer (when deferQueueView.when('footer1', 'lower')) {
+      <imports-orchestrator-examples-footer1-component
+        class="footer1"
+        deferQueueResolve="footer1"
+      />
+      }
+    </li>
+    <li class="footer-item">
+      @defer (when deferQueueView.when('footer2', 'lower')) {
+      <imports-orchestrator-examples-footer2-component
+        class="footer2"
+        deferQueueResolve="footer2"
+      />
+      }
+    </li>
+  </ul>
+</footer>
