@@ -3,7 +3,7 @@ import { Queue } from './queue/queue';
 import { ImportsOrchestratorQueueItem } from './service';
 import { ImportsOrchestration, ImportsStore } from './features/internal';
 import { Observable } from 'rxjs';
-import { ImportsInterceptor } from '@lotto24-angular/imports-orchestrator';
+import { ImportsInterceptor } from './interface';
 
 export const IMPORTS_ORCHESTRATOR_FEATURE_CONCURRENCY = new InjectionToken<
   number | (() => number)
