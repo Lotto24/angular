@@ -1,5 +1,4 @@
 import {
-  EventEmitter,
   inject,
   Injectable,
   Injector,
@@ -7,9 +6,13 @@ import {
 } from '@angular/core';
 import { findFn, findImportPriority } from './host-directive/util';
 import { ImportsQueueProcessor } from './queue/imports-queue-processor.service';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ImportResolveFn } from './resolve';
-import { ImportLifecycle, ImportObservableComponentIO } from './interface';
+import {
+  ImportLifecycle,
+  ImportObservableComponentIO,
+  ImportsInterceptorHooks,
+} from './interface';
 
 import {
   IMPORTS_ORCHESTRATOR_FEATURE_IMPORTS_STORE,
@@ -29,14 +32,20 @@ export interface ImportServiceOptions {
   timeout: number;
 }
 
+interface InterceptorHooksSubjects extends ImportsInterceptorHooks {
+  finish: Subject<ImportsOrchestratorQueueItem>;
+  start: Subject<ImportsOrchestratorQueueItem>;
+  error: Subject<[ImportsOrchestratorQueueItem, unknown]>;
+}
+
 export interface ImportsOrchestratorQueueItem extends ImportServiceOptions {
   identifier: string;
   resolveFn: ImportResolveFn;
   priority: number;
   logger: ConsoleLike;
   destroy$: Observable<void>;
+  hooks: InterceptorHooksSubjects;
   callback?: (result: unknown, err: unknown) => void;
-  lifecycle: ImportLifecycle;
   toString: () => string;
 }
 
@@ -77,11 +86,15 @@ export class ImportService {
       this.logger
     );
 
-    const lifecycle = createLifecycle(options.lifecycle);
+    const hooks: InterceptorHooksSubjects = {
+      start: new Subject(),
+      finish: new Subject(),
+      error: new Subject(),
+    };
 
     runInInjectionContext(this.injector, () => {
       if (this.interceptor) {
-        this.interceptor(identifier, lifecycle);
+        this.interceptor(identifier, hooks);
       }
     });
 
@@ -91,7 +104,7 @@ export class ImportService {
       identifier,
       resolveFn,
       destroy$,
-      lifecycle,
+      hooks,
       logger: this.logger,
       toString: () => `@identifier="${identifier}", @priority=${priority}`,
     };
@@ -112,6 +125,7 @@ export class ImportService {
 
     this.queue.insert(item.priority, item);
     item.lifecycle?.importQueued?.emit();
+    item.hooks.start.next(item);
 
     this.logger.debug(`queue insert ${item.toString()}`);
 
@@ -157,16 +171,4 @@ export class ImportService {
         ${x}`);
     }
   }
-}
-
-function createLifecycle(
-  lifecycle?: Partial<ImportLifecycle>
-): ImportLifecycle {
-  return {
-    importQueued: lifecycle?.importQueued ?? new EventEmitter<void>(),
-    importStarted: lifecycle?.importStarted ?? new EventEmitter<void>(),
-    importFinished: lifecycle?.importFinished ?? new EventEmitter<unknown>(),
-    importErrored: lifecycle?.importErrored ?? new EventEmitter<unknown>(),
-    importComponent: lifecycle?.importComponent,
-  };
 }

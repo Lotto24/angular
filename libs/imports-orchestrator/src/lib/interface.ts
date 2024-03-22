@@ -1,6 +1,7 @@
 import { ComponentRef, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ComponentIO } from './host-directive';
+import { ImportsOrchestratorQueueItem } from './service';
 
 export interface ImportLifecycle {
   /**
@@ -33,6 +34,15 @@ export interface ImportLifecycle {
   importComponent?: EventEmitter<ComponentRef<unknown>>;
 }
 
+
+type Item = Pick<ImportsOrchestratorQueueItem, 'identifier' | 'priority'>
+
+export interface ImportsInterceptorHooks {
+  start: Observable<Item>;
+  finish: Observable<Item>;
+  error: Observable<[Item, unknown]>;
+}
+
 export interface ImportObservableComponentIO {
   readonly inputs$: Observable<ComponentIO>;
   readonly outputs$: Observable<ComponentIO>;
@@ -40,5 +50,5 @@ export interface ImportObservableComponentIO {
 
 export type ImportsInterceptor = (
   identifier: string,
-  lifecycle: ImportLifecycle
+  hooks: ImportsInterceptorHooks
 ) => void;

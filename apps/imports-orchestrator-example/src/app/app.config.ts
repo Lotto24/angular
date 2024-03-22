@@ -64,18 +64,15 @@ export const appConfig = {
     ),
     provideImportsOrchestration(
       APP_IMPORTS_ORCHESTRATION,
-      withInterceptor((identifier, lifecycle) => {
+      withInterceptor((identifier, hooks) => {
         console.log('interceptor, identifier', identifier);
-        lifecycle.importQueued.subscribe(() =>
-          console.log('interceptor, queued', identifier)
-        );
-        lifecycle.importStarted.subscribe(() =>
+        hooks.start.subscribe(() =>
           console.log('interceptor, started', identifier)
         );
-        lifecycle.importFinished.subscribe(() =>
+        hooks.finish.subscribe(() =>
           console.log('interceptor, finished', identifier)
         );
-        lifecycle.importErrored.subscribe(() =>
+        hooks.error.subscribe(() =>
           console.log('interceptor, error', identifier)
         );
       }),

@@ -21,13 +21,15 @@ export async function processQueueItem(
   logger.debug(`queue item resolve (${item})`);
 
   try {
+    item.hooks.start.next(item);
     item.lifecycle?.importStarted?.emit();
     const result = await item.resolveFn(item);
+    item.hooks.finish.next(item);
     item.lifecycle?.importFinished?.emit(result);
     item.callback && item.callback(result, null);
-
     logger.debug(`queue item resolved (${item})`);
   } catch (x) {
+    item.hooks.error.next([item, x]);
     item.lifecycle?.importErrored?.emit(x);
     item.callback && item.callback(null, x);
     logger.error(`error resolving queue item (${item})`, x);
