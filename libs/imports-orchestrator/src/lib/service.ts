@@ -33,6 +33,7 @@ export interface ImportServiceOptions {
 }
 
 interface InterceptorHooksSubjects extends ImportsInterceptorHooks {
+  queued: Subject<ImportsOrchestratorQueueItem>;
   finish: Subject<ImportsOrchestratorQueueItem>;
   start: Subject<ImportsOrchestratorQueueItem>;
   error: Subject<[ImportsOrchestratorQueueItem, unknown]>;
@@ -87,6 +88,7 @@ export class ImportService {
     );
 
     const hooks: InterceptorHooksSubjects = {
+      queued: new Subject(),
       start: new Subject(),
       finish: new Subject(),
       error: new Subject(),
@@ -125,7 +127,8 @@ export class ImportService {
 
     this.queue.insert(item.priority, item);
     item.lifecycle?.importQueued?.emit();
-    item.hooks.start.next(item);
+    item.hooks.queued.next(item);
+    item.hooks.queued.complete();
 
     this.logger.debug(`queue insert ${item.toString()}`);
 

@@ -38,6 +38,7 @@ export interface ImportLifecycle {
 type Item = Pick<ImportsOrchestratorQueueItem, 'identifier' | 'priority'>
 
 export interface ImportsInterceptorHooks {
+  queued: Observable<Item>;
   start: Observable<Item>;
   finish: Observable<Item>;
   error: Observable<[Item, unknown]>;

@@ -33,5 +33,9 @@ export async function processQueueItem(
     item.lifecycle?.importErrored?.emit(x);
     item.callback && item.callback(null, x);
     logger.error(`error resolving queue item (${item})`, x);
+  } finally {
+    item.hooks.start.complete();
+    item.hooks.finish.complete();
+    item.hooks.error.complete();
   }
 }
