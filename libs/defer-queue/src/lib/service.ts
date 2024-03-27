@@ -79,6 +79,7 @@ export class DeferQueue {
           `resolving deferrable w/ identifier=${identifier} because injection context was destroyed`
         );
         deferrable.resolve();
+        this.deferrableStore.delete(identifier);
       });
       return deferrable.triggered();
     };
@@ -117,7 +118,9 @@ export class DeferQueue {
       const resolved = () =>
         new Promise<void>((resolve, reject) => {
           const timeout = setTimeout(() => {
-            this.logger.error(`timeout after ${this.timeout}ms for deferrable w/ identifier=${identifier}, priority=${priority}`);
+            this.logger.error(
+              `timeout after ${this.timeout}ms for deferrable w/ identifier=${identifier}, priority=${priority}`
+            );
             deferrable.resolve();
           }, this.timeout);
 
