@@ -5,7 +5,12 @@ import {
   withPreloading,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
-import {provideDeferQueue, withConcurrencyStatic, withSuspendWhileRouting, withTimeout} from 'defer-queue';
+import {
+  provideDeferQueue,
+  withConcurrencyUpdateFn,
+  withSuspendWhileRouting,
+  withTimeout,
+} from 'defer-queue';
 import {
   provideImportsOrchestration,
   withConcurrencyRelativeToDownlinkSpeed,
@@ -58,7 +63,7 @@ export const appConfig = {
       withPreloading(NoPreloading)
     ),
     provideDeferQueue(
-      withConcurrencyStatic(1),
+      withConcurrencyUpdateFn(downlinkToConcurrencyFn(8, 2)),
       withSuspendWhileRouting(),
       withTimeout(2000),
     ),
@@ -81,3 +86,27 @@ export const appConfig = {
     ),
   ],
 };
+
+export function downlinkToConcurrencyFn(max: number, min: number = 1): () => number {
+  return () => {
+    const downlink = (navigator as any).connection?.downlink;
+
+    if (!downlink) {
+      // if devices do not provide a downlink speed, assign min concurrency for mobile devices and max concurrency for larger devices
+      return screen.width < 768 ? min : max;
+    }
+
+    if (downlink < 5) {
+      // 4G, 3G
+      return min;
+    } else if (downlink < 10) {
+      // DSL
+      return Math.max(min, Math.floor(min + (max - min) / 4));
+    } else if (downlink < 30) {
+      // slow WIFI
+      return Math.max(min, Math.floor(min + (max - min) / 2));
+    }
+
+    return max;
+  };
+}
