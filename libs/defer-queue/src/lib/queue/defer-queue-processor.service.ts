@@ -2,10 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import {
   DEFER_QUEUE_FEATURE_CONCURRENCY,
   DEFER_QUEUE_FEATURE_LOGGER,
-  DEFER_QUEUE_FEATURE_QUEUE, DEFER_QUEUE_FEATURE_ROUTING,
+  DEFER_QUEUE_FEATURE_QUEUE,
+  DEFER_QUEUE_FEATURE_ROUTING,
 } from '../token';
 import { wait } from '../util/wait';
-import {filter, firstValueFrom, tap} from "rxjs";
+import { filter, firstValueFrom, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class DeferQueueProcessor {
@@ -48,7 +49,6 @@ export class DeferQueueProcessor {
     await wait();
     // ^^
 
-
     const concurrency = this.updateConcurrency();
     const concurrentBatch = [];
     for (let i = this.running; i < concurrency; i++) {
@@ -56,7 +56,7 @@ export class DeferQueueProcessor {
       concurrentBatch.push(this.processItem());
     }
     this.logger.debug(
-      `queue starting ${concurrentBatch.length} item(s) to reach max concurrency (running=${this.running})`
+      `queue starting ${concurrentBatch.length} item(s) to reach max concurrency (concurrency=${concurrency}, running=${this.running})`
     );
     await Promise.all(concurrentBatch);
   }
@@ -84,18 +84,10 @@ export class DeferQueueProcessor {
   }
 
   private updateConcurrency(): number {
-    const value =
-      typeof this.concurrency === 'function'
+    return typeof this.concurrency === 'function'
         ? this.concurrency()
         : this.concurrency;
-
-    if (value !== this.concurrency) {
-      this.logger.debug(`queue concurrency changed to ${value}`);
-    }
-
-    return value;
   }
-
 
   private async suspendForNavigation(): Promise<unknown> {
     // suspend processing while routing, as navigation takes precedence

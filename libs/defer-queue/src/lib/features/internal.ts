@@ -1,5 +1,7 @@
 import { Provider } from '@angular/core';
 
+export type DeferQueueFeatureBailout =
+  DeferQueueFeature<DeferQueueFeatureKind.Bailout>;
 export type DeferQueueFeatureConcurrency =
   DeferQueueFeature<DeferQueueFeatureKind.Concurrency>;
 export type DeferQueueFeatureLogger =
@@ -17,6 +19,7 @@ export enum DeferQueueFeatureKind {
   Routing,
   Concurrency,
   Timeout,
+  Bailout,
 }
 
 export type DeferQueueFeature<T extends DeferQueueFeatureKind> = {

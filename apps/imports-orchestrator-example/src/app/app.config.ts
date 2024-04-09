@@ -5,11 +5,16 @@ import {
   withPreloading,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
-import {provideDeferQueue, withConcurrencyStatic, withSuspendWhileRouting, withTimeout} from 'defer-queue';
+import {
+  provideDeferQueue, withBailout,
+  withConcurrencyUpdateFn,
+  withSuspendWhileRouting,
+  withTimeout,
+} from 'defer-queue';
 import {
   provideImportsOrchestration,
   withConcurrencyRelativeToDownlinkSpeed,
-  withInterceptor,
+  withInterceptor, withLogger,
 } from '@lotto24-angular/imports-orchestrator';
 
 const APP_IMPORTS_ORCHESTRATION = {
@@ -48,6 +53,33 @@ const APP_IMPORTS_ORCHESTRATION = {
   serviceComponent: 601,
 };
 
+
+export class NullLogger  {
+  public log(_message: any) {
+    // noop
+  }
+
+  public info(_message: any) {
+    // noop
+  }
+
+  public error(_message: any, _trace?: string) {
+    // noop
+  }
+
+  public warn(_message: any) {
+    // noop
+  }
+
+  public debug(_message: string) {
+    // noop
+  }
+
+  public verbose(_message: string) {
+    // noop
+  }
+}
+
 export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;
 export const appConfig = {
   providers: [
@@ -58,7 +90,8 @@ export const appConfig = {
       withPreloading(NoPreloading)
     ),
     provideDeferQueue(
-      withConcurrencyStatic(1),
+      withBailout(),
+      withConcurrencyUpdateFn(downlinkToConcurrencyFn(8, 2)),
       withSuspendWhileRouting(),
       withTimeout(2000),
     ),
@@ -76,8 +109,33 @@ export const appConfig = {
           console.log('interceptor, error', identifier)
         );
       }),
+      withLogger(new NullLogger()),
       // withSuspendWhileRoutingForImportsOrchestrator(),
       withConcurrencyRelativeToDownlinkSpeed(2, 1)
     ),
   ],
 };
+
+export function downlinkToConcurrencyFn(max: number, min: number = 1): () => number {
+  return () => {
+    const downlink = (navigator as any).connection?.downlink;
+
+    if (!downlink) {
+      // if devices do not provide a downlink speed, assign min concurrency for mobile devices and max concurrency for larger devices
+      return screen.width < 768 ? min : max;
+    }
+
+    if (downlink < 5) {
+      // 4G, 3G
+      return min;
+    } else if (downlink < 10) {
+      // DSL
+      return Math.max(min, Math.floor(min + (max - min) / 4));
+    } else if (downlink < 30) {
+      // slow WIFI
+      return Math.max(min, Math.floor(min + (max - min) / 2));
+    }
+
+    return max;
+  };
+}
