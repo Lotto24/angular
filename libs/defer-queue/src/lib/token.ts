@@ -3,6 +3,8 @@ import { Queue } from './queue/queue';
 import { DeferQueueItem } from './service';
 import {Observable} from "rxjs";
 
+export const DEFER_QUEUE_FEATURE_BAILOUT = new InjectionToken<boolean>('DEFER_QUEUE_FEAUTURE_BAILOUT');
+
 export const DEFER_QUEUE_FEATURE_CONCURRENCY = new InjectionToken<
   number | (() => number)
 >('DEFER_QUEUE_FEAUTURE_CONCURRENCY');

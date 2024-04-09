@@ -6,7 +6,7 @@ import {
 } from '@angular/router';
 import { appRoutes } from './app.routes';
 import {
-  provideDeferQueue,
+  provideDeferQueue, withBailout,
   withConcurrencyUpdateFn,
   withSuspendWhileRouting,
   withTimeout,
@@ -14,7 +14,7 @@ import {
 import {
   provideImportsOrchestration,
   withConcurrencyRelativeToDownlinkSpeed,
-  withInterceptor,
+  withInterceptor, withLogger,
 } from '@lotto24-angular/imports-orchestrator';
 
 const APP_IMPORTS_ORCHESTRATION = {
@@ -53,6 +53,33 @@ const APP_IMPORTS_ORCHESTRATION = {
   serviceComponent: 601,
 };
 
+
+export class NullLogger  {
+  public log(_message: any) {
+    // noop
+  }
+
+  public info(_message: any) {
+    // noop
+  }
+
+  public error(_message: any, _trace?: string) {
+    // noop
+  }
+
+  public warn(_message: any) {
+    // noop
+  }
+
+  public debug(_message: string) {
+    // noop
+  }
+
+  public verbose(_message: string) {
+    // noop
+  }
+}
+
 export type AppImportsOrchestration = typeof APP_IMPORTS_ORCHESTRATION;
 export const appConfig = {
   providers: [
@@ -63,6 +90,7 @@ export const appConfig = {
       withPreloading(NoPreloading)
     ),
     provideDeferQueue(
+      withBailout(),
       withConcurrencyUpdateFn(downlinkToConcurrencyFn(8, 2)),
       withSuspendWhileRouting(),
       withTimeout(2000),
@@ -81,6 +109,7 @@ export const appConfig = {
           console.log('interceptor, error', identifier)
         );
       }),
+      withLogger(new NullLogger()),
       // withSuspendWhileRoutingForImportsOrchestrator(),
       withConcurrencyRelativeToDownlinkSpeed(2, 1)
     ),
