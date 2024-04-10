@@ -80,7 +80,7 @@
     "prepare": "husky install",
     "prepare-imports-orchestrator-example": "nx run imports-orchestrator-example:prepare"
   },
-  "version": "0.4.5-prerelease.0",
+  "version": "0.4.5-prerelease.1",
   "volta": {
     "node": "18.19.0",
     "yarn": "1.22.21"
