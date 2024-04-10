@@ -106,7 +106,6 @@ export class DeferQueue {
       let timeoutId: number = -1;
 
       const resolveAndCleanup = (errorMessage?: string) => {
-        deferrable.triggered.set(true);
         clearTimeout(timeoutId);
         const taken = this.queue.take(item);
         if (taken && errorMessage) {
@@ -116,6 +115,9 @@ export class DeferQueue {
               `removed deferrable w/ identifier=${identifier}, priority=${priority}`
           );
         }
+        this.zone.run(() =>
+          setTimeout(() => deferrable.triggered.set(true), 0)
+        );
       };
 
       const deferrable: DeferQueueDeferrable = {
