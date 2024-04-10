@@ -27,7 +27,7 @@ export interface DeferQueueServiceOptions {
 
 export interface DeferQueueDeferrable {
   triggered: WritableSignal<boolean>;
-  resolve: (errorMessage?: string) => void;
+  resolve: (msg?: string) => void;
 }
 
 export interface DeferQueueItem extends DeferQueueServiceOptions {
@@ -105,12 +105,12 @@ export class DeferQueue {
     if (!this.deferrableStore.has(identifier)) {
       let timeoutId: number = -1;
 
-      const resolveAndCleanup = (errorMessage?: string) => {
+      const resolveAndCleanup = (msg?: string) => {
         clearTimeout(timeoutId);
         const taken = this.queue.take(item);
-        if (taken && errorMessage) {
-          this.logger.error(
-            errorMessage +
+        if (taken && msg) {
+          this.logger.warn(
+            msg +
               '; ' +
               `removed deferrable w/ identifier=${identifier}, priority=${priority}`
           );
