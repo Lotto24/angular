@@ -18,7 +18,7 @@ import { ImportsOrchestratorExamplesHome2Component } from '@lotto24-angular/impo
   ],
   template: `
     @defer (when defer.when('home0', 'lower')) {
-    <imports-orchestrator-examples-home0-component deferrablesResolve="home0" />
+    <imports-orchestrator-examples-home0-component deferQueueResolve="home0" />
     } @placeholder {
     <div>placeholder:home0</div>
     }
