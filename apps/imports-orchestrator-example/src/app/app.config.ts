@@ -6,7 +6,8 @@ import {
 } from '@angular/router';
 import { appRoutes } from './app.routes';
 import {
-  provideDeferQueue, withBailout,
+  provideDeferQueue,
+  withBailout,
   withConcurrencyUpdateFn,
   withSuspendWhileRouting,
   withTimeout,
@@ -14,7 +15,8 @@ import {
 import {
   provideImportsOrchestration,
   withConcurrencyRelativeToDownlinkSpeed,
-  withInterceptor, withLogger,
+  withInterceptor,
+  withLogger,
 } from '@lotto24-angular/imports-orchestrator';
 
 const APP_IMPORTS_ORCHESTRATION = {
@@ -90,7 +92,7 @@ export const appConfig = {
       withPreloading(NoPreloading)
     ),
     provideDeferQueue(
-      withBailout(),
+      withBailout(false),
       withConcurrencyUpdateFn(downlinkToConcurrencyFn(8, 2)),
       withSuspendWhileRouting(),
       withTimeout(2000),

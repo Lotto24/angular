@@ -4,6 +4,7 @@ import {
   inject,
   Injectable,
   Injector,
+  NgZone,
   Signal,
   signal,
   Type,
@@ -26,7 +27,7 @@ export interface DeferQueueServiceOptions {
 
 export interface DeferQueueDeferrable {
   triggered: WritableSignal<boolean>;
-  resolve: (err?: Error) => void;
+  resolve: (errorMessage?: string) => void;
 }
 
 export interface DeferQueueItem extends DeferQueueServiceOptions {
@@ -53,6 +54,7 @@ export class DeferQueue {
   private readonly logger = inject(DEFER_QUEUE_FEATURE_LOGGER);
   private readonly queue = inject(DEFER_QUEUE_FEATURE_QUEUE);
   private readonly deferrableStore = new Map<string, DeferQueueDeferrable>();
+  private readonly zone = inject(NgZone);
 
   public get view() {
     let destroyRef: DestroyRef;
@@ -79,10 +81,10 @@ export class DeferQueue {
     };
   }
 
-  private resolve(identifier: string, err?: Error | undefined): void {
+  private resolve(identifier: string, errorMessage?: string): void {
     const deferrable = this.deferrableStore.get(identifier);
     if (deferrable) {
-      deferrable.resolve(err);
+      deferrable.resolve(errorMessage);
     } else {
       this.logger.error(`could not resolve identifier=${identifier}`);
     }
@@ -92,30 +94,43 @@ export class DeferQueue {
    * Creates a new deferrable queue item, and adds it to the queue. if an item with this identifier already exists, the existing item will be returned.
    * @param identifier is used to connect the resolved item to the defer-trigger
    * @param priority higher priority will resolve the deferrable earlier
+   * @param destroyRef
    *
    */
   private deferrable(
     identifier: string,
-    priority: DeferQueueItemPriority = 'default',
-    destroyRef: DestroyRef,
+    priority: DeferQueueItemPriority,
+    destroyRef: DestroyRef
   ) {
     if (!this.deferrableStore.has(identifier)) {
-      const deferrable: DeferQueueDeferrable = {
-        triggered: signal(this.bailout),
-        resolve: () => {
-          const taken = this.queue.take(item);
-          this.logger.info(
-            `removed deferrable (taken? ${!!taken} w/ identifier=${identifier}, priority=${priority}`
+      let timeoutId: number = -1;
+
+      const resolveAndCleanup = (errorMessage?: string) => {
+        deferrable.triggered.set(true);
+        clearTimeout(timeoutId);
+        const taken = this.queue.take(item);
+        if (taken && errorMessage) {
+          this.logger.error(
+            errorMessage +
+              '; ' +
+              `removed deferrable w/ identifier=${identifier}, priority=${priority}`
           );
-        },
+        }
       };
 
-      const resolved = () =>
-        new Promise<void>((resolve, reject) => {
+      const deferrable: DeferQueueDeferrable = {
+        triggered: signal(this.bailout),
+        resolve: resolveAndCleanup,
+      };
+
+      const resolved = () => {
+        return new Promise<void>((resolve, reject) => {
           deferrable.resolve = (err?: unknown) => {
             if (err) {
+              resolveAndCleanup('' + err);
               reject(err);
             } else {
+              resolveAndCleanup();
               resolve();
               this.logger.info(
                 `resolved deferrable w/ identifier=${identifier}, priority=${priority}`
@@ -124,6 +139,23 @@ export class DeferQueue {
           };
           deferrable.triggered.set(true);
         });
+      };
+
+      timeoutId = this.zone.runOutsideAngular(() =>
+        setTimeout(
+          () =>
+            deferrable.resolve(
+              `timeout after ${this.timeout}ms for deferrable w/ identifier=${identifier}, priority=${priority}`
+            ),
+          this.timeout
+        )
+      );
+
+      destroyRef.onDestroy(() => {
+        deferrable.resolve(
+          `resolving deferrable w/ identifier=${identifier} because injection context was destroyed`
+        );
+      });
 
       const item = this.createQueueItem(priority, resolved);
       this.deferrableStore.set(identifier, deferrable);
@@ -132,27 +164,6 @@ export class DeferQueue {
       );
       this.queue.insert(fromDeferQueueItemPriority(priority), item);
       this.queueProcessor.process();
-
-      // let timeoutId: number = -1;
-      // const onErrorFn = (msg: string) => () => {
-      //   this.logger.error(msg);
-      //   deferrable.resolve();
-      //   clearTimeout(timeoutId);
-      //   this.deferrableStore.delete(identifier);
-      // };
-      //
-      // timeoutId = setTimeout(
-      //   onErrorFn(
-      //     `timeout after ${this.timeout}ms for deferrable w/ identifier=${identifier}, priority=${priority}`
-      //   ),
-      //   this.timeout
-      // );
-      //
-      // destroyRef.onDestroy(
-      //   onErrorFn(
-      //     `resolving deferrable w/ identifier=${identifier} because injection context was destroyed`
-      //   )
-      // );
     }
 
     return this.deferrableStore.get(identifier) as DeferQueueDeferrable;
