@@ -3,8 +3,8 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/imports-orchestrator/src",
   "prefix": "import-orchestrator",
-  "tags": [],
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/angular:package",
@@ -31,13 +31,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/imports-orchestrator/**/*.ts",
-          "libs/imports-orchestrator/**/*.html"
-        ]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "publish": {
       "executor": "@lotto24-angular/workspace:publish",
