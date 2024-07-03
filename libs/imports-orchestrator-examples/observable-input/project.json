@@ -10,6 +10,7 @@
       "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
+          "libs/imports-orchestrator-examples/observable-input",
           "libs/imports-orchestrator-examples/-static-observable-input/**/*.ts",
           "libs/imports-orchestrator-examples/home1/**/*.html"
         ]

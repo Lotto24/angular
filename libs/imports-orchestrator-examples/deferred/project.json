@@ -10,6 +10,7 @@
       "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
+          "libs/imports-orchestrator-examples/deferred",
           "libs/imports-orchestrator-examples-static/deferred/**/*.ts",
           "libs/imports-orchestrator-examples-static/deferred/**/*.html"
         ]

@@ -10,6 +10,7 @@
       "executor": "@nx/eslint:lint",
       "options": {
         "lintFilePatterns": [
+          "libs/imports-orchestrator-examples/io",
           "libs/imports-orchestrator-examples-static/io/**/*.ts",
           "libs/imports-orchestrator-examples-static/io/**/*.html"
         ]
