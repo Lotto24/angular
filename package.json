@@ -83,7 +83,6 @@
   },
   "version": "0.4.5-prerelease.0",
   "volta": {
-    "node": "18.19.0",
-    "yarn": "1.22.21"
+    "node": "20.15.0"
   }
 }
