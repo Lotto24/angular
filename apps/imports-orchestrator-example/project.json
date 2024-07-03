@@ -64,7 +64,7 @@
           "buildTarget": "imports-orchestrator-example:build:development"
         }
       },
-      "defaultConfiguration": "development",
+      "defaultConfiguration": "development"
     },
     "extract-i18n": {
       "executor": "@angular-devkit/build-angular:extract-i18n",
@@ -74,13 +74,7 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "apps/imports-orchestrator-example/**/*.ts",
-          "apps/imports-orchestrator-example/**/*.html"
-        ]
-      }
+      "outputs": ["{options.outputFile}"]
     },
     "test": {
       "executor": "@nx/jest:jest",
