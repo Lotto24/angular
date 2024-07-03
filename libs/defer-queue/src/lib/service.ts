@@ -32,6 +32,7 @@ export interface DeferQueueDeferrable {
 export interface DeferQueueItem extends DeferQueueServiceOptions {
   priority: DeferQueueItemPriority;
   resolved: () => Promise<unknown>;
+  timeCreated: number;
   logger: ConsoleLike;
 }
 
@@ -132,27 +133,6 @@ export class DeferQueue {
       );
       this.queue.insert(fromDeferQueueItemPriority(priority), item);
       this.queueProcessor.process();
-
-      // let timeoutId: number = -1;
-      // const onErrorFn = (msg: string) => () => {
-      //   this.logger.error(msg);
-      //   deferrable.resolve();
-      //   clearTimeout(timeoutId);
-      //   this.deferrableStore.delete(identifier);
-      // };
-      //
-      // timeoutId = setTimeout(
-      //   onErrorFn(
-      //     `timeout after ${this.timeout}ms for deferrable w/ identifier=${identifier}, priority=${priority}`
-      //   ),
-      //   this.timeout
-      // );
-      //
-      // destroyRef.onDestroy(
-      //   onErrorFn(
-      //     `resolving deferrable w/ identifier=${identifier} because injection context was destroyed`
-      //   )
-      // );
     }
 
     return this.deferrableStore.get(identifier) as DeferQueueDeferrable;
@@ -269,6 +249,7 @@ export class DeferQueue {
       ...opts,
       priority,
       resolved,
+      timeCreated: Date.now(),
       logger: this.logger,
     };
   }

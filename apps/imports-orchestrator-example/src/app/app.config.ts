@@ -91,7 +91,7 @@ export const appConfig = {
     ),
     provideDeferQueue(
       withBailout(),
-      withConcurrencyUpdateFn(downlinkToConcurrencyFn(8, 2)),
+      withConcurrencyUpdateFn(downlinkToConcurrencyFn(1, 1)),
       withSuspendWhileRouting(),
       withTimeout(2000),
     ),
