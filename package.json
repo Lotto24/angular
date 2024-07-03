@@ -35,6 +35,7 @@
     "@types/node": "18.16.9",
     "@typescript-eslint/eslint-plugin": "7.9.0",
     "@typescript-eslint/parser": "7.9.0",
+    "@typescript-eslint/utils": "^8.0.0-alpha.28",
     "autoprefixer": "^10.4.0",
     "cypress": "13.9.0",
     "eslint": "8.57.0",
