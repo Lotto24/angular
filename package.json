@@ -82,7 +82,7 @@
     "prepare": "husky install",
     "prepare-imports-orchestrator-example": "nx run imports-orchestrator-example:prepare"
   },
-  "version": "0.4.5-prerelease.0",
+  "version": "0.5.0",
   "volta": {
     "node": "20.15.0"
   }
