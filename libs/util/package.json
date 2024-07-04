@@ -26,6 +26,6 @@
   "sideEffects": false,
   "volta": {
     "node": "18.19.0",
-    "yarn": "1.22.21"
+    "yarn": "1.22.22"
   }
 }
