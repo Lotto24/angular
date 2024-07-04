@@ -74,7 +74,7 @@ export class DeferQueueProcessor {
 
     const isTimeoutOut = Date.now() - item.timeCreated > item.timeout;
     if (isTimeoutOut) {
-      this.logger.warn(
+      this.logger.error(
         `timed out queue item, now=${Date.now()} - created=${
           item.timeCreated
         } > timeout=${item.timeout}`
