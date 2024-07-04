@@ -22,6 +22,7 @@ import { DeferQueueItemPriority, fromDeferQueueItemPriority } from './util';
 
 export interface DeferQueueServiceOptions {
   timeout: number;
+  identifier?: string;
 }
 
 export interface DeferQueueDeferrable {
@@ -31,6 +32,7 @@ export interface DeferQueueDeferrable {
 
 export interface DeferQueueItem extends DeferQueueServiceOptions {
   priority: DeferQueueItemPriority;
+  identifier?: string;
   resolved: () => Promise<unknown>;
   timeCreated: number;
   logger: ConsoleLike;
@@ -126,7 +128,7 @@ export class DeferQueue {
           deferrable.triggered.set(true);
         });
 
-      const item = this.createQueueItem(priority, resolved);
+      const item = this.createQueueItem(priority, resolved, { identifier })
       this.deferrableStore.set(identifier, deferrable);
       this.logger.debug(
         `insert deferrable w/ identifier=${identifier}, ${priority}`
@@ -226,7 +228,7 @@ export class DeferQueue {
           .then((instance) => fn(instance, null))
           .catch((err) => fn(undefined, err));
 
-      const item = this.createQueueItem(priority, resolved);
+      const item = this.createQueueItem(priority, resolved, { identifier: '<service>' });
       this.queue.insert(fromDeferQueueItemPriority(priority), item);
       this.logger.debug(`insert service`);
       this.queueProcessor.process();
