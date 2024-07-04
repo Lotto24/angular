@@ -7,6 +7,7 @@ import {
 } from '../token';
 import { wait } from '../util/wait';
 import { filter, firstValueFrom, tap } from 'rxjs';
+import { DeferQueueItem } from 'defer-queue';
 
 @Injectable({ providedIn: 'root' })
 export class DeferQueueProcessor {
@@ -53,7 +54,12 @@ export class DeferQueueProcessor {
     const concurrentBatch = [];
     for (let i = this.running; i < concurrency; i++) {
       this.running++;
-      concurrentBatch.push(this.processItem());
+
+      do {
+        const item = this.queue.take();
+        concurrentBatch.push(this.processItem(item));
+      } while (this.isNextItemTimedout(this.queue.peek()));
+      // let's take the next item off the queue
     }
     this.logger.debug(
       `queue starting ${concurrentBatch.length} item(s) to reach max concurrency (concurrency=${concurrency}, running=${this.running})`
@@ -61,10 +67,24 @@ export class DeferQueueProcessor {
     await Promise.all(concurrentBatch);
   }
 
-  private async processItem(): Promise<void> {
-    // let's take the next item off the queue
-    const item = this.queue.take();
+  private isNextItemTimedout(item: DeferQueueItem | undefined): boolean {
+    if (!item) {
+      return false;
+    }
 
+    const isTimeoutOut = Date.now() - item.timeCreated > item.timeout;
+    if (isTimeoutOut) {
+      this.logger.error(
+        `timed out queue item, now=${Date.now()} - created=${
+          item.timeCreated
+        } > timeout=${item.timeout}`
+      );
+    }
+
+    return isTimeoutOut;
+  }
+
+  private async processItem(item: DeferQueueItem | null): Promise<void> {
     // let's stop if there are no items in the queue
     if (!item) {
       this.logger.debug('queue is drained');
@@ -85,8 +105,8 @@ export class DeferQueueProcessor {
 
   private updateConcurrency(): number {
     return typeof this.concurrency === 'function'
-        ? this.concurrency()
-        : this.concurrency;
+      ? this.concurrency()
+      : this.concurrency;
   }
 
   private async suspendForNavigation(): Promise<unknown> {
