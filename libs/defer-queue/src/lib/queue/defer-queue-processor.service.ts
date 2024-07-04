@@ -7,7 +7,7 @@ import {
 } from '../token';
 import { wait } from '../util/wait';
 import { filter, firstValueFrom, tap } from 'rxjs';
-import { DeferQueueItem } from 'defer-queue';
+import { DeferQueueItem } from '../service';
 
 @Injectable({ providedIn: 'root' })
 export class DeferQueueProcessor {
@@ -55,12 +55,26 @@ export class DeferQueueProcessor {
     for (let i = this.running; i < concurrency; i++) {
       this.running++;
 
-      do {
+      const item = this.queue.take();
+      concurrentBatch.push(this.processItem(item));
+
+      const timeouts = [];
+
+      while (this.isNextItemTimedout(this.queue.peek())) {
         const item = this.queue.take();
+        timeouts.push(item?.identifier ?? 'unknown');
         concurrentBatch.push(this.processItem(item));
-      } while (this.isNextItemTimedout(this.queue.peek()));
-      // let's take the next item off the queue
+      }
+
+      if (timeouts.length > 0) {
+        this.logger.error(
+          `added ${timeouts.length} timed out item(s), [${timeouts.join(
+            ', '
+          )}]`
+        );
+      }
     }
+
     this.logger.debug(
       `queue starting ${concurrentBatch.length} item(s) to reach max concurrency (concurrency=${concurrency}, running=${this.running})`
     );
@@ -72,16 +86,7 @@ export class DeferQueueProcessor {
       return false;
     }
 
-    const isTimeoutOut = Date.now() - item.timeCreated > item.timeout;
-    if (isTimeoutOut) {
-      this.logger.error(
-        `timed out queue item, now=${Date.now()} - created=${
-          item.timeCreated
-        } > timeout=${item.timeout}`
-      );
-    }
-
-    return isTimeoutOut;
+    return Date.now() - item.timeCreated > item.timeout;
   }
 
   private async processItem(item: DeferQueueItem | null): Promise<void> {
