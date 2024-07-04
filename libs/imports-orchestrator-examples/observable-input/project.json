@@ -3,12 +3,11 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/imports-orchestrator-examples/-static-observable-input/src",
   "prefix": "imports-orchestrator-examples",
-  "tags": [],
   "projectType": "library",
+  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/imports-orchestrator-examples/-static-observable-input/**/*.ts",
