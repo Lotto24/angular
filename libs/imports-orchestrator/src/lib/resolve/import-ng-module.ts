@@ -34,7 +34,6 @@ export function importNgModule(
     }
 
 
-
     const ngModuleRef = createNgModule(ngModuleConstructor, item.injector);
 
     const componentConstructors = (
