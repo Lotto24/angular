@@ -58,7 +58,7 @@ jobs:
         run: npx nx build imports-orchestrator-example
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './dist/apps/imports-orchestrator-example'
 
