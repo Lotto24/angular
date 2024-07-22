@@ -1,7 +1,7 @@
 {
   "dependencies": {},
   "devDependencies": {
-    "@angular-devkit/build-angular": "18.0.7",
+    "@angular-devkit/build-angular": "18.1.1",
     "@angular-devkit/core": "18.0.7",
     "@angular-devkit/schematics": "18.0.7",
     "@angular-eslint/eslint-plugin": "18.1.0",
