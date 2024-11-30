@@ -17,8 +17,8 @@
     "url": "https://github.com/Lotto24/angular/issues"
   },
   "peerDependencies": {
-    "@angular/common": "~15.2.0 || ~17.0.0",
-    "@angular/core": "~15.2.0 || ~17.0.0"
+    "@angular/common": "~15.2.0 || ~17.0.0 || ~17.3.0",
+    "@angular/core": "~15.2.0 || ~17.0.0 || ~17.3.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
